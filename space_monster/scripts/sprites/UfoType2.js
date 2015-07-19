@@ -16,6 +16,10 @@ function UfoType2() {
         return position.x > 725 || position.x < 75 || position.y < 75 || position.y > 525;
     };
     
+    var reverseAngle = function(angle){
+        return (angle+180)%360;
+    }
+    
     var moveStrategy = function(sprite, rocket){
         
         if(init && inBreakZone(sprite)){
@@ -27,15 +31,13 @@ function UfoType2() {
         if(inBreakZone(sprite) && ! that.breaking){
             that.breaking = true;
             var forceVector = sprite.getForceVector();
-            breakeAngle = (forceVector.angle+180)%360;
+            breakeAngle = reverseAngle(forceVector.angle);
         }
         
         if(!inBreakZone(sprite) && that.breaking){
             that.breaking = false;
         }        
-        
-        
-        
+
         if(that.breaking){
             var forceVector = sprite.getForceVector();
             throttledBreakForceVector(breakeAngle, Math.sqrt(forceVector.force));           
@@ -52,14 +54,7 @@ function UfoType2() {
             } else{
                 throttledAddForceVector(angleAndDistance.angle,0.05);
             }             
-        }
-        
-        
-        
-      
-        
-
-                  
+        }                  
     };
     
     this.getPoints = function(){

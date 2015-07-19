@@ -3,8 +3,9 @@ function EnemyGenerator() {
     var extraTime = 4000;
     var enemies = [
         
-        //{x: 0, y: 0, time: 1000, type:"UfoType2"},        
+      
         
+       
         
         {x: -50, y: -50, time: 1000, type:"UfoType1"}, 
         {x: -50, y: -50, time: 2000, type:"UfoType1"},
@@ -30,14 +31,16 @@ function EnemyGenerator() {
         
       
         {x: 100, y: -50, time: 35000+extraTime, type:"UfoType2"},
-        {x: 500, y: -50, time: 35500+extraTime, type:"UfoType2"},
-        {x: 150, y: -50, time: 36500+extraTime, type:"UfoType2"},
-        {x: 450, y: -50, time: 37000+extraTime, type:"UfoType2"},
-        {x: 200, y: -50, time: 37500+extraTime, type:"UfoType2"},
-        {x: 400, y: -50, time: 48000+extraTime, type:"UfoType2"},
-        {x: 250, y: -50, time: 48500+extraTime, type:"UfoType2"},
-        {x: 350, y: -50, time: 49000+extraTime, type:"UfoType2"},
-        {x: 300, y: -50, time: 49500+extraTime, type:"UfoType2"},
+        {x: 200, y: -50, time: 35000+extraTime, type:"UfoType2"},
+        {x: 300, y: -50, time: 35000+extraTime, type:"UfoType2"},
+        {x: 400, y: -50, time: 35000+extraTime, type:"UfoType2"},
+        {x: 500, y: -50, time: 36000+extraTime, type:"UfoType2"},
+        {x: 600, y: -50, time: 36000+extraTime, type:"UfoType2"},
+        {x: 700, y: -50, time: 36000+extraTime, type:"UfoType2"},
+        {x: 800, y: -50, time: 36000+extraTime, type:"UfoType2"},
+        {x: -50, y: 100, time: 37000+extraTime, type:"UfoType2"},
+        {x: -50, y: 200, time: 37000+extraTime, type:"UfoType2"},        
+       
         
         {x: 100, y: -50, time: 54000+extraTime, type:"UfoType2"}, 
         {x: 200, y: -50, time: 54500+extraTime, type:"UfoType2"},  
@@ -66,7 +69,7 @@ function EnemyGenerator() {
             if(enemy.type === "UfoType1"){
                 result.push(new UfoType1().setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setSpeedX(2).setSpeedY(-0.5).setHealth(2));
             }else if(enemy.type === "UfoType2"){
-                result.push(new UfoType2().setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2).setSpeedY(-1));
+                result.push(new UfoType2().setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2).setSpeedY(-1).setSpeedX(1));
             }else if(enemy.type === "UfoType3"){
                 result.push(new UfoType3(enemy.x, enemy.y));
             }

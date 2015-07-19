@@ -81,21 +81,25 @@
                         t.draw(context);
                     });
 
-                    enemies.forEach(function (enemy) {
-                        enemy.update(context, rocket);
-                        if (enemy.bulletFired) {
-                            enemies = enemies.concat(enemy.bulletFired());
+                    enemies.forEach(function (each) {
+                        if (each.handleKeyEvents) {
+                            each.handleKeyEvents(keyEvents);
+                        }                        
+                        each.update(context, rocket);
+                        if (each.bulletFired) {
+                            enemies = enemies.concat(each.bulletFired());
                         }
+                        
                     });
 
                     friendly.forEach(function (each) {
                         if (each.handleKeyEvents) {
                             each.handleKeyEvents(keyEvents);
                         }
+                        each.update(context);
                         if (each.bulletFired) {
                             friendly = friendly.concat(each.bulletFired());
-                        }
-                        each.update(context);
+                        }    
                     });
 
                     for (var i1 = 0; i1 < enemies.length; i1++) {
