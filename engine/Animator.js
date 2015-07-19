@@ -1,4 +1,4 @@
-function Animator(_animation, startX ,startY, width, height, columnWidth, rowHeight,animationSpeed){
+function Animator(_animation, startX ,startY, width, height, columnWidth, rowHeight,animationSpeed,numberOfPhases){
     
     var animation =  document.getElementById(_animation);
     var x;
@@ -27,11 +27,10 @@ function Animator(_animation, startX ,startY, width, height, columnWidth, rowHei
         var column = 0;
         var row = 0;
         var phase = 0;
-        var maxPhase = 16;
         return function(context){
             var now = new Date().getTime();
             
-            if(phase > maxPhase){
+            if(phase > numberOfPhases){
                 completed =  true;
             }
             

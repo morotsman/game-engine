@@ -14,7 +14,7 @@ function Explosion(x,y,speedX,speedY){
     };
     
     
-    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50).setMoveStrategy(moveAnimation);
+    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20,16).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50).setMoveStrategy(moveAnimation);
     
 }
 
