@@ -1,0 +1,165 @@
+<!doctype html>
+
+
+<html lang="en">
+    <head>
+
+    </head>
+
+
+    <body>
+        <img id="planet" src="images/planet.jpg" alt="Planet" style="display:none">
+        <img id="rocket" src="images/rocket.png" alt="Rocket" style="display:none">
+        <img id="ufo" src="images/ufo.png" alt="Ufo" style="display:none">
+        <img id="bullet" src="images/bullet.png" alt="Bullet" style="display:none">
+        <img id="explosion"  src="images/explosion2.png" alt="Explosion" style="display:none">
+        <img id="bonus"  src="images/star.jpg" alt="Bonus" style="display:none">
+
+
+
+        <canvas id="canvas1" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
+
+
+
+
+        <script>
+        </script>
+
+        <script src="external/jquery_1_11_1.min.js"></script>
+
+        <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/Engine.js"></script>
+        <script type="text/javascript" src="../engine/Sprite.js"></script>
+        <script type="text/javascript" src="../engine/Animator.js"></script>
+        <script type="text/javascript" src="scripts/sprites/BaseSprite.js"></script>
+        <script type="text/javascript" src="scripts/sprites/Rocket.js"></script>       
+        <script type="text/javascript" src="scripts/sprites/UfoType1.js"></script>
+        <script type="text/javascript" src="scripts/sprites/UfoType2.js"></script>
+        <script type="text/javascript" src="scripts/sprites/Bullet.js"></script>
+        <script type="text/javascript" src="scripts/sprites/Explosion.js"></script>      
+        <script type="text/javascript" src="scripts/sprites/Bonus.js"></script>
+        <script type="text/javascript" src="scripts/EnemyGenerator.js"></script>
+        <script>
+
+            $(window).load(function () {
+                var screenWidth = 800;
+                var screenHeight = 600;
+
+                var friendly = [];
+                var rocket = new Rocket(screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
+                friendly.push(rocket);
+
+
+                var background = [];
+                var planet = new Sprite().setImage("planet").setPosition(0, 0).setWidthAndHeight(screenWidth, screenHeight);
+                //background.push(planet);
+
+
+                var enemies = [];
+
+
+                var engine = new Engine("canvas1");
+
+
+                var enemyGenerator = new EnemyGenerator();
+
+                var offScreen = function (position) {
+                    if (position.x < -1000 || position.x > screenWidth + 1000) {
+                        return true;
+                    }
+                    if (position.y < -1000 || position.y > screenHeight + 1000) {
+                        return true;
+                    }
+                };
+
+                var points = 0;
+                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+
+                    enemies = enemies.concat(enemyGenerator.generateEnemies(timeSinceStart));
+                    background.forEach(function (t) {
+                        t.draw(context);
+                    });
+
+                    enemies.forEach(function (enemy) {
+                        enemy.update(context, rocket);
+                        if (enemy.bulletFired) {
+                            enemies = enemies.concat(enemy.bulletFired());
+                        }
+                    });
+
+                    friendly.forEach(function (each) {
+                        if (each.handleKeyEvents) {
+                            each.handleKeyEvents(keyEvents);
+                        }
+                        if (each.bulletFired) {
+                            friendly = friendly.concat(each.bulletFired());
+                        }
+                        each.update(context);
+                    });
+
+                    for (var i1 = 0; i1 < enemies.length; i1++) {
+                        for (var i2 = 0; i2 < friendly.length; i2++) {
+                            if (enemies[i1].collision(friendly[i2])) {
+                                enemies[i1].handleCollision(friendly[i2]);
+                                friendly[i2].handleCollision(enemies[i1]);
+                            }
+                        }
+                    }
+
+                    enemies.forEach(function (enemy) {
+                        if (enemy.isDestroyed()) {
+                            enemies = enemies.concat(enemy.getExplosion());
+                            
+                            if(enemy.getPoints() !== 0){
+                                points = points + enemy.getPoints();
+                                if(points%20000 === 0){
+                                    enemies.push(new Bonus(screenWidth));
+                                }
+                            } 
+                        }
+                    });
+
+                    friendly.forEach(function (each) {
+                        if (each.isDestroyed()) {
+                            friendly = friendly.concat(each.getExplosion());
+                        }
+                    });
+
+
+
+                    enemies = enemies.filter(function (enemy) {
+                        return !enemy.isDestroyed() && !offScreen(enemy.getPosition());
+                    });
+
+                    friendly = friendly.filter(function (each) {
+                        return !each.isDestroyed() && !offScreen(each.getPosition());
+                    });
+
+
+                    //console.log(friendly.length + " " + enemies.length);
+
+                    return true;
+
+                });
+
+                engine.start();
+
+
+
+            });
+
+
+
+
+
+        </script>
+
+
+
+
+
+    </body>
+</html>
+
+
