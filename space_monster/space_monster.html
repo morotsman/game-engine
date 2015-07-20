@@ -46,6 +46,49 @@
                 var screenWidth = 800;
                 var screenHeight = 600;
 
+                var offScreen = function (position) {
+                    if (position.x < -1000 || position.x > screenWidth + 1000) {
+                        return true;
+                    }
+                    if (position.y < -1000 || position.y > screenHeight + 1000) {
+                        return true;
+                    }
+                };
+                
+                var updateSprite = function(sprites, context, keyEvents, rocket){
+                    var spritesToAdd = [];
+                    sprites.forEach(function (each) {
+                        if (each.handleKeyEvents) {
+                            each.handleKeyEvents(keyEvents);
+                        }                        
+                        each.update(context, rocket);
+                        if (each.bulletFired) {
+                            spritesToAdd = spritesToAdd.concat(each.bulletFired());
+                        }
+                    }); 
+                    return spritesToAdd;
+                }
+                
+                var deleteDestroyedSprites = function(sprites){
+                    var spritesToAdd = [];
+                    var points = 0;
+                    sprites.forEach(function (each) {
+                        if (each.isDestroyed()) {
+                            spritesToAdd = spritesToAdd.concat(each.getExplosion());
+                            
+                            if(each.getPoints() !== 0){
+                                points = points + each.getPoints();
+                            } 
+                        }
+                    });
+                    return {
+                        spritesToAdd: spritesToAdd,
+                        points:points
+                    };
+                };
+                
+
+
                 var friendly = [];
                 var rocket = new Rocket(screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
                 friendly.push(rocket);
@@ -62,45 +105,22 @@
                 var engine = new Engine("canvas1");
 
 
-                var enemyGenerator = new EnemyGenerator();
-
-                var offScreen = function (position) {
-                    if (position.x < -1000 || position.x > screenWidth + 1000) {
-                        return true;
-                    }
-                    if (position.y < -1000 || position.y > screenHeight + 1000) {
-                        return true;
-                    }
-                };
+                var enemyGenerator = new EnemyGenerator();                
 
                 var points = 0;
+                
                 engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
 
                     enemies = enemies.concat(enemyGenerator.generateEnemies(timeSinceStart));
+                    
                     background.forEach(function (t) {
                         t.draw(context);
                     });
+                    
+                    enemies = enemies.concat(updateSprite(enemies, context,keyEvents, rocket));
+                    friendly = friendly.concat(updateSprite(friendly, context,keyEvents, rocket));
 
-                    enemies.forEach(function (each) {
-                        if (each.handleKeyEvents) {
-                            each.handleKeyEvents(keyEvents);
-                        }                        
-                        each.update(context, rocket);
-                        if (each.bulletFired) {
-                            enemies = enemies.concat(each.bulletFired());
-                        }
-                        
-                    });
-
-                    friendly.forEach(function (each) {
-                        if (each.handleKeyEvents) {
-                            each.handleKeyEvents(keyEvents);
-                        }
-                        each.update(context);
-                        if (each.bulletFired) {
-                            friendly = friendly.concat(each.bulletFired());
-                        }    
-                    });
+ 
 
                     for (var i1 = 0; i1 < enemies.length; i1++) {
                         for (var i2 = 0; i2 < friendly.length; i2++) {
@@ -111,24 +131,19 @@
                         }
                     }
 
-                    enemies.forEach(function (enemy) {
-                        if (enemy.isDestroyed()) {
-                            enemies = enemies.concat(enemy.getExplosion());
-                            
-                            if(enemy.getPoints() !== 0){
-                                points = points + enemy.getPoints();
-                                if(points%20000 === 0){
-                                    enemies.push(new Bonus(screenWidth));
-                                }
-                            } 
-                        }
-                    });
-
-                    friendly.forEach(function (each) {
-                        if (each.isDestroyed()) {
-                            friendly = friendly.concat(each.getExplosion());
-                        }
-                    });
+                    var result = deleteDestroyedSprites(enemies);
+                    enemies = enemies.concat(result.spritesToAdd);
+                    
+                    if(result.points !== 0){
+                        points = points + result.points;
+                        if(points%20000 === 0){
+                            enemies.push(new Bonus(screenWidth));
+                        }   
+                    }
+                    
+                    var result = deleteDestroyedSprites(friendly);
+                    friendly = friendly.concat(result.spritesToAdd);
+                  
 
 
 
