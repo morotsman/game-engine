@@ -12,6 +12,10 @@ function BaseSprite() {
         return "BaseSprite";
     };
     
+    this.getTeam = function(){
+        return "";
+    };      
+    
     var moveStrategy = function(){
         
     };

@@ -3,13 +3,19 @@ UfoType2.prototype = new BaseSprite();
 function UfoType2() {
     BaseSprite.apply(this, arguments);
 
-    var throttledAddForceVector = util.throttled(100, this.addForceVector);
+    var throttledAddForceVector = util.throttled(150, this.addForceVector);
     var throttledBreakForceVector = util.throttled(50, this.addForceVector);
-    var breaking = false;
     var that = this;
     var breakeAngle;
+    
+    this.getType = function(){
+        return "Enemy";
+    };     
+    
+    this.getTeam = function(){
+        return "Enemy";
+    };    
 
-    var init = true;
 
     var inBreakZone = function (sprite) {
         var position = sprite.getPosition();
@@ -18,40 +24,26 @@ function UfoType2() {
 
     var reverseAngle = function (angle) {
         return (angle + 180) % 360;
-    }
+    };
 
 
 
-
-
-    var moveStrategy = function (sprite, rocket) {
-
-        if (init && inBreakZone(sprite)) {
+    var initMoveStrategy = function (sprite, rocket) {
+        if (inBreakZone(sprite)) {
             var angleAndDistance = sprite.getAngleAndDistance(rocket);
             throttledAddForceVector(angleAndDistance.angle, 0.5);
-            return;
-        } else if (init && !inBreakZone(sprite)) {
-            init = false;
-            return;
+        } else if (!inBreakZone(sprite)) {
+            that.setMoveStrategy(searchMoveStrategy);
         }
+    };
 
-        if (inBreakZone(sprite) && !that.breaking) {
-            that.breaking = true;
+    var searchMoveStrategy = function (sprite, rocket) {
+        if (inBreakZone(sprite)) {
             var forceVector = sprite.getForceVector();
             breakeAngle = reverseAngle(forceVector.angle);
+            that.setMoveStrategy(breakMoveStrategy);
             return;
         }
-
-        if (that.breaking) {
-            var forceVector = sprite.getForceVector();
-            throttledBreakForceVector(breakeAngle, forceVector.force / 2);
-            if (forceVector.force < 0.01) {
-                init = true;
-                that.breaking = false;
-            }
-            return;
-        }
-
 
         var angleAndDistance = sprite.getAngleAndDistance(rocket);
         if (angleAndDistance.distance > 300) {
@@ -67,16 +59,26 @@ function UfoType2() {
         }
     };
 
+    var breakMoveStrategy = function (sprite, rocket) {
+        var forceVector = sprite.getForceVector();
+        throttledBreakForceVector(breakeAngle, forceVector.force / 3);
+        if (forceVector.force < 0.01) {
+            that.setMoveStrategy(initMoveStrategy);
+        }
+    };
+
 
     this.getPoints = function () {
         return 1000;
     };
 
     this.handleCollision = function (other) {
-        other.setDamage(2);
+        if(other.getTeam() === "Rocket"){
+            other.setDamage(2);
+        }     
     };
 
-    this.setMoveStrategy(moveStrategy);
+    this.setMoveStrategy(initMoveStrategy);
 
 
 }

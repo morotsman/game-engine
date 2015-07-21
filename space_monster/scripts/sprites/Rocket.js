@@ -9,7 +9,14 @@ function Rocket(screenWidth, screenHeight) {
         numberOfCanons: 1
     };
 
-
+    this.getType = function(){
+        return "Rocket";
+    }; 
+    
+    this.getTeam = function(){
+        return "Rocket";
+    };
+    
     var throttledAddForceVector = util.throttled(100, that.addForceVector);
     var throttledCannonFired = util.throttled(300, function () {
         that.cannonFired = true;
@@ -45,10 +52,10 @@ function Rocket(screenWidth, screenHeight) {
             var position = that.getPosition();
             result.push(new Bullet(position.x, position.y - that.getRadius(), 5));
             if (bonuses.numberOfCanons > 1) {
-                result.push(new Bullet(position.x + 20, position.y - that.getRadius(), 5));
+                result.push(new Bullet(position.x + 20, position.y - that.getRadius(), 5).setTeam("Rocket"));
             }
             if (bonuses.numberOfCanons > 2) {
-                result.push(new Bullet(position.x - 20, position.y - that.getRadius(), 5));
+                result.push(new Bullet(position.x - 20, position.y - that.getRadius(), 5).setTeam("Rocket"));
             }
         }
         return result;
@@ -70,7 +77,10 @@ function Rocket(screenWidth, screenHeight) {
 
 
     this.handleCollision = function (other) {
-        other.setDamage(2);
+        if(other.getTeam() === "Enemy"){
+            other.setDamage(2);
+        }
+        
     };
 
     this.receiveBonus = function (bonus) {

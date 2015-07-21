@@ -2,6 +2,14 @@ UfoType1.prototype = new BaseSprite();
 
 function UfoType1() {
     BaseSprite.apply(this, arguments);
+    
+    this.getType = function(){
+        return "Enemy";
+    };      
+    
+    this.getTeam = function(){
+        return "Enemy";
+    };     
 
     var moveStrategy = function (sprite, rocket) {
         var position = sprite.getPosition();
@@ -30,14 +38,16 @@ function UfoType1() {
         }
 
         if (fireCannon) {
-            result.push(new Bullet(ufoPosition.x, ufoPosition.y + sprite.getRadius() + 20, -6));
+            result.push(new Bullet(ufoPosition.x, ufoPosition.y + sprite.getRadius() + 20, -6).setTeam("Enemy"));
             fireCannon = false;
         }
         return result;
     };
 
     this.handleCollision = function (other) {
-        other.setDamage(2);
+        if(other.getTeam() !== "Enemy"){
+            other.setDamage(2);
+        }
     };
 
     this.getPoints = function () {

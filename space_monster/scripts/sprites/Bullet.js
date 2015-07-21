@@ -2,10 +2,21 @@ Bullet.prototype = new BaseSprite();
 
 function Bullet(x,y, speed){
     BaseSprite.apply(this,arguments);
+    
+    var team = "";
+    
+    this.setTeam = function(_team){
+        team = _team; 
+        return this;
+    };
    
     this.getType = function(){
         return "Bullet";
-    };   
+    }; 
+    
+    this.getTeam = function(){
+        return team;
+    };      
     
     this.getDamage = function(){
         return 1;
@@ -18,7 +29,8 @@ function Bullet(x,y, speed){
     };        
     
     this.handleCollision = function(other){
-        if(other.getType() !== "Bullet"){
+        if(other.getType() !== "Bullet" && other.getTeam() !== team){
+            console.log("damage");
             other.setDamage(1);
         }
         

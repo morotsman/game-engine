@@ -54,8 +54,38 @@
                         return true;
                     }
                 };
+               
+
+                var rocket = new Rocket(screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
+
+
+                var background = [];
+                var planet = new Sprite().setImage("planet").setPosition(0, 0).setWidthAndHeight(screenWidth, screenHeight);
+                //background.push(planet);
+
+
+                var sprites = [];
+
+
+                var engine = new Engine("canvas1");
+
+
+                var enemyGenerator = new EnemyGenerator();                
+
+                var points = 0;
                 
-                var updateSprite = function(sprites, context, keyEvents, rocket){
+                sprites.push(rocket);
+                
+                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+
+                    sprites = sprites.concat(enemyGenerator.generateEnemies(timeSinceStart));
+                    
+                    background.forEach(function (t) {
+                        t.draw(context);
+                    });
+                    
+                    
+
                     var spritesToAdd = [];
                     sprites.forEach(function (each) {
                         if (each.handleKeyEvents) {
@@ -66,97 +96,43 @@
                             spritesToAdd = spritesToAdd.concat(each.bulletFired());
                         }
                     }); 
-                    return spritesToAdd;
-                }
-                
-                var deleteDestroyedSprites = function(sprites){
-                    var spritesToAdd = [];
-                    var points = 0;
-                    sprites.forEach(function (each) {
-                        if (each.isDestroyed()) {
-                            spritesToAdd = spritesToAdd.concat(each.getExplosion());
-                            
-                            if(each.getPoints() !== 0){
-                                points = points + each.getPoints();
-                            } 
-                        }
-                    });
-                    return {
-                        spritesToAdd: spritesToAdd,
-                        points:points
-                    };
-                };
-                
-
-
-                var friendly = [];
-                var rocket = new Rocket(screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
-                friendly.push(rocket);
-
-
-                var background = [];
-                var planet = new Sprite().setImage("planet").setPosition(0, 0).setWidthAndHeight(screenWidth, screenHeight);
-                //background.push(planet);
-
-
-                var enemies = [];
-
-
-                var engine = new Engine("canvas1");
-
-
-                var enemyGenerator = new EnemyGenerator();                
-
-                var points = 0;
-                
-                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
-
-                    enemies = enemies.concat(enemyGenerator.generateEnemies(timeSinceStart));
                     
-                    background.forEach(function (t) {
-                        t.draw(context);
-                    });
-                    
-                    enemies = enemies.concat(updateSprite(enemies, context,keyEvents, rocket));
-                    friendly = friendly.concat(updateSprite(friendly, context,keyEvents, rocket));
-
+                    sprites = sprites.concat(spritesToAdd);
  
 
-                    for (var i1 = 0; i1 < enemies.length; i1++) {
-                        for (var i2 = 0; i2 < friendly.length; i2++) {
-                            if (enemies[i1].collision(friendly[i2])) {
-                                enemies[i1].handleCollision(friendly[i2]);
-                                friendly[i2].handleCollision(enemies[i1]);
+                    for (var i1 = 0; i1 < sprites.length; i1++) {
+                        for (var i2 = i1; i2 < sprites.length; i2++) {
+                            if (sprites[i1].collision(sprites[i2]) && i1 !== i2) {
+                                sprites[i1].handleCollision(sprites[i2]);
+                                sprites[i2].handleCollision(sprites[i1]);
                             }
                         }
                     }
 
-                    var result = deleteDestroyedSprites(enemies);
-                    enemies = enemies.concat(result.spritesToAdd);
+
+                    var exposions = [];
+                    var pointsForRound = 0;
+                    sprites.forEach(function (each) {
+                        if (each.isDestroyed()) {
+                            exposions = exposions.concat(each.getExplosion());
+                            if(each.getPoints() !== 0){
+                                pointsForRound = pointsForRound + each.getPoints();
+                            } 
+                        }
+                    });
+
+                    sprites = sprites.concat(exposions);
                     
-                    if(result.points !== 0){
-                        points = points + result.points;
+                    if(pointsForRound !== 0){
+                        points = points + pointsForRound;
                         if(points%20000 === 0){
-                            enemies.push(new Bonus(screenWidth));
+                            sprites.push(new Bonus(screenWidth));
                         }   
                     }
-                    
-                    var result = deleteDestroyedSprites(friendly);
-                    friendly = friendly.concat(result.spritesToAdd);
-                  
 
-
-
-                    enemies = enemies.filter(function (enemy) {
-                        return !enemy.isDestroyed() && !offScreen(enemy.getPosition());
-                    });
-
-                    friendly = friendly.filter(function (each) {
+                    sprites = sprites.filter(function (each) {
                         return !each.isDestroyed() && !offScreen(each.getPosition());
                     });
-
-
-                    //console.log(friendly.length + " " + enemies.length);
 
                     return true;
 
