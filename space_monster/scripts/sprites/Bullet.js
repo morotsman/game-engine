@@ -23,14 +23,12 @@ function Bullet(x,y, speed){
     };
     
     this.getExplosion = function(){
-        console.log("getExplosion");
         var position = this.getPosition();
         return [new Explosion(position.x,position.y,0,0)];
     };        
     
     this.handleCollision = function(other){
         if(other.getType() !== "Bullet" && other.getTeam() !== team){
-            console.log("damage");
             other.setDamage(1);
         }
         

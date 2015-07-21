@@ -170,7 +170,7 @@ function Sprite() {
         } else {
             drawImage(context);
         }
-        //drawCircle(context);
+        drawCircle(context);
         context.restore();
     };
 
@@ -179,8 +179,8 @@ function Sprite() {
     };
 
 
-    this.setAnimation = function (_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed) {
-        animation = new Animator(_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed);
+    this.setAnimation = function (_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed, numberOfPhases) {
+        animation = new Animator(_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed,numberOfPhases);
         return this;
     };
 
