@@ -61,7 +61,7 @@ function UfoType2() {
 
     var breakMoveStrategy = function (sprite, rocket) {
         var forceVector = sprite.getForceVector();
-        throttledBreakForceVector(breakeAngle, forceVector.force / 3);
+        throttledBreakForceVector(breakeAngle, forceVector.force / 2);
         if (forceVector.force < 0.01) {
             that.setMoveStrategy(initMoveStrategy);
         }

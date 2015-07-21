@@ -91,7 +91,7 @@ function Rocket(screenWidth, screenHeight) {
 
 
 
-    this.setKeyStrategy(keyStrategy).setAggressiveStrategy(aggressiveStrategy).setMoveStrategy(moveStrategy).setHealth(2);
+    this.setKeyStrategy(keyStrategy).setAggressiveStrategy(aggressiveStrategy).setMoveStrategy(moveStrategy).setHealth(20000);
 
 }
 ;

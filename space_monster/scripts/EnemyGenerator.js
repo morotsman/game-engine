@@ -68,7 +68,7 @@ function EnemyGenerator() {
             }else if(enemy.type === "UfoType2"){
                 result.push(new UfoType2().setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2));
             }else if(enemy.type === "UfoType3"){
-                result.push(new UfoType3(enemy.x, enemy.y));
+                result.push(new UfoType3().setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2));
             }
         } else {
             enemies.push(enemy);
