@@ -6,6 +6,9 @@ function Engine(canvasId) {
     var requestId;
 
     var updateHandler;
+    var collisionHandler = function(){
+        
+    };
 
     var keyEvents = {};
     document.addEventListener("keydown", function (e) {
@@ -19,15 +22,17 @@ function Engine(canvasId) {
     this.registerUpdateHandler = function (fun) {
         updateHandler = fun;
     };
+    
+    this.registerCollisionHandler = function (fun) {
+        collisionHandler = fun;
+    };    
 
     this.start = function () {
         var runner = function (now) {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            var cont = updateHandler(context, now, keyEvents);
-            if (cont) {
-                requestId = requestAnimationFrame(runner);
-            }
-
+            updateHandler(context, now, keyEvents);
+            collisionHandler();
+            requestId = requestAnimationFrame(runner);
         };
 
 

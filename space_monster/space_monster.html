@@ -78,12 +78,11 @@
                 sprites.push(rocket);
                 
                 engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
-
-                    sprites = sprites.concat(enemyGenerator.generateEnemies(timeSinceStart));
-                    
                     background.forEach(function (t) {
                         t.draw(context);
                     });
+                    
+                    sprites = sprites.concat(enemyGenerator.generateEnemies(timeSinceStart));
 
                     var spritesToAdd = [];
                     sprites.forEach(function (each) {
@@ -93,10 +92,11 @@
                     }); 
                     
                     sprites = sprites.concat(spritesToAdd);
- 
-
+                });
+                
+                /*
+                engine.registerCollisionHandler(function(){
                     engine.detectCollisions(sprites);
-
 
                     var exposions = [];
                     var pointsForRound = 0;
@@ -122,9 +122,8 @@
                         return !each.isDestroyed() && !offScreen(each.getPosition());
                     });
 
-                    return true;
-
                 });
+                */
 
                 engine.start();
 
