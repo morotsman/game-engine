@@ -71,14 +71,12 @@ function BaseSprite() {
         }
     };
     
-    this.handleCollision = function(other){
-        
-    };
     
     this.getExplosion = function(){
         var position = this.getPosition();
         return [new Explosion(position.x,position.y,this.getSpeedX(),this.getSpeedY())];
-    };    
+    }; 
+    
     
     this.setDestroyed = function(){
         destroyed = true;

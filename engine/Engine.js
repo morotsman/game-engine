@@ -23,17 +23,28 @@ function Engine(canvasId) {
     this.start = function () {
         var runner = function (now) {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            var cont = updateHandler(context,now,keyEvents);
-            if(cont){
+            var cont = updateHandler(context, now, keyEvents);
+            if (cont) {
                 requestId = requestAnimationFrame(runner);
             }
-            
+
         };
 
 
         requestId = requestAnimationFrame(runner);
     };
-    
+
+    this.detectCollisions = function (sprites) {
+        for (var i1 = 0; i1 < sprites.length; i1++) {
+            for (var i2 = i1; i2 < sprites.length; i2++) {
+                if (sprites[i1].collision(sprites[i2]) && i1 !== i2) {
+                    sprites[i1].handleCollision(sprites[i2]);
+                    sprites[i2].handleCollision(sprites[i1]);
+                }
+            }
+        }
+    };
+
 
 
 

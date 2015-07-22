@@ -84,31 +84,18 @@
                     background.forEach(function (t) {
                         t.draw(context);
                     });
-                    
-                    
 
                     var spritesToAdd = [];
                     sprites.forEach(function (each) {
-                        if (each.handleKeyEvents) {
-                            each.handleKeyEvents(keyEvents);
-                        }                        
+                        each.handleKeyEvents(keyEvents);                      
                         each.update(context, rocket);
-                        if (each.bulletFired) {
-                            spritesToAdd = spritesToAdd.concat(each.bulletFired());
-                        }
+                        spritesToAdd = spritesToAdd.concat(each.bulletFired());
                     }); 
                     
                     sprites = sprites.concat(spritesToAdd);
  
 
-                    for (var i1 = 0; i1 < sprites.length; i1++) {
-                        for (var i2 = i1; i2 < sprites.length; i2++) {
-                            if (sprites[i1].collision(sprites[i2]) && i1 !== i2) {
-                                sprites[i1].handleCollision(sprites[i2]);
-                                sprites[i2].handleCollision(sprites[i1]);
-                            }
-                        }
-                    }
+                    engine.detectCollisions(sprites);
 
 
                     var exposions = [];

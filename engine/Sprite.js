@@ -117,6 +117,10 @@ function Sprite() {
         }
 
     };
+    
+    this.handleCollision = function(other){
+        
+    };
 
 
     this.getAngleAndDistance = function (other) {
