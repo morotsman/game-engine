@@ -8,7 +8,7 @@ function Bonus(screenWidth){
     
     this.handleCollision = function(other){
         if(other.receiveBonus){
-            other.receiveBonus("increaseNumberOfCanons");
+            other.receiveBonus();
             this.setDestroyed();
         }
         

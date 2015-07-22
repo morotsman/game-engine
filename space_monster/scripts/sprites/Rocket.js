@@ -84,7 +84,7 @@ function Rocket(screenWidth, screenHeight) {
     };
 
     this.receiveBonus = function (bonus) {
-        if (bonus === "increaseNumberOfCanons") {
+        if (bonuses.numberOfCanons < 3) {
             bonuses.numberOfCanons = bonuses.numberOfCanons + 1;
         }
     };
