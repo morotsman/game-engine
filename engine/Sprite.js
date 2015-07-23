@@ -174,7 +174,7 @@ function Sprite() {
         } else {
             drawImage(context);
         }
-        drawCircle(context);
+        //drawCircle(context);
         context.restore();
     };
 
@@ -194,7 +194,7 @@ function Sprite() {
         ctx.beginPath();
         ctx.arc(x + width / 2, y + height / 2, radius, 0, 2 * Math.PI);
         ctx.stroke();
-    }
+    };
 
 
 
