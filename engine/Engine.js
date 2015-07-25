@@ -29,10 +29,10 @@ function Engine(canvasId) {
     };
     
     var offScreenDetector = function (screenWidth, screenHeight, position) {
-        if (position.x < -1000 || position.x > screenWidth + 1000) {
+        if (position.x < 0 || position.x > screenWidth) {
             return true;
         }
-        if (position.y < -1000 || position.y > screenHeight + 1000) {
+        if (position.y < 0 || position.y > screenHeight) {
             return true;
         }
     };    

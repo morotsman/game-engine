@@ -60,16 +60,6 @@
                     enemyGenerator.generateEnemies(timeSinceStart);
                 });
                 
-                
-                
-                engine.registerCollisionHandler(function(){                  
-                    /*
-                    sprites = sprites.filter(function (each) {
-                        return !each.isDestroyed() && !offScreen(each.getPosition());
-                    });
-                    */
-                });
-                
                 var points  = 0;
                 engine.registerDestructionHandler(function(sprite){
                     points = points + sprite.getPoints();
@@ -78,7 +68,7 @@
                             new Bonus(engine, screenWidth);
                         }
                     }                    
-                });
+                });          
                 
                 engine.registerOffScreenDetector(function (screenWidth, screenHeight, position) {
                     if (position.x < -1000 || position.x > screenWidth + 1000) {
@@ -88,15 +78,8 @@
                         return true;
                     }
                 });
-                
-                    
-                
-                
-
+ 
                 engine.start();
-
-
-
             });
 
 
