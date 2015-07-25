@@ -4,8 +4,6 @@ function BaseSprite() {
     Sprite.apply(this,arguments);
 
     var health;
-    var destroyed = false;
-
     
     this.getType = function(){
         return "BaseSprite";
@@ -27,19 +25,9 @@ function BaseSprite() {
     this.setDamage = function(_damage){
         health = health - _damage;
         if(health <= 0){
-            destroyed = true;
+            this.setDestroyed();
         }
-    };
-    
-    
-    this.setDestroyed = function(){
-        destroyed = true;
-    };
-    
-    
-    this.isDestroyed = function(){
-        return destroyed;
-    };    
+    };     
     
     this.getPoints = function(){
         return 0;

@@ -10,6 +10,7 @@ function Sprite(engine) {
     var radius = 0;
     var animation;
     var angle;
+    var destroyed = false;
 
     var keyEvents = {};
 
@@ -132,8 +133,12 @@ function Sprite(engine) {
     };
     
     this.isDestroyed = function(){
-        return false;
+        return destroyed;
     };
+    
+    this.setDestroyed = function(){
+        destroyed = true;
+    };    
 
 
     this.getAngleAndDistance = function (other) {

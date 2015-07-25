@@ -28,6 +28,10 @@ function Engine(canvasId) {
 
     };
     
+    var offScreenHandler = function(sprite){
+        
+    };
+    
     var offScreenDetector = function (screenWidth, screenHeight, position) {
         if (position.x < 0 || position.x > screenWidth) {
             return true;
@@ -65,6 +69,11 @@ function Engine(canvasId) {
         offScreenDetector= fun;
         return this;
     };
+    
+    this.registerOffScreenHandler = function(fun){
+        offScreenHandler = fun;
+        return this;
+    };
 
     this.withCollisionDetector = function () {
         useCollisionDetector = true;
@@ -92,8 +101,13 @@ function Engine(canvasId) {
                         destructionHandler(sprite);
                     }
                 });
+                sprites.forEach(function(sprite){
+                    if(offScreenDetector(screenWidth, screenHeight, sprite.getPosition())){
+                        offScreenHandler(sprite);
+                    }
+                });
                 sprites = sprites.filter(function (each) {
-                    return !each.isDestroyed() && !offScreenDetector(screenWidth, screenHeight, each.getPosition());
+                    return !each.isDestroyed();
                 });
             }
             console.log(sprites.length);
@@ -117,7 +131,9 @@ function Engine(canvasId) {
         }
     };
 
-
+    this.forEach = function(fun){
+        sprites.forEach(fun);
+    }
 
 
 }
