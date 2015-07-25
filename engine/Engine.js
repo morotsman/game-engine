@@ -32,7 +32,8 @@ function Engine(canvasId) {
         
     };
     
-    var offScreenDetector = function (screenWidth, screenHeight, position) {
+    var offScreenDetector = function (screenWidth, screenHeight, sprite) {
+        var position = sprite.getPosition();
         if (position.x < 0 || position.x > screenWidth) {
             return true;
         }
@@ -102,7 +103,7 @@ function Engine(canvasId) {
                     }
                 });
                 sprites.forEach(function(sprite){
-                    if(offScreenDetector(screenWidth, screenHeight, sprite.getPosition())){
+                    if(offScreenDetector(screenWidth, screenHeight, sprite)){
                         offScreenHandler(sprite);
                     }
                 });
@@ -110,7 +111,7 @@ function Engine(canvasId) {
                     return !each.isDestroyed();
                 });
             }
-            console.log(sprites.length);
+            //console.log(sprites.length);
             requestId = requestAnimationFrame(runner);
         };
 

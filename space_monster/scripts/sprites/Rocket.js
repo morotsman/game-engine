@@ -64,17 +64,6 @@ function Rocket(engine, screenWidth, screenHeight) {
     };
 
     this.handleUpdate = function () {
-        var position = that.getPosition();
-        if (position.x > screenWidth) {
-            that.setPosition(0, position.y);
-        } else if (position.x < 0) {
-            that.setPosition(screenWidth, position.y);
-        }
-        if (position.y > screenHeight) {
-            that.setPosition(position.x, 0);
-        } else if (position.y < 0) {
-            that.setPosition(position.x, screenHeight);
-        }
         aggressiveStrategy();
     };
 
@@ -96,7 +85,37 @@ function Rocket(engine, screenWidth, screenHeight) {
         }
     };
 
+    var offScreenDetector = function (screenWidth, screenHeight, sprite) {
+        var position = sprite.getPosition();
+        if (position.x > screenWidth || position.x < 0) {
+            return true;
+        }
+        if (position.y > screenHeight || position.y < 0) {
+            return true;
+        }
+    };
 
+    this.getOffScreenDetector = function () {
+        return offScreenDetector;
+    };
+
+    var offScreenHandler = function (sprite) {
+        var position = sprite.getPosition();
+        if (position.x > screenWidth) {
+            that.setPosition(0, position.y);
+        } else if (position.x < 0) {
+            that.setPosition(screenWidth, position.y);
+        }
+        if (position.y > screenHeight) {
+            that.setPosition(position.x, 0);
+        } else if (position.y < 0) {
+            that.setPosition(position.x, screenHeight);
+        }
+    };
+
+    this.getOffScreenHandler = function () {
+        return offScreenHandler;
+    };
 
 
 

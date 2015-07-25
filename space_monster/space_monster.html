@@ -69,19 +69,13 @@
                         }
                     }                    
                 });          
-                
-                
-                engine.registerOffScreenDetector(function (screenWidth, screenHeight, position) {
-                    if (position.x < -1000 || position.x > screenWidth + 1000) {
-                        return true;
-                    }
-                    if (position.y < -1000 || position.y > screenHeight + 1000) {
-                        return true;
-                    }
+                        
+                engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite) {
+                    return sprite.getOffScreenDetector()(screenWidth, screenHeight, sprite);
                 });
                 
                 engine.registerOffScreenHandler(function(sprite){
-                    sprite.setDestroyed();
+                    return sprite.getOffScreenHandler()(sprite);
                 });
  
                 engine.start();

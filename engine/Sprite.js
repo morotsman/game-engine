@@ -192,7 +192,7 @@ function Sprite(engine) {
         } else {
             drawImage(context);
         }
-        drawCircle(context);
+        //drawCircle(context);
         context.restore();
     };
 
