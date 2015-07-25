@@ -1,6 +1,6 @@
-Bonus.prototype = new BaseSprite();
+Bonus.prototype = Object.create(BaseSprite.prototype);
 
-function Bonus(screenWidth){
+function Bonus(engine,screenWidth){
     BaseSprite.apply(this,arguments);
     
     
@@ -16,7 +16,7 @@ function Bonus(screenWidth){
     
     this.setImage("bonus").setPosition(screenWidth/2, 0).setWidthAndHeight(30, 30).setSpeedY(-2);
     
-    
+    console.log("Bonus created");
     
 }
 

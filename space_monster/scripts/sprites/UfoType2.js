@@ -1,6 +1,6 @@
-UfoType2.prototype = new BaseSprite();
+UfoType2.prototype = Object.create(BaseSprite.prototype);
 
-function UfoType2() {
+function UfoType2(engine,rocket) {
     BaseSprite.apply(this, arguments);
 
     var throttledAddForceVector = util.throttled(150, this.addForceVector);
@@ -25,27 +25,27 @@ function UfoType2() {
     var reverseAngle = function (angle) {
         return (angle + 180) % 360;
     };
+    
 
 
-
-    var initMoveStrategy = function (sprite, rocket) {
-        if (inBreakZone(sprite)) {
-            var angleAndDistance = sprite.getAngleAndDistance(rocket);
+    var initUpdateStrategy = function () {
+        if (inBreakZone(that)) {
+            var angleAndDistance = that.getAngleAndDistance(rocket);
             throttledAddForceVector(angleAndDistance.angle, 0.5);
-        } else if (!inBreakZone(sprite)) {
-            that.setMoveStrategy(searchMoveStrategy);
+        } else if (!inBreakZone(that)) {
+            currentUpdateStrategy = searchUpdateStrategy;
         }
     };
 
-    var searchMoveStrategy = function (sprite, rocket) {
-        if (inBreakZone(sprite)) {
-            var forceVector = sprite.getForceVector();
+    var searchUpdateStrategy = function () {
+        if (inBreakZone(that)) {
+            var forceVector = that.getForceVector();
             breakeAngle = reverseAngle(forceVector.angle);
-            that.setMoveStrategy(breakMoveStrategy);
+            currentUpdateStrategy = breakMoveStrategy;
             return;
         }
 
-        var angleAndDistance = sprite.getAngleAndDistance(rocket);
+        var angleAndDistance = that.getAngleAndDistance(rocket);
         if (angleAndDistance.distance > 300) {
             throttledAddForceVector(angleAndDistance.angle, 1);
         } else if (angleAndDistance.distance > 200) {
@@ -59,11 +59,11 @@ function UfoType2() {
         }
     };
 
-    var breakMoveStrategy = function (sprite, rocket) {
-        var forceVector = sprite.getForceVector();
+    var breakMoveStrategy = function () {
+        var forceVector = that.getForceVector();
         throttledBreakForceVector(breakeAngle, forceVector.force / 2);
         if (forceVector.force < 0.01) {
-            that.setMoveStrategy(initMoveStrategy);
+            currentUpdateStrategy = initUpdateStrategy;
         }
     };
 
@@ -77,8 +77,16 @@ function UfoType2() {
             other.setDamage(2);
         }     
     };
-
-    this.setMoveStrategy(initMoveStrategy);
+    
+    var currentUpdateStrategy = initUpdateStrategy;
+    
+    this.handleUpdate = function(){
+        currentUpdateStrategy();
+    };
+    
+    this.handleDestruction = function(){
+        new Explosion(engine, this.getPosition().x,this.getPosition().y,this.getSpeedX(),this.getSpeedY());
+    };   
 
 
 }

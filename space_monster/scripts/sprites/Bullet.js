@@ -1,6 +1,6 @@
-Bullet.prototype = new BaseSprite();
+Bullet.prototype = Object.create(BaseSprite.prototype);
 
-function Bullet(x,y, speed){
+function Bullet(engine,x,y, speed){
     BaseSprite.apply(this,arguments);
     
     var team = "";
@@ -22,10 +22,10 @@ function Bullet(x,y, speed){
         return 1;
     };
     
-    this.getExplosion = function(){
-        var position = this.getPosition();
-        return [new Explosion(position.x,position.y,0,0)];
-    };        
+    this.handleDestruction = function(){
+        new Explosion(engine, this.getPosition().x,this.getPosition().y,0,0);
+    };    
+           
     
     this.handleCollision = function(other){
         if(other.getType() !== "Bullet" && other.getTeam() !== team){

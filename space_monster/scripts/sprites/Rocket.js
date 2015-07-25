@@ -1,6 +1,6 @@
-Rocket.prototype = new BaseSprite();
+Rocket.prototype = Object.create(BaseSprite.prototype);
 
-function Rocket(screenWidth, screenHeight) {
+function Rocket(engine, screenWidth, screenHeight) {
     BaseSprite.apply(this, arguments);
 
     var cannonFired = false;
@@ -9,21 +9,23 @@ function Rocket(screenWidth, screenHeight) {
         numberOfCanons: 1
     };
 
-    this.getType = function(){
-        return "Rocket";
-    }; 
-    
-    this.getTeam = function(){
+    this.getType = function () {
         return "Rocket";
     };
-    
+
+    this.getTeam = function () {
+        return "Rocket";
+    };
+
     var throttledAddForceVector = util.throttled(100, that.addForceVector);
     var throttledCannonFired = util.throttled(300, function () {
         that.cannonFired = true;
     });
 
+    var points = 0;
 
-    var keyStrategy = function (keys) {
+
+    this.handleKeyEvents = function (keys) {
         if (keys[39]) {//right
             throttledAddForceVector(0, 1);
         }
@@ -50,18 +52,18 @@ function Rocket(screenWidth, screenHeight) {
 
             that.cannonFired = false;
             var position = that.getPosition();
-            result.push(new Bullet(position.x, position.y - that.getRadius(), 5));
+            new Bullet(engine, position.x, position.y - that.getRadius(), 5);
             if (bonuses.numberOfCanons > 1) {
-                result.push(new Bullet(position.x + 20, position.y - that.getRadius(), 5).setTeam("Rocket"));
+                new Bullet(engine, position.x + 20, position.y - that.getRadius(), 5).setTeam("Rocket");
             }
             if (bonuses.numberOfCanons > 2) {
-                result.push(new Bullet(position.x - 20, position.y - that.getRadius(), 5).setTeam("Rocket"));
+                new Bullet(engine, position.x - 20, position.y - that.getRadius(), 5).setTeam("Rocket");
             }
         }
         return result;
     };
 
-    var moveStrategy = function () {
+    this.handleUpdate = function () {
         var position = that.getPosition();
         if (position.x > screenWidth) {
             that.setPosition(0, position.y);
@@ -73,14 +75,19 @@ function Rocket(screenWidth, screenHeight) {
         } else if (position.y < 0) {
             that.setPosition(position.x, screenHeight);
         }
+        aggressiveStrategy();
+    };
+
+    this.handleDestruction = function () {
+        new Explosion(engine, this.getPosition().x, this.getPosition().y, this.getSpeedX(), this.getSpeedY())
     };
 
 
     this.handleCollision = function (other) {
-        if(other.getTeam() === "Enemy"){
+        if (other.getTeam() === "Enemy") {
             other.setDamage(2);
         }
-        
+
     };
 
     this.receiveBonus = function (bonus) {
@@ -91,7 +98,10 @@ function Rocket(screenWidth, screenHeight) {
 
 
 
-    this.setKeyStrategy(keyStrategy).setAggressiveStrategy(aggressiveStrategy).setMoveStrategy(moveStrategy).setHealth(20000);
+
+
+    this.setHealth(20000);
+
 
 }
 ;

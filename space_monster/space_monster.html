@@ -46,83 +46,51 @@
             $(window).load(function () {
                 var screenWidth = 800;
                 var screenHeight = 600;
+               
+                var engine = new Engine("canvas1").withCollisionDetector();
+                
+                var rocket = new Rocket(engine,screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
 
-                var offScreen = function (position) {
+
+                var enemyGenerator = new EnemyGenerator(engine,rocket);                
+
+                var points = 0;
+                
+                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {              
+                    enemyGenerator.generateEnemies(timeSinceStart);
+                });
+                
+                
+                
+                engine.registerCollisionHandler(function(){                  
+                    /*
+                    sprites = sprites.filter(function (each) {
+                        return !each.isDestroyed() && !offScreen(each.getPosition());
+                    });
+                    */
+                });
+                
+                var points  = 0;
+                engine.registerDestructionHandler(function(sprite){
+                    points = points + sprite.getPoints();
+                    if (sprite.getPoints() !== 0 && points !== 0) {
+                        if (points % 20000 === 0) {
+                            new Bonus(engine, screenWidth);
+                        }
+                    }                    
+                });
+                
+                engine.registerOffScreenDetector(function (screenWidth, screenHeight, position) {
                     if (position.x < -1000 || position.x > screenWidth + 1000) {
                         return true;
                     }
                     if (position.y < -1000 || position.y > screenHeight + 1000) {
                         return true;
                     }
-                };
-               
-
-                var rocket = new Rocket(screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
-
-
-                var background = [];
-                var planet = new Sprite().setImage("planet").setPosition(0, 0).setWidthAndHeight(screenWidth, screenHeight);
-                //background.push(planet);
-
-
-                var sprites = [];
-
-
-                var engine = new Engine("canvas1");
-
-
-                var enemyGenerator = new EnemyGenerator();                
-
-                var points = 0;
-                
-                sprites.push(rocket);
-                
-                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
-                    background.forEach(function (t) {
-                        t.draw(context);
-                    });
-                    
-                    sprites = sprites.concat(enemyGenerator.generateEnemies(timeSinceStart));
-
-                    var spritesToAdd = [];
-                    sprites.forEach(function (each) {
-                        each.handleKeyEvents(keyEvents);                      
-                        each.update(context, rocket);
-                        spritesToAdd = spritesToAdd.concat(each.bulletFired());
-                    }); 
-                    
-                    sprites = sprites.concat(spritesToAdd);
                 });
                 
-               
-                engine.registerCollisionHandler(function(){
-                    engine.detectCollisions(sprites);
-
-                    var exposions = [];
-                    var pointsForRound = 0;
-                    sprites.forEach(function (each) {
-                        if (each.isDestroyed()) {
-                            exposions = exposions.concat(each.getExplosion());
-                            if(each.getPoints() !== 0){
-                                pointsForRound = pointsForRound + each.getPoints();
-                            } 
-                        }
-                    });
-
-                    sprites = sprites.concat(exposions);
                     
-                    if(pointsForRound !== 0){
-                        points = points + pointsForRound;
-                        if(points%20000 === 0){
-                            sprites.push(new Bonus(screenWidth));
-                        }   
-                    }
-
-                    sprites = sprites.filter(function (each) {
-                        return !each.isDestroyed() && !offScreen(each.getPosition());
-                    });
-
-                });
+                
                 
 
                 engine.start();

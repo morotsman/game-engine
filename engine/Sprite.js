@@ -1,4 +1,4 @@
-function Sprite() {
+function Sprite(engine) {
 
     var image;
     var x = 0;
@@ -85,12 +85,9 @@ function Sprite() {
     };
     
     this.getForceVector = function(){
-        var force = Math.sqrt(Math.pow(speedX,2) + Math.pow(speedY,2));
-        //var angle = Math.tan(speedY/speedX) * 180 / Math.PI;
-        
+        var force = Math.sqrt(Math.pow(speedX,2) + Math.pow(speedY,2));        
         var angle = Math.atan2(speedY, speedX) * 180 / Math.PI;
-
-
+        
         if (angle < 0) {
             angle = 360 + angle;
         }      
@@ -118,8 +115,24 @@ function Sprite() {
 
     };
     
+    this.handleUpdate = function(){
+        
+    };
+    
     this.handleCollision = function(other){
         
+    };
+    
+    this.handleKeyEvents = function(keyEvents){
+        
+    };
+    
+    this.handleDestruction = function(){
+        //console.log("handle destruction");
+    };
+    
+    this.isDestroyed = function(){
+        return false;
     };
 
 
@@ -174,7 +187,7 @@ function Sprite() {
         } else {
             drawImage(context);
         }
-        //drawCircle(context);
+        drawCircle(context);
         context.restore();
     };
 
@@ -196,7 +209,7 @@ function Sprite() {
         ctx.stroke();
     };
 
-
+    engine.addSprite(this);
 
 }
 ;

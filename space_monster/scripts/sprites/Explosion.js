@@ -1,20 +1,25 @@
-Explosion.prototype = new BaseSprite();
+Explosion.prototype = Object.create(BaseSprite.prototype);
 
-function Explosion(x,y,speedX,speedY){
+function Explosion(engine, x,y,speedX,speedY){
     BaseSprite.apply(this,arguments);
     
-    var moveAnimation = function(that){
+    var that = this;
+    
+    var moveAnimation = function(){
         if(that.animationCompleted()){
             that.setDestroyed();
         }
     };
     
-    this.getExplosion = function(){
-        return [];
+    
+    this.handleUpdate = function(){
+        moveAnimation();
     };
+   
     
+   
     
-    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20,16).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50).setMoveStrategy(moveAnimation);
+    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20,16).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50);
     
 }
 
