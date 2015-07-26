@@ -1,4 +1,4 @@
-function Animator(_animation, startX ,startY, width, height, columnWidth, rowHeight,animationSpeed,numberOfPhases){
+function Animator(_animation, startX ,startY, width, height, columnWidth, rowHeight,animationSpeed,numberOfPhases, columns){
     
     var animation =  document.getElementById(_animation);
     var x;
@@ -36,8 +36,8 @@ function Animator(_animation, startX ,startY, width, height, columnWidth, rowHei
             
             if((now - switchTime > animationSpeed)){
                 phase++;
-                column = phase%4;
-                row = Math.floor(phase/4);
+                column = phase%columns;
+                row = Math.floor(phase/columns);
                 switchTime = now;
             }
             context.drawImage(animation,startX + columnWidth*column,startY + rowHeight*row,width,height,x,y,displayWidth,displayHeight);

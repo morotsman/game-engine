@@ -1,0 +1,68 @@
+<!doctype html>
+
+
+<html lang="en">
+    <head>
+
+    </head>
+
+
+    <body>
+        <img id="right_knight" src="knight.png" alt="Knight" style="display:none">
+        <img id="left_knight" src="knight_flip.png" alt="Knight" style="display:none">
+        <img id="ufo" src="ufo.png" alt="Platforms" style="display:none">
+
+
+
+        <canvas id="canvas1" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
+
+
+
+
+        <script>
+        </script>
+
+        
+
+        <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/Engine.js"></script>
+        <script type="text/javascript" src="../engine/Sprite.js"></script>
+        <script type="text/javascript" src="../engine/Animator.js"></script>
+        <script type="text/javascript" src="Knight.js"></script>
+        <script type="text/javascript" src="Platform.js"></script>
+        <script>
+
+                var engine = new Engine("canvas1").withCollisionDetector("rectangle");
+
+                new Knight(engine,400,50).setImage("knight");
+                
+                new Platform(engine, 350,450,300,10).setImage("ufo");
+                new Platform(engine, 300,400,100,10).setImage("ufo");
+                new Platform(engine, 400,350,100,10).setImage("ufo");
+
+                var gravity = 0.5;
+
+                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+                    engine.forEach(function (sprite) {
+                        sprite.addForceVector(270, gravity);
+                    });
+                });
+
+
+                engine.start();
+
+
+
+
+
+        </script>
+
+
+
+
+
+    </body>
+</html>
+
+

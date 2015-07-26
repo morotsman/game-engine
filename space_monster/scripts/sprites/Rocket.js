@@ -52,12 +52,12 @@ function Rocket(engine, screenWidth, screenHeight) {
 
             that.cannonFired = false;
             var position = that.getPosition();
-            new Bullet(engine, position.x, position.y - that.getRadius(), 5);
+            new Bullet(engine, position.x, position.y - that.getRadius()*2, 5);
             if (bonuses.numberOfCanons > 1) {
-                new Bullet(engine, position.x + 20, position.y - that.getRadius(), 5).setTeam("Rocket");
+                new Bullet(engine, position.x + 20, position.y - that.getRadius()*2, 5).setTeam("Rocket");
             }
             if (bonuses.numberOfCanons > 2) {
-                new Bullet(engine, position.x - 20, position.y - that.getRadius(), 5).setTeam("Rocket");
+                new Bullet(engine, position.x - 20, position.y - that.getRadius()*2, 5).setTeam("Rocket");
             }
         }
         return result;

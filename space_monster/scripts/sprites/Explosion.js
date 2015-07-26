@@ -19,7 +19,7 @@ function Explosion(engine, x,y,speedX,speedY){
     
    
     
-    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20,16).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50);
+    this.setAnimation("explosion",80, 10, 200, 200, 320, 250, 20,16,4).setPosition(x,y).setSpeedX(speedX).setSpeedY(speedY).setWidthAndHeight(50, 50);
     
 }
 

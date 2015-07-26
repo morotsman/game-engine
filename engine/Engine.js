@@ -7,6 +7,7 @@ function Engine(canvasId) {
     var sprites = [];
     var useCollisionDetector = false;
     var that = this;
+    var collisionStrategy = "circle";
 
     this.addSprite = function (sprite) {
         sprites.push(sprite);
@@ -80,15 +81,28 @@ function Engine(canvasId) {
         return this;
     };
 
-    this.withCollisionDetector = function () {
+    this.withCollisionDetector = function (_collisionStrategy) {
         useCollisionDetector = true;
+        collisionStrategy = _collisionStrategy;
         return this;
     };
 
 
 
-    this.start = function () {
+    this.start = function () { 
+        var counter = 0;
+        var time;
         var runner = function (now) {
+            counter++;
+            if(!time){
+                time = now;
+            }
+            if(now - time > 1000){
+                console.log(counter);
+                counter = 0;
+                time = now;
+            }
+            
             var screenWidth = canvas.width;
             var screenHeight = canvas.height;
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -127,7 +141,7 @@ function Engine(canvasId) {
     this.detectCollisions = function () {
         for (var i1 = 0; i1 < sprites.length; i1++) {
             for (var i2 = i1; i2 < sprites.length; i2++) {
-                if (sprites[i1].collision(sprites[i2]) && i1 !== i2) {
+                if (sprites[i1].collision(sprites[i2],collisionStrategy) && i1 !== i2) {
                     sprites[i1].handleCollision(sprites[i2]);
                     collisionHandler(sprites[i1]);
                     sprites[i2].handleCollision(sprites[i1]);
