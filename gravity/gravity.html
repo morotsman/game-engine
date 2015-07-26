@@ -1,0 +1,105 @@
+<!doctype html>
+
+
+<html lang="en">
+    <head>
+
+    </head>
+
+
+    <body>
+        <img id="ball" src="soccer-ball.png" alt="Ball" style="display:none">
+
+
+
+        <canvas id="canvas1" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
+
+
+
+
+        <script>
+        </script>
+
+        <script src="external/jquery_1_11_1.min.js"></script>
+
+        <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/Engine.js"></script>
+        <script type="text/javascript" src="../engine/Sprite.js"></script>
+        <script type="text/javascript" src="../engine/Animator.js"></script>
+        <script>
+
+            $(window).load(function () {
+
+                var engine = new Engine("canvas1").withCollisionDetector();
+
+                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(200, 100).setSpeedX(2);
+                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 300);
+                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 200);
+                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 50).setSpeedX(-3);
+                
+                var gravity = 1;
+                var bounce = 0.9;
+                var friction = 0.05;
+
+                var direction;
+                engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite) {
+                    var position = sprite.getPosition();
+                    var widthAndHeight = sprite.getWidthAndHeight();
+                    if (position.x > screenWidth - widthAndHeight.width) {
+                        direction = "right";
+                        return true;
+                    } else if (position.x < 0) {
+                        direction = "left";
+                        return true;
+                    }
+                    if (position.y > (screenHeight - widthAndHeight.height)) {
+                        direction = "down";
+                        return true;
+                    }
+                });
+
+                engine.registerOffScreenHandler(function (sprite, screenWidth, screenHeight) {
+                    var widthAndHeight = sprite.getWidthAndHeight();
+                    var position = sprite.getPosition();
+                    if(direction === "down"){
+                        sprite.setPosition(position.x, screenHeight - widthAndHeight.height);                     
+                        sprite.setSpeedY(-sprite.getSpeedY()*bounce); 
+                        sprite.setSpeedX(sprite.getSpeedX()*(1-friction)); 
+                        
+                    }else if(direction === "right"){
+                        sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
+                        sprite.setSpeedX(-sprite.getSpeedX()*bounce); 
+                    }else if(direction === "left"){
+                        sprite.setPosition(0, position.y);
+                        sprite.setSpeedX(-sprite.getSpeedX()*bounce);
+                    }
+                    
+
+                });
+
+                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+                    engine.forEach(function (sprite) {
+                        sprite.addForceVector(270, gravity);
+                    });
+                });
+
+
+
+                engine.start();
+            });
+
+
+
+
+
+        </script>
+
+
+
+
+
+    </body>
+</html>
+
+

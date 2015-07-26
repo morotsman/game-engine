@@ -71,6 +71,13 @@ function Sprite(engine) {
         radius = width > height ? width / 2 : height / 2;
         return this;
     };
+    
+    this.getWidthAndHeight = function () {
+        return {
+            width:width,
+            height:height
+        };
+    };    
 
 
 

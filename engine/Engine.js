@@ -90,25 +90,25 @@ function Engine(canvasId) {
             context.clearRect(0, 0, canvas.width, canvas.height);
             updateHandler(context, now, keyEvents);
             sprites.forEach(function (sprite) {
-                sprite.handleKeyEvents(keyEvents);
+                sprite.handleKeyEvents(keyEvents,now);
                 sprite.handleUpdate(now);
-                sprite.draw(context);
+                sprite.draw(context,now);
             });
             if (useCollisionDetector) {
-                that.detectCollisions();
+                that.detectCollisions(now);
                 sprites.forEach(function (sprite) {
-                    if (sprite.isDestroyed()) {
-                        sprite.handleDestruction();
-                        destructionHandler(sprite);
+                    if (sprite.isDestroyed(now)) {
+                        sprite.handleDestruction(now);
+                        destructionHandler(sprite,now);
                     }
                 });
                 sprites.forEach(function(sprite){
-                    if(offScreenDetector(screenWidth, screenHeight, sprite)){
-                        offScreenHandler(sprite);
+                    if(offScreenDetector(screenWidth, screenHeight, sprite,now)){
+                        offScreenHandler(sprite, screenWidth, screenHeight,now);
                     }
                 });
                 sprites = sprites.filter(function (each) {
-                    return !each.isDestroyed();
+                    return !each.isDestroyed(now);
                 });
             }
             //console.log(sprites.length);

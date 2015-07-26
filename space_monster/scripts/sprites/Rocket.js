@@ -119,7 +119,7 @@ function Rocket(engine, screenWidth, screenHeight) {
 
 
 
-    this.setHealth(20000);
+    this.setHealth(4);
 
 
 }
