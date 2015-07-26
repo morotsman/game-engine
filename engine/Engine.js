@@ -34,12 +34,16 @@ function Engine(canvasId) {
     
     var offScreenDetector = function (screenWidth, screenHeight, sprite) {
         var position = sprite.getPosition();
-        if (position.x < 0 || position.x > screenWidth) {
-            return true;
+        if (position.x < 0){
+            return "left";
+        }else if(position.x > screenWidth) {
+            return "right";
+        }else if (position.y < 0){
+            return "top";
+        }else if(position.y > screenHeight) {
+            return "down";
         }
-        if (position.y < 0 || position.y > screenHeight) {
-            return true;
-        }
+        return undefined;
     };    
 
     var keyEvents = {};
@@ -103,8 +107,9 @@ function Engine(canvasId) {
                     }
                 });
                 sprites.forEach(function(sprite){
-                    if(offScreenDetector(screenWidth, screenHeight, sprite,now)){
-                        offScreenHandler(sprite, screenWidth, screenHeight,now);
+                    var direction = offScreenDetector(screenWidth, screenHeight, sprite,now);
+                    if(direction){
+                        offScreenHandler(sprite, screenWidth, screenHeight, direction, now);
                     }
                 });
                 sprites = sprites.filter(function (each) {

@@ -42,24 +42,20 @@
                 var bounce = 0.9;
                 var friction = 0.05;
 
-                var direction;
                 engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite) {
                     var position = sprite.getPosition();
                     var widthAndHeight = sprite.getWidthAndHeight();
                     if (position.x > screenWidth - widthAndHeight.width) {
-                        direction = "right";
-                        return true;
+                        return "right";
                     } else if (position.x < 0) {
-                        direction = "left";
-                        return true;
+                        return "left";
                     }
                     if (position.y > (screenHeight - widthAndHeight.height)) {
-                        direction = "down";
-                        return true;
+                        return "down";
                     }
                 });
 
-                engine.registerOffScreenHandler(function (sprite, screenWidth, screenHeight) {
+                engine.registerOffScreenHandler(function (sprite, screenWidth, screenHeight, direction) {
                     var widthAndHeight = sprite.getWidthAndHeight();
                     var position = sprite.getPosition();
                     if(direction === "down"){
