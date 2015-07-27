@@ -1,6 +1,6 @@
 Rocket.prototype = Object.create(BaseSprite.prototype);
 
-function Rocket(engine, screenWidth, screenHeight) {
+function Rocket(engine) {
     BaseSprite.apply(this, arguments);
 
     var cannonFired = false;
@@ -90,22 +90,8 @@ function Rocket(engine, screenWidth, screenHeight) {
         return util.createBufferedOffScreenDetector(0,0);
     };
 
-    var offScreenHandler = function (sprite) {
-        var position = sprite.getPosition();
-        if (position.x > screenWidth) {
-            that.setPosition(0, position.y);
-        } else if (position.x < 0) {
-            that.setPosition(screenWidth, position.y);
-        }
-        if (position.y > screenHeight) {
-            that.setPosition(position.x, 0);
-        } else if (position.y < 0) {
-            that.setPosition(position.x, screenHeight);
-        }
-    };
-
     this.getOffScreenHandler = function () {
-        return offScreenHandler;
+        return util.wrappingOffScreenHandler;
     };
 
 

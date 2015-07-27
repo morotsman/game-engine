@@ -41,12 +41,9 @@ function BaseSprite() {
         return util.createBufferedOffScreenDetector(1000,1000);
     };
 
-    var offScreenHandler = function (sprite) {
-        sprite.setDestroyed();
-    };
 
     this.getOffScreenHandler = function () {
-        return offScreenHandler;
+        return util.destructiveOffscreenHandler;
     };
 
 

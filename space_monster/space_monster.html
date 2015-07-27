@@ -47,7 +47,7 @@
                
                 var engine = new Engine("canvas1").withCollisionDetector();
                 
-                var rocket = new Rocket(engine,screenWidth, screenHeight).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
+                var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
 
 
                 var enemyGenerator = new EnemyGenerator(engine,rocket);                
@@ -72,8 +72,8 @@
                     return sprite.getOffScreenDetector()(screenWidth, screenHeight, sprite);
                 });
                 
-                engine.registerOffScreenHandler(function(sprite){
-                    return sprite.getOffScreenHandler()(sprite);
+                engine.registerOffScreenHandler(function(sprite,screenWidth,screenHight,direction){
+                    return sprite.getOffScreenHandler()(sprite,screenWidth,screenHight,direction);
                 });
  
                 engine.start();
