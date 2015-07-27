@@ -87,12 +87,10 @@ function Engine(canvasId) {
         return this;
     };
 
-
-
-    this.start = function () { 
-        var counter = 0;
+    var createFrameCounter = function(){
         var time;
-        var runner = function (now) {
+        var counter = 0;
+        return function(now){
             counter++;
             if(!time){
                 time = now;
@@ -101,7 +99,14 @@ function Engine(canvasId) {
                 console.log(counter);
                 counter = 0;
                 time = now;
-            }
+            }           
+        }
+    }
+
+    this.start = function () { 
+        var frameCounter = createFrameCounter();
+        var runner = function (now) {
+            frameCounter(now);
             
             var screenWidth = canvas.width;
             var screenHeight = canvas.height;
