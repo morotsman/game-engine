@@ -15,55 +15,60 @@ var util = {
         };
     },
     createBufferedOffScreenDetector: function (bufferX, bufferY) {
-        return function (screenWidth, screenHeight, sprite, now) {
+        return function (screenWidth, screenHeight, sprite, now, offScreenHandler) {
             var position = sprite.getPosition();
             var widthAndHeight = sprite.getWidthAndHeight();
+            var direction;
             if (position.x < -bufferX) {
-                return "left";
-            } else if (position.x > screenWidth - widthAndHeight.width + bufferX) {
-                return "right";
+                direction = "left";
+            } else if (position.x > (screenWidth - widthAndHeight.width) + bufferX) {
+                direction =  "right";
             } else if (position.y < -bufferY) {
-                return "top";
+                direction =  "top";
             } else if (position.y > (screenHeight-widthAndHeight.height) + bufferY) {
-                return "down";
+                direction =  "down";
+            }else {
+                return;
             }
-            return undefined;
+            offScreenHandler(sprite, screenWidth, screenHeight, direction, now, bufferX, bufferY);
+            
         };
     },
     bouncingOffScreenHandler: function (bounce, friction) {
-        return function (sprite, screenWidth, screenHeight, direction) {
+        return function (sprite, screenWidth, screenHeight, direction,now,bufferX,bufferY) {
             var widthAndHeight = sprite.getWidthAndHeight();
             var position = sprite.getPosition();
             if (direction === "down") {
-                sprite.setPosition(position.x, screenHeight - widthAndHeight.height);
+                sprite.setPosition(position.x, screenHeight + bufferY - widthAndHeight.height);
                 sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                 sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
             } else if (direction === "top") {
-                sprite.setPosition(position.x, widthAndHeight.height);
+                sprite.setPosition(position.x, widthAndHeight.height + bufferY);
                 sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                 sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
             } else if (direction === "right") {
-                sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
+                sprite.setPosition(screenWidth + bufferX - widthAndHeight.width, position.y);
                 sprite.setSpeedX(-sprite.getSpeedX() * bounce);
             } else if (direction === "left") {
-                sprite.setPosition(0, position.y);
+                sprite.setPosition(-bufferX, position.y);
                 sprite.setSpeedX(-sprite.getSpeedX() * bounce);
             }
 
 
         };
     },
-    wrappingOffScreenHandler : function (sprite,screenWidth,screenHeight) {
+    wrappingOffScreenHandler : function (sprite, screenWidth, screenHeight, direction, now, bufferX, bufferY) {
         var position = sprite.getPosition();
-        if (position.x > screenWidth) {
-            sprite.setPosition(0, position.y);
-        } else if (position.x < 0) {
-            sprite.setPosition(screenWidth, position.y);
+        var widthAndHeight = sprite.getWidthAndHeight();
+        if (direction === "right") {
+            sprite.setPosition(-bufferX, position.y);
+        } else if (direction === "left") {
+            sprite.setPosition(screenWidth+bufferX-widthAndHeight.width, position.y);
         }
-        if (position.y > screenHeight) {
-            sprite.setPosition(position.x, 0);
-        } else if (position.y < 0) {
-            sprite.setPosition(position.x, screenHeight);
+        if (direction === "down") {
+            sprite.setPosition(position.x, -bufferY);
+        } else if (direction === "top") {
+            sprite.setPosition(position.x, screenHeight+bufferY-widthAndHeight.height);
         }
     },
     destructiveOffscreenHandler : function(sprite){

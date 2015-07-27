@@ -68,12 +68,13 @@
                     }                    
                 });          
                         
-                engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite) {
-                    return sprite.getOffScreenDetector()(screenWidth, screenHeight, sprite);
+                engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite,now,offScreenHandler) {
+                    return sprite.getOffScreenDetector()(screenWidth, screenHeight, sprite,now,offScreenHandler);
                 });
                 
-                engine.registerOffScreenHandler(function(sprite,screenWidth,screenHight,direction){
-                    return sprite.getOffScreenHandler()(sprite,screenWidth,screenHight,direction);
+                engine.registerOffScreenHandler(function(sprite,screenWidth,screenHight,direction,now,bufferX,bufferY){
+                    return sprite.getOffScreenHandler()(sprite,screenWidth,screenHight,direction,now,bufferX,bufferY);
+                    
                 });
  
                 engine.start();

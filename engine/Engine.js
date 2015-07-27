@@ -121,7 +121,7 @@ function Engine(canvasId) {
                     }
                 });
                 sprites.forEach(function(sprite){
-                    var direction = offScreenDetector(screenWidth, screenHeight, sprite,now);
+                    var direction = offScreenDetector(screenWidth, screenHeight, sprite,now, offScreenHandler);
                     if(direction){
                         offScreenHandler(sprite, screenWidth, screenHeight, direction, now);
                     }
