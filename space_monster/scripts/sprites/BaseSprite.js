@@ -37,18 +37,8 @@ function BaseSprite() {
 
     };
 
-    var offScreenDetector = function (screenWidth, screenHeight, sprite) {
-        var position = sprite.getPosition();
-        if (position.x < -1000 || position.x > screenWidth + 1000) {
-            return true;
-        }
-        if (position.y < -1000 || position.y > screenHeight + 1000) {
-            return true;
-        }
-    };
-
     this.getOffScreenDetector = function () {
-        return offScreenDetector;
+        return util.createBufferedOffScreenDetector(1000,1000);
     };
 
     var offScreenHandler = function (sprite) {

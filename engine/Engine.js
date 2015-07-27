@@ -33,7 +33,7 @@ function Engine(canvasId) {
         
     };
     
-    var offScreenDetector = function (screenWidth, screenHeight, sprite) {
+    var offScreenDetector = function (screenWidth, screenHeight, sprite, now) {
         var position = sprite.getPosition();
         if (position.x < 0){
             return "left";
@@ -136,7 +136,7 @@ function Engine(canvasId) {
                 sprite.handleUpdate(now);
                 sprite.draw(context,now);
             });            
-            //console.log(sprites.length);
+            console.log(sprites.length);
             requestId = requestAnimationFrame(runner);
         };
 

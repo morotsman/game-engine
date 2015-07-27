@@ -85,18 +85,9 @@ function Rocket(engine, screenWidth, screenHeight) {
         }
     };
 
-    var offScreenDetector = function (screenWidth, screenHeight, sprite) {
-        var position = sprite.getPosition();
-        if (position.x > screenWidth || position.x < 0) {
-            return true;
-        }
-        if (position.y > screenHeight || position.y < 0) {
-            return true;
-        }
-    };
 
     this.getOffScreenDetector = function () {
-        return offScreenDetector;
+        return util.createBufferedOffScreenDetector(0,0);
     };
 
     var offScreenHandler = function (sprite) {
