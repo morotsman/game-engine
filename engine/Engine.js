@@ -100,8 +100,8 @@ function Engine(canvasId) {
                 counter = 0;
                 time = now;
             }           
-        }
-    }
+        };
+    };
 
     this.start = function () { 
         var frameCounter = createFrameCounter();
@@ -111,12 +111,7 @@ function Engine(canvasId) {
             var screenWidth = canvas.width;
             var screenHeight = canvas.height;
             context.clearRect(0, 0, canvas.width, canvas.height);
-            updateHandler(context, now, keyEvents);
-            sprites.forEach(function (sprite) {
-                sprite.handleKeyEvents(keyEvents,now);
-                sprite.handleUpdate(now);
-                sprite.draw(context,now);
-            });
+
             if (useCollisionDetector) {
                 that.detectCollisions(now);
                 sprites.forEach(function (sprite) {
@@ -135,6 +130,12 @@ function Engine(canvasId) {
                     return !each.isDestroyed(now);
                 });
             }
+            updateHandler(context, now, keyEvents);
+            sprites.forEach(function (sprite) {
+                sprite.handleKeyEvents(keyEvents,now);
+                sprite.handleUpdate(now);
+                sprite.draw(context,now);
+            });            
             //console.log(sprites.length);
             requestId = requestAnimationFrame(runner);
         };
@@ -148,9 +149,8 @@ function Engine(canvasId) {
             for (var i2 = i1; i2 < sprites.length; i2++) {
                 if (sprites[i1].collision(sprites[i2],collisionStrategy) && i1 !== i2) {
                     sprites[i1].handleCollision(sprites[i2]);
-                    collisionHandler(sprites[i1]);
                     sprites[i2].handleCollision(sprites[i1]);
-                    collisionHandler(sprites[i1]);
+                    collisionHandler(sprites[i1],sprites[i2]);
                 }
             }
         }
@@ -158,7 +158,7 @@ function Engine(canvasId) {
 
     this.forEach = function(fun){
         sprites.forEach(fun);
-    }
+    };
 
 
 }
