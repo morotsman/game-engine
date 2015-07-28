@@ -14,7 +14,7 @@ function Sprite(engine) {
 
     var that = this;
     var offScreenHandler;
-    var offScreenHandlerUtil = new OffScreenHandlerUtil();
+    var offScreenHandlerFactory = new OffScreenHandlerFactory();
 
     var keyEvents = {};
 
@@ -270,7 +270,7 @@ function Sprite(engine) {
         if(util.isFunction(something)){
             offScreenHandler = something;
         }else{  
-            offScreenHandler = offScreenHandlerUtil.getOffScreenHandler.apply(this,arguments);
+            offScreenHandler = offScreenHandlerFactory.getOffScreenHandler.apply(this,arguments);
         }
         return this;        
     };    

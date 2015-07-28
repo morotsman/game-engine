@@ -1,4 +1,4 @@
-function OffScreenHandlerUtil(){
+function OffScreenHandlerFactory(){
        
     
    var createBouncingOffScreenHandler = function (bounce, friction) {

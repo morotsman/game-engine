@@ -8,7 +8,7 @@ function Engine(canvasId) {
     var useCollisionDetector = false;
     var that = this;
     var collisionStrategy = "circle";
-    var offScreenHandlerUtil = new OffScreenHandlerUtil();
+    var offScreenHandlerFactory = new OffScreenHandlerFactory();
     var globalOffScreenHandler;
     
 
@@ -86,7 +86,7 @@ function Engine(canvasId) {
         if(util.isFunction(something)){
             globalOffScreenHandler = something;
         }else{  
-            globalOffScreenHandler = offScreenHandlerUtil.getOffScreenHandler.apply(this,arguments);
+            globalOffScreenHandler = offScreenHandlerFactory.getOffScreenHandler.apply(this,arguments);
         }
         return this;        
     };
