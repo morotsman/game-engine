@@ -55,12 +55,12 @@
 
             var points = 0;
 
-            engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+            engine.withUpdateHandler(function (context, timeSinceStart, keyEvents) {
                 enemyGenerator.generateEnemies(timeSinceStart);
             });
 
             var points = 0;
-            engine.registerDestructionHandler(function (sprite) {
+            engine.withDestructionHandler(function (sprite) {
                 points = points + sprite.getPoints();
                 if (sprite.getPoints() !== 0 && points !== 0) {
                     if (points % 20000 === 0) {

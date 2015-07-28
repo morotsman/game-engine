@@ -61,17 +61,17 @@ function Engine(canvasId) {
         delete keyEvents[e.keyCode];
     }, true);
 
-    this.registerUpdateHandler = function (fun) {
+    this.withUpdateHandler = function (fun) {
         updateHandler = fun;
         return this;
     };
 
-    this.registerCollisionHandler = function (fun) {
+    this.withCollisionHandler = function (fun) {
         collisionHandler = fun;
         return this;
     };
 
-    this.registerDestructionHandler = function (fun) {
+    this.withDestructionHandler = function (fun) {
         destructionHandler = fun;
         return this;
     };
