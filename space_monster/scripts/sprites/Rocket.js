@@ -85,11 +85,6 @@ function Rocket(engine) {
         }
     };
 
-
-    this.getOffScreenDetector = function () {
-        return util.createBufferedOffScreenDetector(0,0);
-    };
-
     this.getOffScreenHandler = function () {
         return util.wrappingOffScreenHandler;
     };

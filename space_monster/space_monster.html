@@ -42,42 +42,39 @@
         <script type="text/javascript" src="scripts/EnemyGenerator.js"></script>
         <script>
 
-                var screenWidth = 800;
-                var screenHeight = 600;
-               
-                var engine = new Engine("canvas1").withCollisionDetector();
-                
-                var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
+            var screenWidth = 800;
+            var screenHeight = 600;
+
+            var engine = new Engine("canvas1").withCollisionDetector();
+
+            var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
 
 
-                var enemyGenerator = new EnemyGenerator(engine,rocket);                
+            var enemyGenerator = new EnemyGenerator(engine, rocket);
 
-                var points = 0;
-                
-                engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {              
-                    enemyGenerator.generateEnemies(timeSinceStart);
-                });
-                
-                var points  = 0;
-                engine.registerDestructionHandler(function(sprite){
-                    points = points + sprite.getPoints();
-                    if (sprite.getPoints() !== 0 && points !== 0) {
-                        if (points % 20000 === 0) {
-                            new Bonus(engine, screenWidth);
-                        }
-                    }                    
-                });          
-                        
-                engine.registerOffScreenDetector(function (screenWidth, screenHeight, sprite,now,offScreenHandler) {
-                    return sprite.getOffScreenDetector()(screenWidth, screenHeight, sprite,now,offScreenHandler);
-                });
-                
-                engine.registerOffScreenHandler(function(sprite,screenWidth,screenHight,direction,now,bufferX,bufferY){
-                    return sprite.getOffScreenHandler()(sprite,screenWidth,screenHight,direction,now,bufferX,bufferY);
-                    
-                });
- 
-                engine.start();
+            var points = 0;
+
+            engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
+                enemyGenerator.generateEnemies(timeSinceStart);
+            });
+
+            var points = 0;
+            engine.registerDestructionHandler(function (sprite) {
+                points = points + sprite.getPoints();
+                if (sprite.getPoints() !== 0 && points !== 0) {
+                    if (points % 20000 === 0) {
+                        new Bonus(engine, screenWidth);
+                    }
+                }
+            });
+
+
+            engine.registerOffScreenHandler(function (sprite, screenWidth, screenHight, direction, now) {
+                return sprite.getOffScreenHandler()(sprite, screenWidth, screenHight, direction, now);
+
+            });
+
+            engine.start();
 
 
 

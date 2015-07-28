@@ -33,19 +33,25 @@ function Engine(canvasId) {
         
     };
     
-    var offScreenDetector = function (screenWidth, screenHeight, sprite, now) {
-        var position = sprite.getPosition();
-        if (position.x < 0){
-            return "left";
-        }else if(position.x > screenWidth) {
-            return "right";
-        }else if (position.y < 0){
-            return "top";
-        }else if(position.y > screenHeight) {
-            return "down";
-        }
-        return undefined;
+    var createBufferedOffScreenDetector =  function (bufferX, bufferY) {
+        return function (screenWidth, screenHeight, sprite, now) {
+            var position = sprite.getPosition();
+            var widthAndHeight = sprite.getWidthAndHeight();
+            var direction;
+            if (position.x < -bufferX) {
+                return "left";
+            } else if (position.x > (screenWidth - widthAndHeight.width) + bufferX) {
+                return "right";
+            } else if (position.y < -bufferY) {
+                return "top";
+            } else if (position.y > (screenHeight-widthAndHeight.height) + bufferY) {
+                return "down";
+            } 
+            return undefined;
+        };
     };    
+    
+    var offScreenDetector = createBufferedOffScreenDetector(0,0);   
 
     var keyEvents = {};
     document.addEventListener("keydown", function (e) {
@@ -71,11 +77,6 @@ function Engine(canvasId) {
         return this;
     };
     
-    this.registerOffScreenDetector = function(fun){
-        offScreenDetector= fun;
-        return this;
-    };
-    
     this.registerOffScreenHandler = function(fun){
         offScreenHandler = fun;
         return this;
@@ -86,6 +87,8 @@ function Engine(canvasId) {
         collisionStrategy = _collisionStrategy;
         return this;
     };
+    
+    
 
     var createFrameCounter = function(){
         var time;
@@ -121,10 +124,13 @@ function Engine(canvasId) {
                     }
                 });
                 sprites.forEach(function(sprite){
-                    var direction = offScreenDetector(screenWidth, screenHeight, sprite,now, offScreenHandler);
+                    var direction = offScreenDetector(screenWidth, screenHeight, sprite);
                     if(direction){
                         offScreenHandler(sprite, screenWidth, screenHeight, direction, now);
                     }
+                    
+                    
+                    
                 });
                 sprites = sprites.filter(function (each) {
                     return !each.isDestroyed(now);

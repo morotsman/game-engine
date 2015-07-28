@@ -40,8 +40,6 @@
                 var bounce = 0.9;
                 var friction = 0.05;
 
-                engine.registerOffScreenDetector(util.createBufferedOffScreenDetector(0,0));
-
                 engine.registerOffScreenHandler(util.bouncingOffScreenHandler(bounce,friction));
 
                 engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
