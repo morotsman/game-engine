@@ -22,8 +22,6 @@ function Rocket(engine) {
         that.cannonFired = true;
     });
 
-    var points = 0;
-
 
     this.handleKeyEvents = function (keys) {
         if (keys[39]) {//right
@@ -68,7 +66,7 @@ function Rocket(engine) {
     };
 
     this.handleDestruction = function () {
-        new Explosion(engine, this.getPosition().x, this.getPosition().y, this.getSpeedX(), this.getSpeedY())
+        new Explosion(engine, this.getPosition().x, this.getPosition().y, this.getSpeedX(), this.getSpeedY());
     };
 
 

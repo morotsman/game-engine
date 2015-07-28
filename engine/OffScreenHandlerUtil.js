@@ -1,7 +1,7 @@
 function OffScreenHandlerUtil(){
        
     
-   var bouncingOffScreenHandler = function (bounce, friction) {
+   var createBouncingOffScreenHandler = function (bounce, friction) {
         return function (sprite, screenWidth, screenHeight, direction,now) {
             var widthAndHeight = sprite.getWidthAndHeight();
             var position = sprite.getPosition();
@@ -49,7 +49,7 @@ function OffScreenHandlerUtil(){
         if(wrapper === "wrapping"){
             return wrappingOffScreenHandler;
         }else if(wrapper === "bouncing"){
-            return bouncingOffScreenHandler.apply(this,Array.prototype.slice.call(arguments, 1));
+            return createBouncingOffScreenHandler.apply(this,Array.prototype.slice.call(arguments, 1));
         }else if(wrapper === "destructive"){
             return destructiveOffscreenHandler;
         }

@@ -18,20 +18,14 @@ function Bullet(engine,x,y, speed){
         return team;
     };      
     
-    this.getDamage = function(){
-        return 1;
-    };
-    
     this.handleDestruction = function(){
         new Explosion(engine, this.getPosition().x,this.getPosition().y,0,0);
     };    
-           
-    
+             
     this.handleCollision = function(other){
         if(other.getType() !== "Bullet" && other.getTeam() !== team){
             other.setDamage(1);
-        }
-        
+        }  
     }; 
     
     this.setImage("bullet").setWidthAndHeight(15, 15).setSpeedY(speed).setPosition(x,y).setHealth(1); 
