@@ -13,6 +13,8 @@ function Sprite(engine) {
     var destroyed = false;
 
     var that = this;
+    var offScreenHandler;
+    var offScreenHandlerUtil = new OffScreenHandlerUtil();
 
     var keyEvents = {};
 
@@ -255,6 +257,23 @@ function Sprite(engine) {
         ctx.arc(x + width / 2, y + height / 2, radius, 0, 2 * Math.PI);
         ctx.stroke();
     };
+    
+    this.handleOffScreen = function(screenWidth, screenHeight, direction, now){
+        if(offScreenHandler){
+            offScreenHandler(that,screenWidth, screenHeight, direction, now);
+            return true;
+        }
+        return false;
+    }; 
+    
+    this.withOffScreenHandler = function(something){
+        if(util.isFunction(something)){
+            offScreenHandler = something;
+        }else{  
+            offScreenHandler = offScreenHandlerUtil.getOffScreenHandler.apply(this,arguments);
+        }
+        return this;        
+    };    
 
     engine.addSprite(this);
 

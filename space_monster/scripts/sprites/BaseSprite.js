@@ -38,18 +38,18 @@ function BaseSprite() {
     };
 
 
-    this.getOffScreenHandler = function (sprite, screenWidth, screenHeight, direction, now) {
-        return function (sprite) {
-            var position = sprite.getPosition();
-            if (position.x > screenWidth + 300 || position.x < -300) {
-                sprite.setDestroyed();
-            }
-            if (position.y > screenHeight + 300 || position.y < -300){
-                sprite.setDestroyed();
-            }
-        };
+    var getOffScreenHandler = function (sprite, screenWidth, screenHeight, direction, now) {
+        var position = sprite.getPosition();
+        if (position.x > screenWidth + 300 || position.x < -300) {
+            sprite.setDestroyed();
+        }
+        if (position.y > screenHeight + 300 || position.y < -300) {
+            sprite.setDestroyed();
+        }
+
     };
 
+    this.withOffScreenHandler(getOffScreenHandler);
 
 }
 ;

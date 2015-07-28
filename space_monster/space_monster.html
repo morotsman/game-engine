@@ -28,6 +28,7 @@
 
 
         <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/OffScreenHandlerUtil.js"></script>
         <script type="text/javascript" src="../engine/Engine.js"></script>
         <script type="text/javascript" src="../engine/Sprite.js"></script>
         <script type="text/javascript" src="../engine/Animator.js"></script>
@@ -69,10 +70,6 @@
             });
 
 
-            engine.registerOffScreenHandler(function (sprite, screenWidth, screenHight, direction, now) {
-                return sprite.getOffScreenHandler()(sprite, screenWidth, screenHight, direction, now);
-
-            });
 
             engine.start();
 

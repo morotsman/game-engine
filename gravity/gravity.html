@@ -24,23 +24,27 @@
         
 
         <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/OffScreenHandlerUtil.js"></script>
         <script type="text/javascript" src="../engine/Engine.js"></script>
         <script type="text/javascript" src="../engine/Sprite.js"></script>
         <script type="text/javascript" src="../engine/Animator.js"></script>
         <script>
+                var gravity = 1;
+                var bounce = 0.9;
+                var friction = 0.05;
 
-                var engine = new Engine("canvas1").withCollisionDetector();
+                var engine = new Engine("canvas1").withCollisionDetector().withGlobalOffScreenHandler("bouncing",bounce,friction);
+                
+
 
                 new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(200, 100).setSpeedX(2);
                 new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 300);
                 new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 200);
                 new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 50).setSpeedX(-6);
                 
-                var gravity = 1;
-                var bounce = 0.9;
-                var friction = 0.05;
 
-                engine.registerOffScreenHandler(util.bouncingOffScreenHandler(bounce,friction));
+
+                
 
                 engine.registerUpdateHandler(function (context, timeSinceStart, keyEvents) {
                     engine.forEach(function (sprite) {

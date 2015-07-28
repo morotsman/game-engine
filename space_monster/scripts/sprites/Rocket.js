@@ -85,13 +85,10 @@ function Rocket(engine) {
         }
     };
 
-    this.getOffScreenHandler = function () {
-        return util.wrappingOffScreenHandler;
-    };
 
 
 
-    this.setHealth(4);
+    this.setHealth(4).withOffScreenHandler("wrapping");
 
 
 }
