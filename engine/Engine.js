@@ -143,7 +143,7 @@ function Engine(canvasId) {
                 sprite.handleUpdate(now);
                 sprite.draw(context, now);
             });
-            console.log(sprites.length);
+            //console.log(sprites.length);
             requestId = requestAnimationFrame(runner);
         };
 

@@ -10,7 +10,7 @@
     <body>
         <img id="right_knight" src="knight.png" alt="Knight" style="display:none">
         <img id="left_knight" src="knight_flip.png" alt="Knight" style="display:none">
-        <img id="ufo" src="ufo.png" alt="Platforms" style="display:none">
+        <img id="platform" src="blocks_5.png" alt="Platforms" style="display:none">
 
 
 
@@ -34,15 +34,17 @@
         <script type="text/javascript" src="platform.js"></script>
         <script>
 
-                var engine = new Engine("canvas1").withCollisionDetector("rectangle");
+                var engine = new Engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
 
-                new Knight(engine,400,50).setImage("knight");
                 
-                new Platform(engine, 350,450,300,10).setImage("ufo");
-                new Platform(engine, 300,400,100,10).setImage("ufo");
-                new Platform(engine, 400,350,100,10).setImage("ufo");
+                new Knight(engine).setImage("knight").setPosition(320,50);
+                new Platform(engine).setImage("platform").setPosition(100,450).setWidthAndHeight(300,30);
+                new Platform(engine).setImage("platform").setPosition(150,410).setWidthAndHeight(100,30);
+                new Platform(engine).setImage("platform").setPosition(300,330).setWidthAndHeight(100,30);
+                new Platform(engine).setImage("platform").setPosition(550,330).setWidthAndHeight(100,30).setSpeedY(2).withOffScreenHandler("wrapping");
+                
 
-                var gravity = 0.5;
+                var gravity = 0.3;
 
                 engine.withUpdateHandler(function (context, timeSinceStart, keyEvents) {
                     engine.forEach(function (sprite) {
