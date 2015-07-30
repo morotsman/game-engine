@@ -37,11 +37,14 @@
                 var engine = new Engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
 
                 
-                new Knight(engine).setImage("knight").setPosition(320,50);
-                new Platform(engine).setImage("platform").setPosition(100,450).setWidthAndHeight(300,30);
-                new Platform(engine).setImage("platform").setPosition(150,410).setWidthAndHeight(100,30);
-                new Platform(engine).setImage("platform").setPosition(300,330).setWidthAndHeight(100,30);
-                new Platform(engine).setImage("platform").setPosition(550,330).setWidthAndHeight(100,30).setSpeedY(2).withOffScreenHandler("wrapping");
+                new Knight(engine).setImage("knight").setPosition(7,50);
+                new Platform(engine).setImage("platform").setPosition(1,500).setWidthAndHeight(200,30);
+                new Platform(engine).setImage("platform").setPosition(150,410).setWidthAndHeight(50,30);
+                new Platform(engine).setImage("platform").setPosition(300,400).setWidthAndHeight(50,30).setSpeedY(2).withOffScreenHandler("wrapping");
+                new Platform(engine).setImage("platform").setPosition(400,400).setWidthAndHeight(50,30).setSpeedY(-2).withOffScreenHandler("wrapping");
+                new Platform(engine).setImage("platform").setPosition(500,200).setWidthAndHeight(50,30).setSpeedY(2).withOffScreenHandler("wrapping");
+                new Platform(engine).setImage("platform").setPosition(600,100).setWidthAndHeight(100,30);
+
                 
 
                 var gravity = 0.3;
