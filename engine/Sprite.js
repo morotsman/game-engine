@@ -127,20 +127,40 @@ function Sprite(engine) {
     };
     
     var rectangularStartegy = function(other){
-        var otherPosition = other.getPosition();
-        var otherWidthAndHeight = other.getWidthAndHeight();;
-        var left = x;
-        var otherLeft = otherPosition.x;
-        var right = x + width;
-        var otherRight = otherPosition.x + otherWidthAndHeight.width;
-        var top  = y;
-        var otherTop = otherPosition.y;
-        var bottom = y + height;
-        var otherBottom = otherPosition.y + otherWidthAndHeight.height;
-        if(bottom < otherTop || top > otherBottom || right < otherLeft || left > otherRight){
-            return false;
+        var sprite1Width = width;
+        var sprite1Height = height;
+        var sprite1CenterX = x  + sprite1Width/2;
+        var sprite1CenterY = y  + sprite1Height/2;
+        
+        var otherWidth = other.getWidthAndHeight().width;
+        var otherHeight = other.getWidthAndHeight().height;
+        var otherCenterX = other.getPosition().x  + otherWidth/2;
+        var otherCenterY = other.getPosition().y  + otherHeight/2;        
+        
+        var w = 0.5 * (sprite1Width + otherWidth);
+        var h = 0.5 * (sprite1Height + otherHeight);
+        var dx = sprite1CenterX - otherCenterX;
+        var dy = sprite1CenterY - otherCenterY;
+        if (Math.abs(dx) <= w && Math.abs(dy) <= h)
+        {
+            /* collision! */
+            var wy = w * dy;
+            var hx = h * dx;
+            if (wy > hx) {
+                if (wy > -hx) {
+                    return "top";
+                } else {
+                    return "right";
+                }
+            } else {
+                if (wy > -hx) {
+                    return "left";
+                } else {
+                    return "down";
+                }
+            }
+
         }
-        return true; 
     };
 
     this.collision = function (other, strategy) {

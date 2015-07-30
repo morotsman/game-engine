@@ -150,18 +150,34 @@ function Engine(canvasId) {
 
         requestId = requestAnimationFrame(runner);
     };
+    
+    var opositDirection = function(side){
+        if(side === "top"){
+            return "down";
+        }else if(side === "down"){
+            return "top";
+        }else if(side === "right"){
+            return "left";
+        }else if(side === "left"){
+            return "right";
+        }
+        return side;
+    };
 
     this.detectCollisions = function () {
         for (var i1 = 0; i1 < sprites.length; i1++) {
             for (var i2 = i1; i2 < sprites.length; i2++) {
-                if (sprites[i1].collision(sprites[i2], collisionStrategy) && i1 !== i2) {
-                    sprites[i1].handleCollision(sprites[i2]);
-                    sprites[i2].handleCollision(sprites[i1]);
+                var direction = sprites[i1].collision(sprites[i2], collisionStrategy);
+                if (direction && i1 !== i2) {
+                    sprites[i1].handleCollision(sprites[i2],direction);
+                    sprites[i2].handleCollision(sprites[i1],opositDirection(direction));
                     collisionHandler(sprites[i1], sprites[i2]);
                 }
             }
         }
     };
+    
+    
 
     this.forEach = function (fun) {
         sprites.forEach(fun);
