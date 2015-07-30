@@ -15,7 +15,7 @@ function Platform(engine) {
     this.handleCollision = function (other,side) { 
         var onGround = false;
         if (side === "top") {
-            other.setSpeedY(0);
+            other.setSpeedY(that.getSpeedY());
             other.addForceVector(90, 0.1);
             var position = other.getPosition();
             other.setPosition(position.x, that.getPosition().y - other.getWidthAndHeight().height);
