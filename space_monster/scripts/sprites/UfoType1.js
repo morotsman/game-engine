@@ -21,7 +21,7 @@ function UfoType1(engine, rocket) {
         }
 
         if (fireCannon) {
-            new Bullet(engine, ufoPosition.x, ufoPosition.y + sprite.getRadius() + 20, -6).setTeam("Enemy");
+            new Bullet(engine, ufoPosition.x, ufoPosition.y + sprite.getRadius() + 30, -6).setTeam("Enemy");
             fireCannon = false;
         }
         return result;

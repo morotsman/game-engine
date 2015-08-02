@@ -1,0 +1,66 @@
+<!doctype html>
+
+
+<html lang="en">
+    <head>
+
+    </head>
+
+
+    <body>
+        <img id="ball" src="soccer-ball.png" alt="Ball" style="display:none">
+        <img id="platform" src="blocks_5.png" alt="Platforms" style="display:none">
+
+
+
+        <canvas id="canvas1" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
+
+
+
+
+        <script>
+        </script>
+
+        
+
+        <script type="text/javascript" src="../engine/Util.js"></script>
+        <script type="text/javascript" src="../engine/OffScreenHandlerFactory.js"></script>
+        <script type="text/javascript" src="../engine/RectangularCollisionStartegy.js"></script>
+        <script type="text/javascript" src="../engine/Engine.js"></script>
+        <script type="text/javascript" src="../engine/Sprite.js"></script>
+        <script type="text/javascript" src="../engine/Animator.js"></script>
+        <script type="text/javascript" src="platform.js"></script>
+        <script>
+
+
+                var engine = new Engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("bouncing",0,0);
+                
+                
+                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(50, 50).setSpeedY(-37);
+                new Platform(engine).setImage("platform").setPosition(25,400).setWidthAndHeight(100,10);
+                
+
+                
+
+
+                
+
+
+
+                engine.start();
+
+
+
+
+
+        </script>
+
+
+
+
+
+    </body>
+</html>
+
+

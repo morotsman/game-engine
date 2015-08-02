@@ -7,9 +7,9 @@ function Engine(canvasId) {
     var sprites = [];
     var useCollisionDetector = false;
     var that = this;
-    var collisionStrategy = "circle";
     var offScreenHandlerFactory = new OffScreenHandlerFactory();
     var globalOffScreenHandler;
+    var collisionStrategy = new RectangularCollisionStartegy();
     
 
     this.addSprite = function (sprite) {
@@ -76,9 +76,8 @@ function Engine(canvasId) {
         return this;
     };
 
-    this.withCollisionDetector = function (_collisionStrategy) {
+    this.withCollisionDetector = function () {
         useCollisionDetector = true;
-        collisionStrategy = _collisionStrategy;
         return this;
     };
 
@@ -167,7 +166,7 @@ function Engine(canvasId) {
     this.detectCollisions = function () {
         for (var i1 = 0; i1 < sprites.length; i1++) {
             for (var i2 = i1; i2 < sprites.length; i2++) {
-                var direction = sprites[i1].collision(sprites[i2], collisionStrategy);
+                var direction = collisionStrategy.collision(sprites[i1],sprites[i2]);
                 if (direction && i1 !== i2) {
                     sprites[i1].handleCollision(sprites[i2],direction);
                     sprites[i2].handleCollision(sprites[i1],opositDirection(direction));

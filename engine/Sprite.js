@@ -114,66 +114,6 @@ function Sprite(engine) {
         return radius;
     };
 
-    var circularStartegy = function (other) {
-        var dx = (x + radius) - (other.getPosition().x + other.getRadius());
-        //var dy = (y + radius) - (other.getPosition().y + other.getRadius());
-        var dy = (y) - (other.getPosition().y);
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < radius + other.getRadius()) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-    
-    var rectangularStartegy = function(other){
-        var sprite1Width = width;
-        var sprite1Height = height;
-        var sprite1CenterX = x  + sprite1Width/2;
-        var sprite1CenterY = y  + sprite1Height/2;
-        
-        var otherWidth = other.getWidthAndHeight().width;
-        var otherHeight = other.getWidthAndHeight().height;
-        var otherCenterX = other.getPosition().x  + otherWidth/2;
-        var otherCenterY = other.getPosition().y  + otherHeight/2;        
-        
-        var w = 0.5 * (sprite1Width + otherWidth);
-        var h = 0.5 * (sprite1Height + otherHeight);
-        var dx = sprite1CenterX - otherCenterX;
-        var dy = sprite1CenterY - otherCenterY;
-        if (Math.abs(dx) <= w && Math.abs(dy) <= h)
-        {
-            /* collision! */
-            var wy = w * dy;
-            var hx = h * dx;
-            if (wy > hx) {
-                if (wy > -hx) {
-                    return "top";
-                } else {
-                    return "right";
-                }
-            } else {
-                if (wy > -hx) {
-                    return "left";
-                } else {
-                    return "down";
-                }
-            }
-
-        }
-    };
-
-    this.collision = function (other, strategy) {
-        if (!strategy || strategy === "circel") {
-            return circularStartegy(other);
-        } else if (strategy === "rectangle") {
-            return rectangularStartegy(other);
-        }
-    };
-
-
-
-
     this.handleUpdate = function () {
 
     };
@@ -221,8 +161,12 @@ function Sprite(engine) {
     };
 
     var drawImage = function (context) {
+        if(!image){
+            return;
+        }
         x = x + speedX;
         y = y - speedY;
+         
 
         if (width && height) {
             context.drawImage(image, x, y, width, height);
