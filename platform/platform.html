@@ -24,7 +24,7 @@
         </script>
 
         
-
+        <script type="text/javascript" src="../engine/line-intersect.js"></script>
         <script type="text/javascript" src="../engine/Util.js"></script>
         <script type="text/javascript" src="../engine/RectangularCollisionStartegy.js"></script>
         <script type="text/javascript" src="../engine/OffScreenHandlerFactory.js"></script>
@@ -40,7 +40,7 @@
                 
                 new Knight(engine).setImage("knight").setPosition(7,50);
                 new Platform(engine).setImage("platform").setPosition(1,500).setWidthAndHeight(200,30);
-                new Platform(engine).setImage("platform").setPosition(150,410).setWidthAndHeight(50,30);
+                new Platform(engine).setImage("platform").setPosition(100,460).setWidthAndHeight(50,30);
                 new Platform(engine).setImage("platform").setPosition(300,400).setWidthAndHeight(50,30).setSpeedY(2).withOffScreenHandler("wrapping");
                 new Platform(engine).setImage("platform").setPosition(400,400).setWidthAndHeight(50,30).setSpeedY(-2).withOffScreenHandler("wrapping");
                 new Platform(engine).setImage("platform").setPosition(500,200).setWidthAndHeight(50,30).setSpeedY(2).withOffScreenHandler("wrapping");

@@ -96,17 +96,39 @@ function Sprite(engine) {
         speedY = speedY + Math.sin(_angle * Math.PI / 180) * force;
     };
 
-    this.getForceVector = function () {
-        var force = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
+    var calulateForce = function (speedX, speedY) {
+        return Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
+    };
+    var calculateAngle = function (speedX, speedY) {
         var angle = Math.atan2(speedY, speedX) * 180 / Math.PI;
-
         if (angle < 0) {
             angle = 360 + angle;
         }
+        return angle;
+    };
 
+    this.relativeForce = function (other) {
+        var relativeX = speedX - other.getSpeedX();
+        var relativeY = speedY - other.getSpeedY();
         return {
-            force: force,
-            angle: angle
+            force: calulateForce(relativeX, relativeY),
+            angle: calculateAngle(relativeX, relativeY)            
+        };
+    };
+    
+    this.relativeSpeed = function (other) {
+        var relativeX = speedX - other.getSpeedX();
+        var relativeY = speedY - other.getSpeedY();
+        return {
+            x: -relativeX,
+            y: relativeY           
+        };
+    };    
+
+    this.getForceVector = function () {
+        return {
+            force: calulateForce(speedX, speedY),
+            angle: calculateAngle(speedX, speedY)
         };
     };
 
@@ -161,12 +183,12 @@ function Sprite(engine) {
     };
 
     var drawImage = function (context) {
-        if(!image){
+        if (!image) {
             return;
         }
         x = x + speedX;
         y = y - speedY;
-         
+
 
         if (width && height) {
             context.drawImage(image, x, y, width, height);
@@ -202,14 +224,14 @@ function Sprite(engine) {
         return animation.isCompleted();
     };
 
-    
+
     this.setAnimation = function (_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed, numberOfPhases, numberOfColumns) {
         animation = new Animator(_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed, numberOfPhases, numberOfColumns);
         return this;
     };
-    
-    
-    this.setAnimator = function(animator){
+
+
+    this.setAnimator = function (animator) {
         animation = animator;
         return this;
     };
@@ -221,23 +243,23 @@ function Sprite(engine) {
         ctx.arc(x + width / 2, y + height / 2, radius, 0, 2 * Math.PI);
         ctx.stroke();
     };
-    
-    this.handleOffScreen = function(screenWidth, screenHeight, direction, now){
-        if(offScreenHandler){
-            offScreenHandler(that,screenWidth, screenHeight, direction, now);
+
+    this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {
+        if (offScreenHandler) {
+            offScreenHandler(that, screenWidth, screenHeight, direction, now);
             return true;
         }
         return false;
-    }; 
-    
-    this.withOffScreenHandler = function(something){
-        if(util.isFunction(something)){
+    };
+
+    this.withOffScreenHandler = function (something) {
+        if (util.isFunction(something)) {
             offScreenHandler = something;
-        }else{  
-            offScreenHandler = offScreenHandlerFactory.getOffScreenHandler.apply(this,arguments);
+        } else {
+            offScreenHandler = offScreenHandlerFactory.getOffScreenHandler.apply(this, arguments);
         }
-        return this;        
-    };    
+        return this;
+    };
 
     engine.addSprite(this);
 

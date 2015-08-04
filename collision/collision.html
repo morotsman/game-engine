@@ -23,7 +23,7 @@
         </script>
 
         
-
+        <script type="text/javascript" src="../engine/line-intersect.js"></script>
         <script type="text/javascript" src="../engine/Util.js"></script>
         <script type="text/javascript" src="../engine/OffScreenHandlerFactory.js"></script>
         <script type="text/javascript" src="../engine/RectangularCollisionStartegy.js"></script>
@@ -34,16 +34,16 @@
         <script>
 
 
-                var engine = new Engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("bouncing",0,0);
+                var engine = new Engine("canvas1").withGlobalOffScreenHandler("bouncing",0,0).withCollisionDetector();
                 
                 
-                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(50, 50).setSpeedY(-37);
-                new Platform(engine).setImage("platform").setPosition(25,400).setWidthAndHeight(100,10);
-                
+                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(25, 10).setSpeedY(-37);
+                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(100, 350).setSpeedY(37);
+                new Platform(engine).setImage("platform").setPosition(25,180).setWidthAndHeight(100,10);
 
-                
-
-
+                new Platform(engine).setImage("platform").setPosition(500,180).setWidthAndHeight(10,100);
+                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(35, 200).setSpeedX(37);  
+                new Sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(700, 260).setSpeedX(-37);
                 
 
 
