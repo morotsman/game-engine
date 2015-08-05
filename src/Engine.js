@@ -166,7 +166,7 @@ function Engine(canvasId) {
     this.detectCollisions = function () {
         for (var i1 = 0; i1 < sprites.length; i1++) {
             for (var i2 = i1+1; i2 < sprites.length; i2++) {
-                var direction = collisionStrategy.predictiveCollision(sprites[i1],sprites[i2]);
+                var direction = collisionStrategy.collision(sprites[i1],sprites[i2]);
                 if (direction && i1 !== i2) {
                     sprites[i1].handleCollision(sprites[i2],direction);
                     sprites[i2].handleCollision(sprites[i1],opositDirection(direction));

@@ -9,7 +9,7 @@ function RectangularCollisionStartegy() {
             height: one.height + two.height
         };
     };
-    var collision = function (md) {
+    var detectSide = function (md) {
         var direction = "left";
         var minDist = Math.abs(md.left);
         if (Math.abs(md.left + md.width) < minDist)
@@ -68,34 +68,39 @@ function RectangularCollisionStartegy() {
             maxX: sprite.getPosition().x + sprite.getWidthAndHeight().width,
             maxY: sprite.getPosition().y + sprite.getWidthAndHeight().height,
             width: sprite.getWidthAndHeight().width,
-            height: sprite.getWidthAndHeight().height,
-            speedX: sprite.getSpeedX(),
-            speedY: sprite.getSpeedY()
+            height: sprite.getWidthAndHeight().height
         };
     };
+    
+    var relativeSpeed = function (one,two) {
+        var relativeX = one.getSpeedX() - two.getSpeedX();
+        var relativeY = one.getSpeedY() - two.getSpeedY();
+        return {
+            x: -relativeX,
+            y: relativeY           
+        };
+    };       
 
-    this.predictiveCollision = function (_one, _two) {
-        var one = spriteToAABB(_one);
-        var two = spriteToAABB(_two);
+    this.collision = function (sprite1, sprite2) {
+        var one = spriteToAABB(sprite1);
+        var two = spriteToAABB(sprite2);
         var md = minkowskiDifference(one, two);
         if (md.left <= 0 && md.left + md.width >= 0
                 && md.top <= 0 && md.top + md.height >= 0) {
-            return collision(md);
+            return detectSide(md);
         } else {
-            var relativeSpeed = _one.relativeSpeed(_two);
-            //console.log(relativeSpeed);
-            var h = getIntersectionFraction(md, relativeSpeed);
+            var rSpeed = relativeSpeed(sprite1,sprite2);
+            var h = getIntersectionFraction(md, rSpeed);
             if (h !== Number.MAX_VALUE) {
-                one.x = one.x - one.speedX * h;
+                one.x = one.x - sprite1.getSpeedX() * h;
                 one.maxX = one.x + one.width;
-                one.y = one.y - one.speedY * h;
+                one.y = one.y - sprite1.getSpeedY() * h;
                 one.maxY = one.y + one.height;
-                two.x = two.x - two.speedX * h;
+                two.x = two.x - sprite2.getSpeedX() * h;
                 two.maxX = two.x + two.width;
-                two.y = two.y - two.speedY * h;
+                two.y = two.y - sprite2.getSpeedY() * h;
                 two.maxY = two.y + two.height;
-                var tmp = minkowskiDifference(one, two);
-                return collision(tmp);
+                return detectSide(minkowskiDifference(one, two));
             }
 
 
