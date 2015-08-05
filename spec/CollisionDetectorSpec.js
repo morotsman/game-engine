@@ -37,12 +37,57 @@ describe("Collision detector", function () {
         var sprite2 = spriteCreator(100,100,10,10,0,0);
         var result = unitUnderTest.collision(sprite1,sprite2);
         expect(result).toEqual(undefined);
+               
+    });
+    
+    it("should be able to detect that two sprites that almost touch does not collide", function () {  
+        //left
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(-0.0001,10,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);  
+        
+         //right
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(20.0001,10,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);   
+        
+        //up
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(10,20.0001,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);   
+        
+        //down
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(10,-0.0001,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);               
+    });  
+    
+    it("should be able to detect that two sprites that just touch collides", function () {  
+
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(0,10,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("left");  
         
         var sprite1 = spriteCreator(10,10,10,10,0,0);
-        var sprite2 = spriteCreator(0,10,9.99,10,0,0);
+        var sprite2 = spriteCreator(20,10,10,10,0,0);
         var result = unitUnderTest.collision(sprite1,sprite2);
-        expect(result).toEqual(undefined);        
-    });
+        expect(result).toEqual("right");   
+        
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var sprite2 = spriteCreator(10,20,10,10,0,0);//y increases towards the bottom of the screen
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");   
+        
+        var sprite2 = spriteCreator(10,0,10,10,0,0);//y increases towards the bottom of the screen
+        var sprite1 = spriteCreator(10,10,10,10,0,0);
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("top");               
+    });     
     
     it("should be able to detect that two sprites that are completly overlapping collides", function () {
         var sprite1 = spriteCreator(10,10,10,10,0,0);
