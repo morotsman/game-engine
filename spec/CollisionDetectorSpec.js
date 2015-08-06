@@ -167,7 +167,14 @@ describe("Collision detector", function () {
         var result = unitUnderTest.collision(sprite1,sprite2);
         expect(result).toEqual("right");
         var result = unitUnderTest.collision(sprite2,sprite1);
-        expect(result).toEqual("left");           
+        expect(result).toEqual("left"); 
+        
+        var sprite1 = spriteCreator(0,0,1,1,10,-14);//hitting with both x and y speed
+        var sprite2 = spriteCreator(10,10,10,10,0,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("right");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("left");        
           
     }); 
     
