@@ -12,7 +12,7 @@ function RectangularCollisionStartegy() {
     var detectSide = function (md) {
         var direction = "left";
         var minDist = Math.abs(md.left);
-        if (Math.abs(md.left + md.width) < minDist)
+        if (Math.abs(md.left + md.width) < minDist)//a cornercase here: the minDistance could be equal if something that has the width of one pixel hits a corner. 
         {
             minDist = Math.abs(md.left + md.width);
             direction = "right";
@@ -101,6 +101,8 @@ function RectangularCollisionStartegy() {
                 two.y = two.y - sprite2.getSpeedY() * h;
                 two.maxY = two.y + two.height;
                 var md = minkowskiDifference(one, two);
+                var hepp1 = one;
+                var hepp2 = two;
                 if (md.left <= 0 && md.left + md.width >= 0
                         && md.top <= 0 && md.top + md.height >= 0) {
                     return detectSide(md);

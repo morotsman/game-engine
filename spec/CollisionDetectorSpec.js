@@ -134,7 +134,7 @@ describe("Collision detector", function () {
         var result = unitUnderTest.collision(sprite2,sprite1);
         expect(result).toEqual("left");   
         
-        var sprite1 = spriteCreator(0,0,1,1,100,0);//top corner
+        var sprite1 = spriteCreator(0,-1,1,1,100,0);//top corner
         var sprite2 = spriteCreator(10,0,10,10,0,0); 
         var result = unitUnderTest.collision(sprite1,sprite2);
         expect(result).toEqual("right");
@@ -171,17 +171,106 @@ describe("Collision detector", function () {
           
     }); 
     
-    it("should be able to detect that one moving and one stationary sprite collides on the top and bottom side", function () {
-         
-             
-        var sprite1 = spriteCreator(25,0,1,1,0,-100);
-        var sprite2 = spriteCreator(20,11,100,10,0,0); 
+    it("should be able to detect that one moving and one stationary sprite collides on the top and bottom side", function () {         
+        var sprite1 = spriteCreator(25,0,1,1,0,-100);//in the middle
+        var sprite2 = spriteCreator(20,10,10,10,0,0); 
         var result = unitUnderTest.collision(sprite1,sprite2);
         expect(result).toEqual("down");
         var result = unitUnderTest.collision(sprite2,sprite1);
-        expect(result).toEqual("top");         
-          
-    });        
+        expect(result).toEqual("top");  
+        
+        var sprite1 = spriteCreator(19,0,2,1,0,-100);//left corner
+        var sprite2 = spriteCreator(20,10,10,10,0,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top"); 
+        
+        var sprite1 = spriteCreator(29,0,2,1,0,-100);//right corner
+        var sprite2 = spriteCreator(20,10,10,10,0,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top");  
+        
+        var sprite1 = spriteCreator(20,0,10,10,0,-100);//equal size
+        var sprite2 = spriteCreator(20,40,10,10,0,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top");    
+        
+        var sprite1 = spriteCreator(20,0,20,20,0,-100);//bigger
+        var sprite2 = spriteCreator(20,40,10,10,0,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top");          
+    });
+    
+    it("should be able to detect that two moving sprites collides on the top and bottom side", function () {         
+        var sprite1 = spriteCreator(25,0,1,1,0,-100);//catching up
+        var sprite2 = spriteCreator(20,10,10,10,0,-91); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top"); 
+        
+        var sprite1 = spriteCreator(25,0,1,1,0,-100);//behind
+        var sprite2 = spriteCreator(20,10,10,10,0,-92); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual(undefined); 
+        
+        var sprite1 = spriteCreator(25,0,1,1,0,-10);//frontal
+        var sprite2 = spriteCreator(20,10,10,10,0,10); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top");  
+        
+        var sprite1 = spriteCreator(25,0,1,1,0,-2);//frontal
+        var sprite2 = spriteCreator(20,10,10,10,0,7); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("down");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("top");              
+        
+              
+    });    
+    
+    
+    it("should be able to detect that two moving sprites collides on the left and right side", function () {         
+        var sprite1 = spriteCreator(0,0,1,1,150,0);//catching up
+        var sprite2 = spriteCreator(50,0,10,10,101,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("right");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("left"); 
+        
+        var sprite1 = spriteCreator(0,0,1,1,150,0);//behind
+        var sprite2 = spriteCreator(50,0,10,10,102,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual(undefined);
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual(undefined); 
+ 
+        
+        var sprite1 = spriteCreator(0,0,1,1,30,0);//frontal
+        var sprite2 = spriteCreator(50,0,10,10,-40,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("right");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("left");         
+ 
+        var sprite1 = spriteCreator(0,0,1,1,3,0);//frontal
+        var sprite2 = spriteCreator(50,0,10,10,-46,0); 
+        var result = unitUnderTest.collision(sprite1,sprite2);
+        expect(result).toEqual("right");
+        var result = unitUnderTest.collision(sprite2,sprite1);
+        expect(result).toEqual("left");                       
+    });    
     
     
 
