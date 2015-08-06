@@ -1,10 +1,6 @@
 describe("Line intersection detector", function () {
 
-    var unitUnderTest;
-
-    beforeEach(function () {
-        unitUnderTest = new LineIntersect();
-    });
+    var unitUnderTest = new LineIntersect();
 
     it("should be able to detect that two horizontal lines are parallel", function () {
         var p1 = {
