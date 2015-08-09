@@ -26,13 +26,7 @@
         <script>
         </script>
 
-        <script type="text/javascript" src="../../src/line-intersect.js"></script>
-        <script type="text/javascript" src="../../src/Util.js"></script>
-        <script type="text/javascript" src="../../src/OffScreenHandlerFactory.js"></script>
-        <script type="text/javascript" src="../../src/RectangularCollisionStartegy.js"></script>
-        <script type="text/javascript" src="../../src/Engine.js"></script>
-        <script type="text/javascript" src="../../src/Sprite.js"></script>
-        <script type="text/javascript" src="../../src/Animator.js"></script>
+        <script type="text/javascript" src="../../dist/engine.js"></script>
         <script type="text/javascript" src="scripts/sprites/BaseSprite.js"></script>
         <script type="text/javascript" src="scripts/sprites/Rocket.js"></script>       
         <script type="text/javascript" src="scripts/sprites/UfoType1.js"></script>
@@ -47,7 +41,7 @@
             var screenWidth = 800;
             var screenHeight = 600;
 
-            var engine = new Engine("canvas1").withCollisionDetector();
+            var engine = new game_engine.engine("canvas1").withCollisionDetector();
 
             var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
 

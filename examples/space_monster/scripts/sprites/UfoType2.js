@@ -3,8 +3,8 @@ UfoType2.prototype = Object.create(BaseSprite.prototype);
 function UfoType2(engine,rocket) {
     BaseSprite.apply(this, arguments);
 
-    var throttledAddForceVector = util.throttled(150, this.addForceVector);
-    var throttledBreakForceVector = util.throttled(50, this.addForceVector);
+    var throttledAddForceVector = game_engine.util.throttled(150, this.addForceVector);
+    var throttledBreakForceVector = game_engine.util.throttled(50, this.addForceVector);
     var that = this;
     var breakeAngle;
     

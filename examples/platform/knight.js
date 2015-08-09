@@ -1,15 +1,15 @@
-Knight.prototype = Object.create(Sprite.prototype);
+Knight.prototype = Object.create(game_engine.sprite.prototype);
 
 function Knight(engine){
-    Sprite.apply(this,arguments);
+    game_engine.sprite.apply(this,arguments);
     
     var that = this;
-    var throttledJump = util.throttled(500, that.addForceVector);
-    var throttledWalk = util.throttled(100, that.addForceVector);
+    var throttledJump = game_engine.util.throttled(500, that.addForceVector);
+    var throttledWalk = game_engine.util.throttled(100, that.addForceVector);
     var speed = 70;
-    var left = new Animator("left_knight",125, 24, 16, 22, -16, 0, speed, 6,6);
-    var right = new Animator("right_knight",34, 24, 16, 22, 16, 0, speed, 6,6);
-    var stop = new Animator("right_knight",34, 24, 16, 22, 16, 0, speed, 1,1);
+    var left = new game_engine.Animator("left_knight",125, 24, 16, 22, -16, 0, speed, 6,6);
+    var right = new game_engine.Animator("right_knight",34, 24, 16, 22, 16, 0, speed, 6,6);
+    var stop = new game_engine.Animator("right_knight",34, 24, 16, 22, 16, 0, speed, 1,1);
     
     var currentDirection = "none";
     var maxSpeed = 5;

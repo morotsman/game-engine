@@ -22,26 +22,21 @@
         </script>
 
         
-        <script type="text/javascript" src="../../src/line-intersect.js"></script>
-        <script type="text/javascript" src="../../src/Util.js"></script>
-        <script type="text/javascript" src="../../src/RectangularCollisionStartegy.js"></script>
-        <script type="text/javascript" src="../../src/OffScreenHandlerFactory.js"></script>
-        <script type="text/javascript" src="../../src/Engine.js"></script>
-        <script type="text/javascript" src="../../src/Sprite.js"></script>
-        <script type="text/javascript" src="../../src/Animator.js"></script>
+        <script type="text/javascript" src="../../dist/engine.js"></script>
+        
         <script>
                 var gravity = 1;
                 var bounce = 0.9;
                 var friction = 0.05;
 
-                var engine = new Engine("canvas1").withCollisionDetector().withGlobalOffScreenHandler("bouncing",bounce,friction);
+                var engine = new game_engine.engine("canvas1").withCollisionDetector().withGlobalOffScreenHandler("bouncing",bounce,friction);
                 
 
 
-                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(200, 100).setSpeedX(2);
-                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 300);
-                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 200);
-                new Sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 50).setSpeedX(-6);
+                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(200, 100).setSpeedX(2);
+                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 300);
+                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 200);
+                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 50).setSpeedX(-6);
                 
 
 

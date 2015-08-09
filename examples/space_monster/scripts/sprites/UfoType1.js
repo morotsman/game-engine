@@ -42,7 +42,7 @@ function UfoType1(engine, rocket) {
     var fireCannon = false;
 
 
-    var throttledFireCannon = util.throttled(6000, function () {
+    var throttledFireCannon = game_engine.util.throttled(6000, function () {
         fireCannon = true;
     });
 

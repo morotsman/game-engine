@@ -24,18 +24,12 @@
         </script>
 
         
-        <script type="text/javascript" src="../../src/line-intersect.js"></script>
-        <script type="text/javascript" src="../../src/Util.js"></script>
-        <script type="text/javascript" src="../../src/RectangularCollisionStartegy.js"></script>
-        <script type="text/javascript" src="../../src/OffScreenHandlerFactory.js"></script>
-        <script type="text/javascript" src="../../src/Engine.js"></script>
-        <script type="text/javascript" src="../../src/Sprite.js"></script>
-        <script type="text/javascript" src="../../src/Animator.js"></script>
+        <script type="text/javascript" src="../../dist/engine.js"></script>
         <script type="text/javascript" src="knight.js"></script>
         <script type="text/javascript" src="platform.js"></script>
         <script>
 
-                var engine = new Engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
+                var engine = new game_engine.engine("canvas1").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
 
                 
                 new Knight(engine).setImage("knight").setPosition(7,50);

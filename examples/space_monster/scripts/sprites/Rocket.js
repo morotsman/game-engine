@@ -17,8 +17,8 @@ function Rocket(engine) {
         return "Rocket";
     };
 
-    var throttledAddForceVector = util.throttled(100, that.addForceVector);
-    var throttledCannonFired = util.throttled(300, function () {
+    var throttledAddForceVector = game_engine.util.throttled(100, that.addForceVector);
+    var throttledCannonFired = game_engine.util.throttled(300, function () {
         that.cannonFired = true;
     });
 

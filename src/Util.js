@@ -1,4 +1,4 @@
-var util = {
+define({
     throttled: function (duration, fun) {
         var lastCall;
         var lastResult;
@@ -18,8 +18,6 @@ var util = {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
     } 
-
-
-};
+});
 
 

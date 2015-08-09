@@ -1,7 +1,7 @@
-BaseSprite.prototype = Object.create(Sprite.prototype);
+BaseSprite.prototype = Object.create(game_engine.sprite.prototype);
 
 function BaseSprite() {
-    Sprite.apply(this, arguments);
+    game_engine.sprite.apply(this, arguments);
 
     var health;
 

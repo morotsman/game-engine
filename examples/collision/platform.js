@@ -1,6 +1,6 @@
-Platform.prototype = Object.create(Sprite.prototype);
+Platform.prototype = Object.create(game_engine.sprite.prototype);
 function Platform(engine) {
-    Sprite.apply(this, arguments);
+    game_engine.sprite.apply(this, arguments);
     var that = this;
     var bounce = 0.5;
     
