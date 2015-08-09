@@ -1,4 +1,4 @@
-function Animator(_animation, startX ,startY, width, height, columnWidth, rowHeight,animationSpeed,numberOfPhases, columns){
+function Animator(_animation, sourceX ,sourceY, sourceImageWidth, sourceImageHeight, columnWidth, rowHeight,animationSpeed,numberOfPhases, columns){
     
     var animation =  document.getElementById(_animation);
     var x;
@@ -40,7 +40,7 @@ function Animator(_animation, startX ,startY, width, height, columnWidth, rowHei
                 row = Math.floor(phase/columns);
                 switchTime = now;
             }
-            context.drawImage(animation,startX + columnWidth*column,startY + rowHeight*row,width,height,x,y,displayWidth,displayHeight);
+            context.drawImage(animation,sourceX + columnWidth*column,sourceY + rowHeight*row,sourceImageWidth,sourceImageHeight,x,y,displayWidth,displayHeight);
         };
     };   
     
