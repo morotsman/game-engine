@@ -1,11 +1,10 @@
-define(["Engine", "Sprite", "Util", "Animator"], function(Engine, Sprite, util, Animator) {
+define(["Engine", "Sprite", "Util"], function(Engine, Sprite, util) {
 
 
     return {
         engine: Engine,
         sprite: Sprite,
-        util: util,
-        Animator: Animator
+        util: util
     };
 
 });

@@ -1318,8 +1318,7 @@ define('game_engine',["Engine", "Sprite", "Util", "Animator"], function(Engine, 
     return {
         engine: Engine,
         sprite: Sprite,
-        util: util,
-        Animator: Animator
+        util: util
     };
 
 });
