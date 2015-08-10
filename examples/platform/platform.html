@@ -44,7 +44,7 @@
 
                 var gravity = 0.3;
 
-                engine.withUpdateHandler(function (context, timeSinceStart, keyEvents) {
+                engine.withUpdateHandler(function (timeSinceStart, keyEvents) {
                     engine.forEach(function (sprite) {
                         sprite.addForceVector(270, gravity);
                     });

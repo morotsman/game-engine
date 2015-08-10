@@ -136,7 +136,7 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], functi
                         return !each.isDestroyed(now);
                     });
                 }
-                updateHandler(context, now, keyEvents);
+                updateHandler(now, keyEvents);
                 sprites.forEach(function (sprite) {
                     sprite.handleKeyEvents(keyEvents, now);
                     sprite.handleUpdate(now);

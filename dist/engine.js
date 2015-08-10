@@ -904,7 +904,7 @@ define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"
                         return !each.isDestroyed(now);
                     });
                 }
-                updateHandler(context, now, keyEvents);
+                updateHandler(now, keyEvents);
                 sprites.forEach(function (sprite) {
                     sprite.handleKeyEvents(keyEvents, now);
                     sprite.handleUpdate(now);
@@ -1312,7 +1312,7 @@ define('Sprite',["OffScreenHandlerFactory","Util", "Animator"], function (offScr
 
 
 
-define('game_engine',["Engine", "Sprite", "Util", "Animator"], function(Engine, Sprite, util, Animator) {
+define('game_engine',["Engine", "Sprite", "Util"], function(Engine, Sprite, util) {
 
 
     return {

@@ -42,7 +42,7 @@
 
                 
 
-                engine.withUpdateHandler(function (context, timeSinceStart, keyEvents) {
+                engine.withUpdateHandler(function (timeSinceStart, keyEvents) {
                     engine.forEach(function (sprite) {
                         sprite.addForceVector(270, gravity);
                     });

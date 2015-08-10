@@ -50,7 +50,7 @@
 
             var points = 0;
 
-            engine.withUpdateHandler(function (context, timeSinceStart, keyEvents) {
+            engine.withUpdateHandler(function (timeSinceStart, keyEvents) {
                 enemyGenerator.generateEnemies(timeSinceStart);
             });
 
