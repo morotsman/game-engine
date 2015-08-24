@@ -766,7 +766,7 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 
 
 
-define('Renderer',[], function () {
+define('renderer/Renderer',[], function () {
 
 
     function Renderer(canvasId) {
@@ -808,7 +808,7 @@ define('Renderer',[], function () {
 
 
 
-define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
+define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "renderer/Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
     function Engine(canvasId) {
 

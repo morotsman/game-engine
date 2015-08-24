@@ -1,4 +1,4 @@
-define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
+define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "renderer/Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
     function Engine(canvasId) {
 
