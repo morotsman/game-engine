@@ -766,18 +766,59 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 
 
 
-define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], function (util,offScreenHandlerFactory,collisionStrategy) {
+define('Renderer',[], function () {
+
+
+    function Renderer(canvasId) {
+        var canvas = document.getElementById(canvasId);
+        var context = canvas.getContext("2d");
+
+
+        this.height = function () {
+            return canvas.height;
+        };
+
+        this.width = function () {
+            return canvas.width;
+        };
+
+        this.clearRect = function () {
+            context.clearRect.apply(context, arguments);
+        };
+
+        this.save = function () {
+            context.save.apply(context, arguments);
+        };
+
+        this.restore = function () {
+            context.restore.apply(context, arguments);
+        };
+
+        this.drawImage = function () {
+            context.drawImage.apply(context, arguments);
+        };
+    }
+    ;
+
+
+
+    return Renderer;
+
+});
+
+
+
+define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
     function Engine(canvasId) {
 
-        var canvas = document.getElementById(canvasId);
-        var context = canvas.getContext("2d");
         var requestId;
         var updateHandler;
         var sprites = [];
         var useCollisionDetector = false;
         var that = this;
         var globalOffScreenHandler;
+        var renderer = new Renderer(canvasId);
 
 
         this.addSprite = function (sprite) {
@@ -788,7 +829,7 @@ define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"
             sprites = sprites.concat(_sprites);
         };
 
-        var updateHandler = function (context, now, keyEvents) {
+        var updateHandler = function (now, keyEvents) {
 
         };
 
@@ -879,9 +920,9 @@ define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"
             var runner = function (now) {
                 frameCounter(now);
 
-                var screenWidth = canvas.width;
-                var screenHeight = canvas.height;
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                var screenWidth = renderer.width();
+                var screenHeight = renderer.height();
+                renderer.clearRect(0, 0, screenWidth, screenHeight);
 
                 if (useCollisionDetector) {
                     that.detectCollisions(now);
@@ -908,7 +949,7 @@ define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"
                 sprites.forEach(function (sprite) {
                     sprite.handleKeyEvents(keyEvents, now);
                     sprite.handleUpdate(now);
-                    sprite.draw(context, now);
+                    sprite.draw(renderer, now);
                 });
                 //console.log(sprites.length);
                 requestId = requestAnimationFrame(runner);

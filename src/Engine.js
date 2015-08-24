@@ -1,15 +1,14 @@
-define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], function (util,offScreenHandlerFactory,collisionStrategy) {
+define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
     function Engine(canvasId) {
 
-        var canvas = document.getElementById(canvasId);
-        var context = canvas.getContext("2d");
         var requestId;
         var updateHandler;
         var sprites = [];
         var useCollisionDetector = false;
         var that = this;
         var globalOffScreenHandler;
+        var renderer = new Renderer(canvasId);
 
 
         this.addSprite = function (sprite) {
@@ -20,7 +19,7 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], functi
             sprites = sprites.concat(_sprites);
         };
 
-        var updateHandler = function (context, now, keyEvents) {
+        var updateHandler = function (now, keyEvents) {
 
         };
 
@@ -111,9 +110,9 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], functi
             var runner = function (now) {
                 frameCounter(now);
 
-                var screenWidth = canvas.width;
-                var screenHeight = canvas.height;
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                var screenWidth = renderer.width();
+                var screenHeight = renderer.height();
+                renderer.clearRect(0, 0, screenWidth, screenHeight);
 
                 if (useCollisionDetector) {
                     that.detectCollisions(now);
@@ -140,7 +139,7 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"], functi
                 sprites.forEach(function (sprite) {
                     sprite.handleKeyEvents(keyEvents, now);
                     sprite.handleUpdate(now);
-                    sprite.draw(context, now);
+                    sprite.draw(renderer, now);
                 });
                 //console.log(sprites.length);
                 requestId = requestAnimationFrame(runner);

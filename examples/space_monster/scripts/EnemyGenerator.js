@@ -57,18 +57,18 @@ function EnemyGenerator(engine, rocket) {
 
 
     this.generateEnemies = function (elapsedTime) {
-
+        
         var enemy = enemies.pop();
         if (!enemy) {
             return;
         }
         if (enemy.time < elapsedTime) {
             if(enemy.type === "UfoType1"){
-                new UfoType1(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setSpeedX(2).setSpeedY(-0.5).setHealth(2);
+                new UfoType1(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(30,10).setSpeedX(2).setSpeedY(-0.5).setHealth(2);
             }else if(enemy.type === "UfoType2"){
-                new UfoType3(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2);
+                new UfoType3(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(30,10).setHealth(2);
             }else if(enemy.type === "UfoType3"){
-                new UfoType3(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(40,40).setHealth(2);
+                new UfoType3(engine,rocket).setPosition(enemy.x,enemy.y).setImage("ufo").setWidthAndHeight(30,10).setHealth(2);
             }
         } else {
             enemies.push(enemy);
