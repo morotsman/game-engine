@@ -769,7 +769,7 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 define('renderer/CanvasRenderer',[], function () {
 
 
-    function Renderer(canvasId) {
+    function CanvasRenderer(canvasId) {
         var canvas = document.getElementById(canvasId);
         var context = canvas.getContext("2d");
 
@@ -802,7 +802,7 @@ define('renderer/CanvasRenderer',[], function () {
 
 
 
-    return Renderer;
+    return CanvasRenderer;
 
 });
 
@@ -811,14 +811,62 @@ define('renderer/CanvasRenderer',[], function () {
 
 
 
-define('renderer/Renderer',["renderer/CanvasRenderer"], function (CanvasRenderer) {
+define('renderer/WebGLRenderer',[], function () {
+
+
+    function WebGLRenderer(canvasId) {
+        var canvas = document.getElementById(canvasId);
+        var context = canvas.getContext("2d");
+
+
+        this.height = function () {
+            return canvas.height;
+        };
+
+        this.width = function () {
+            return canvas.width;
+        };
+
+        this.clearRect = function () {
+            context.clearRect.apply(context, arguments);
+        };
+
+        this.save = function () {
+            context.save.apply(context, arguments);
+        };
+
+        this.restore = function () {
+            context.restore.apply(context, arguments);
+        };
+
+        this.drawImage = function () {
+            context.drawImage.apply(context, arguments);
+        };
+    }
+    ;
+
+
+
+    return WebGLRenderer;
+
+});
+
+
+
+
+
+
+
+
+
+define('renderer/Renderer',["renderer/CanvasRenderer","renderer/WebGLRenderer"], function (CanvasRenderer,WebGLRenderer) {
 
 
     function Renderer(canvasId, type) {
         if(type === "canvas"){
             return new CanvasRenderer(canvasId);
         }else if(type === "webGL"){
-            return undefined;
+            return new WebGLRenderer(canvasId);
         }else{
             return undefined;
         }

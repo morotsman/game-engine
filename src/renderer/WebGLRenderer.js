@@ -1,7 +1,7 @@
 define([], function () {
 
 
-    function CanvasRenderer(canvasId) {
+    function WebGLRenderer(canvasId) {
         var canvas = document.getElementById(canvasId);
         var context = canvas.getContext("2d");
 
@@ -34,9 +34,12 @@ define([], function () {
 
 
 
-    return CanvasRenderer;
+    return WebGLRenderer;
 
 });
+
+
+
 
 
 
