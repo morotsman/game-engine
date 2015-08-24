@@ -1,6 +1,6 @@
 define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "renderer/Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
-    function Engine(canvasId) {
+    function Engine(canvasId,type) {
 
         var requestId;
         var updateHandler;
@@ -8,7 +8,7 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
         var useCollisionDetector = false;
         var that = this;
         var globalOffScreenHandler;
-        var renderer = new Renderer(canvasId);
+        var renderer = new Renderer(canvasId,type);
 
 
         this.addSprite = function (sprite) {

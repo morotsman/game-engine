@@ -766,7 +766,7 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 
 
 
-define('renderer/Renderer',[], function () {
+define('renderer/CanvasRenderer',[], function () {
 
 
     function Renderer(canvasId) {
@@ -808,9 +808,34 @@ define('renderer/Renderer',[], function () {
 
 
 
+
+
+
+define('renderer/Renderer',["renderer/CanvasRenderer"], function (CanvasRenderer) {
+
+
+    function Renderer(canvasId, type) {
+        if(type === "canvas"){
+            return new CanvasRenderer(canvasId);
+        }else if(type === "webGL"){
+            return undefined;
+        }else{
+            return undefined;
+        }
+    };
+
+    return Renderer;
+
+
+    
+
+});
+
+
+
 define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "renderer/Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
 
-    function Engine(canvasId) {
+    function Engine(canvasId,type) {
 
         var requestId;
         var updateHandler;
@@ -818,7 +843,7 @@ define('Engine',["Util","OffScreenHandlerFactory","RectangularCollisionStartegy"
         var useCollisionDetector = false;
         var that = this;
         var globalOffScreenHandler;
-        var renderer = new Renderer(canvasId);
+        var renderer = new Renderer(canvasId,type);
 
 
         this.addSprite = function (sprite) {
