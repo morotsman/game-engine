@@ -8,3 +8,5 @@ node lib/requirejs-2.1.20/r.js -o build_min.js
 
 Build non minified version:
 node lib/requirejs-2.1.20/r.js -o build.js
+
+test
