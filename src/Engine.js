@@ -1,6 +1,6 @@
-define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "renderer/Renderer"], function (util,offScreenHandlerFactory,collisionStrategy,Renderer) {
+define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "renderer/Renderer"], function (util, offScreenHandlerFactory, collisionStrategy, Renderer) {
 
-    function Engine(canvasId,type) {
+    function Engine(canvasId, type) {
 
         var requestId;
         var updateHandler;
@@ -8,7 +8,7 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
         var useCollisionDetector = false;
         var that = this;
         var globalOffScreenHandler;
-        var renderer = new Renderer(canvasId,type);
+        var renderer = new Renderer(canvasId, type);
 
 
         this.addSprite = function (sprite) {
@@ -19,10 +19,6 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
             sprites = sprites.concat(_sprites);
         };
 
-        var updateHandler = function (now, keyEvents) {
-
-        };
-
         var collisionHandler = function () {
 
         };
@@ -31,19 +27,31 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
 
         };
 
-        var createBufferedOffScreenDetector = function (bufferX, bufferY) {
+        var createBufferedOffScreenDetector = function () {
             return function (screenWidth, screenHeight, sprite, now) {
                 var position = sprite.getPosition();
                 var widthAndHeight = sprite.getWidthAndHeight();
                 var direction;
-                if (position.x < -bufferX) {
-                    return "left";
-                } else if (position.x > (screenWidth - widthAndHeight.width) + bufferX) {
-                    return "right";
-                } else if (position.y < -bufferY) {
-                    return "top";
-                } else if (position.y > (screenHeight - widthAndHeight.height) + bufferY) {
-                    return "down";
+                if (position.x < 0) {
+                    return {
+                        direction: "left",
+                        distance: position.x
+                    };
+                } else if (position.x > (screenWidth - widthAndHeight.width)) {
+                    return {
+                        direction: "right",
+                        distance: position.x - (screenWidth - widthAndHeight.width)
+                    };
+                } else if (position.y < 0) {
+                    return {
+                        direction: "top",
+                        distance: position.y
+                    };
+                } else if (position.y >= (screenHeight - widthAndHeight.height)) {
+                    return {
+                        direction: "down",
+                        distance: position.y - (screenHeight - widthAndHeight.height)
+                    };
                 }
                 return undefined;
             };
@@ -105,45 +113,66 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
             };
         };
 
-        this.start = function () {
-            var frameCounter = createFrameCounter();
-            var runner = function (now) {
-                frameCounter(now);
+        var frameCounter = createFrameCounter();
+        var runner = function (now) {
+            frameCounter(now);
+            requestId = requestAnimationFrame(runner);
 
-                var screenWidth = renderer.width();
-                var screenHeight = renderer.height();
-                renderer.clearRect(0, 0, screenWidth, screenHeight);
-
-                if (useCollisionDetector) {
-                    that.detectCollisions(now);
-                    sprites.forEach(function (sprite) {
-                        if (sprite.isDestroyed(now)) {
-                            sprite.handleDestruction(now);
-                            destructionHandler(sprite, now);
-                        }
-                    });
-                    sprites.forEach(function (sprite) {
-                        var direction = offScreenDetector(screenWidth, screenHeight, sprite);
-                        if (direction) {
-                            var handled = sprite.handleOffScreen(screenWidth, screenHeight, direction, now);
-                            if (!handled) {
-                                globalOffScreenHandler(sprite, screenWidth, screenHeight, direction, now);
-                            }
-                        }
-                    });
-                    sprites = sprites.filter(function (each) {
-                        return !each.isDestroyed(now);
-                    });
+            var screenWidth = renderer.width();
+            var screenHeight = renderer.height();
+            renderer.clearRect(0, 0, screenWidth, screenHeight);
+            
+            if (useCollisionDetector) {
+                that.detectCollisions(now);
+                for (var i = 0; i < sprites.length; i++) {
+                    if (sprites[i].isDestroyed(now)) {
+                        sprites[i].handleDestruction(now);
+                        destructionHandler(sprites[i], now);
+                    }
                 }
+            }
+            
+            if (updateHandler) {
                 updateHandler(now, keyEvents);
-                sprites.forEach(function (sprite) {
-                    sprite.handleKeyEvents(keyEvents, now);
-                    sprite.handleUpdate(now);
-                    sprite.draw(renderer, now);
-                });
-                //console.log(sprites.length);
-                requestId = requestAnimationFrame(runner);
-            };
+            }    
+            
+            for (var i = 0; i < sprites.length; i++) {
+                sprites[i].handleKeyEvents(keyEvents, now);
+                sprites[i].handleUpdate(now);  
+                sprites[i].tick();
+            }            
+            
+            for (var i = 0; i < sprites.length; i++) {
+                var offScreen = offScreenDetector(screenWidth, screenHeight, sprites[i]);
+                if (offScreen) {
+                    var handled = sprites[i].handleOffScreen(screenWidth, screenHeight, offScreen, now);
+                    if (!handled && globalOffScreenHandler) {
+                        globalOffScreenHandler(sprites[i], screenWidth, screenHeight, offScreen, now);
+                    }
+                }
+            }
+            
+           
+            var filteredSprites = [];
+            for (var i = 0; i < sprites.length; i++) {
+                if(!sprites[i].isDestroyed(now)){
+                    filteredSprites.push(sprites[i]);
+                }
+            }
+            
+
+            for(var i=0; i < filteredSprites.length; i++){
+                filteredSprites[i].draw(renderer);
+            }
+
+            
+            renderer.flush();
+            sprites = filteredSprites;
+
+            
+        };
+
+        this.start = function () {
 
 
             requestId = requestAnimationFrame(runner);
@@ -178,12 +207,14 @@ define(["Util","OffScreenHandlerFactory","RectangularCollisionStartegy", "render
 
 
         this.forEach = function (fun) {
-            sprites.forEach(fun);
+            for(var i = 0; i < sprites.length; i++ ){
+                fun(sprites[i]);
+            }
         };
 
 
     }
-    
+
     return Engine;
 
 });

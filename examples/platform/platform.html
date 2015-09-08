@@ -24,15 +24,14 @@
         </script>
 
         
-        <script type="text/javascript" src="../../dist/engine.js"></script>
+        <script type="text/javascript" src="engine.js"></script>
         <script type="text/javascript" src="knight.js"></script>
         <script type="text/javascript" src="platform.js"></script>
         <script>
 
-                var engine = new game_engine.engine("canvas1","canvas").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
+                var engine = new game_engine.engine("canvas1","webGL").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
 
-                
-                new Knight(engine).setImage("knight").setPosition(7,50);
+                new Knight(engine);
                 new Platform(engine).setImage("platform").setPosition(1,500).setWidthAndHeight(200,30);
                 new Platform(engine).setImage("platform").setPosition(100,460).setWidthAndHeight(50,30);
                 new Platform(engine).setImage("platform").setPosition(300,400).setWidthAndHeight(50,30).setSpeedY(2).withOffScreenHandler("wrapping");

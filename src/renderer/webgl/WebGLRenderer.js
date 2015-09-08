@@ -1,10 +1,17 @@
-define([], function () {
+define(["renderer/webgl/WebGLUtil","renderer/webgl/ImageRenderer"], function (webGLUtil,imageRenderer) {
+
 
 
     function WebGLRenderer(canvasId) {
         var canvas = document.getElementById(canvasId);
-        var context = canvas.getContext("2d");
-
+        var gl = webGLUtil.initGL(canvas);
+        if (!gl) {
+            return;
+        }
+        
+        imageRenderer.init(gl,canvas);
+        
+        
 
         this.height = function () {
             return canvas.height;
@@ -15,19 +22,24 @@ define([], function () {
         };
 
         this.clearRect = function () {
-            context.clearRect.apply(context, arguments);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         };
 
         this.save = function () {
-            context.save.apply(context, arguments);
+
         };
 
         this.restore = function () {
-            context.restore.apply(context, arguments);
+
         };
 
         this.drawImage = function () {
-            context.drawImage.apply(context, arguments);
+            imageRenderer.drawImage.apply(imageRenderer, arguments);         
+        };
+        
+        
+        this.flush = function () {
+            imageRenderer.flush();
         };
     }
     ;

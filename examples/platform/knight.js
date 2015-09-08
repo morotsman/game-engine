@@ -21,7 +21,7 @@ function Knight(engine){
             }
             if(currentDirection !== "right"){
                 currentDirection = "right";
-                that.setAnimation("right_knight",34, 24, 16, 22, 16, 0, speed, 6,6).setPosition(position.x,position.y).setWidthAndHeight(30, 30);
+                this.setImage("right_knight",6,6,16,22,100,34,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
             }            
         }else if (keys[37]) {//left
             if(that.getSpeedX() > -maxSpeed){
@@ -29,15 +29,15 @@ function Knight(engine){
             }
             if(currentDirection !== "left"){
                 currentDirection = "left";
-                that.setAnimation("left_knight",125, 24, 16, 22, -16, 0, speed, 6,6).setPosition(position.x,position.y).setWidthAndHeight(30, 30);
+                this.setImage("left_knight",6,6,16,22,100,45,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
             }              
         } else{
             that.setSpeedX(0);
             if(currentDirection !== "none"){
                 if(currentDirection==="right"){
-                   that.setAnimation("right_knight",34, 24, 16, 22, 16, 0, speed, 1,1).setPosition(position.x,position.y).setWidthAndHeight(30, 30); 
+                   this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
                 }else{
-                  that.setAnimation("left_knight",125, 24, 16, 22, -16, 0, speed, 1,1).setPosition(position.x,position.y).setWidthAndHeight(30, 30);  
+                  this.setImage("left_knight",1,6,16,22,100,44,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
                 }
                
                 currentDirection = "none";
@@ -61,6 +61,6 @@ function Knight(engine){
         onGround = _onGround;
     };
 
-    this.setAnimation("right_knight",34, 24, 16, 22, 16, 0, speed, 1,1).setWidthAndHeight(30, 30);
+    this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(7,50).setWidthAndHeight(30,30);
     
 }

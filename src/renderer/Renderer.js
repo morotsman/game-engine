@@ -1,4 +1,4 @@
-define(["renderer/CanvasRenderer","renderer/WebGLRenderer"], function (CanvasRenderer,WebGLRenderer) {
+define(["renderer/CanvasRenderer","renderer/webgl/WebGLRenderer"], function (CanvasRenderer,WebGLRenderer) {
 
 
     function Renderer(canvasId, type) {

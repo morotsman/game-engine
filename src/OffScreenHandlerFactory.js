@@ -4,21 +4,22 @@ define([], function () {
 
 
         var createBouncingOffScreenHandler = function (bounce, friction) {
-            return function (sprite, screenWidth, screenHeight, direction, now) {
+            return function (sprite, screenWidth, screenHeight, offScreen, now) {
                 var widthAndHeight = sprite.getWidthAndHeight();
                 var position = sprite.getPosition();
-                if (direction === "down") {
-                    sprite.setPosition(position.x, screenHeight - widthAndHeight.height);
+                if (offScreen.direction === "down") {
+                    var yPos = screenHeight - widthAndHeight.height - offScreen.distance;
+                    sprite.setPosition(position.x, offScreen.distance===0?yPos+1:yPos);
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (direction === "top") {
+                } else if (offScreen.direction === "top") {
                     sprite.setPosition(position.x, widthAndHeight.height);
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (direction === "right") {
+                } else if (offScreen.direction === "right") {
                     sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
-                } else if (direction === "left") {
+                } else if (offScreen.direction === "left") {
                     sprite.setPosition(0, position.y);
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
                 }
@@ -27,17 +28,17 @@ define([], function () {
             };
         };
 
-        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, direction, now) {
+        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, offScreen, now) {
             var position = sprite.getPosition();
             var widthAndHeight = sprite.getWidthAndHeight();
-            if (direction === "right") {
+            if (offScreen.direction === "right") {
                 sprite.setPosition(0, position.y);
-            } else if (direction === "left") {
+            } else if (offScreen.direction === "left") {
                 sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
             }
-            if (direction === "down") {
+            if (offScreen.direction === "down") {
                 sprite.setPosition(position.x, 0);
-            } else if (direction === "top") {
+            } else if (offScreen.direction === "top") {
                 sprite.setPosition(position.x, screenHeight - widthAndHeight.height);
             }
         };

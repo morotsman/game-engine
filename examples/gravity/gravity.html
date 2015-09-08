@@ -12,6 +12,7 @@
 
 
 
+
         <canvas id="canvas1" width="800" height="600" style="border:1px solid #000000;"></canvas>
 
 
@@ -21,36 +22,47 @@
         <script>
         </script>
 
-        
-        <script type="text/javascript" src="../../dist/engine.js"></script>
-        
+
+        <script type="text/javascript" src="engine.js"></script>
+
         <script>
-                var gravity = 1;
-                var bounce = 0.9;
-                var friction = 0.05;
+            var gravity = 1.1;
+            var bounce = 1;
+            var friction = 0;
 
-                var engine = new game_engine.engine("canvas1","canvas").withCollisionDetector().withGlobalOffScreenHandler("bouncing",bounce,friction);
-                
-
-
-                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(200, 100).setSpeedX(2);
-                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 300);
-                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 200);
-                new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(50, 50).setPosition(400, 50).setSpeedX(-6);
-                
+            var engine = new game_engine.engine("canvas1", "webGL").withGlobalOffScreenHandler("bouncing", bounce, friction);
 
 
-                
 
-                engine.withUpdateHandler(function (timeSinceStart, keyEvents) {
-                    engine.forEach(function (sprite) {
-                        sprite.addForceVector(270, gravity);
-                    });
+            var prev = 0;
+            var counter = 0;
+            engine.withUpdateHandler(function (timeSinceStart, keyEvents) {
+                if (counter < 20) {
+                    for (var x = 0; x < 1; x++) {
+                        var xPos = Math.floor((Math.random() * 700));
+                        new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(20, 20).setPosition(xPos, 10);
+                        counter = counter + 1;
+                        if (counter % 100 === 0) {
+                            console.log("counter: " + counter);
+                        }
+                    }
+                    prev = timeSinceStart;
+
+
+
+                }
+
+
+
+                engine.forEach(function (sprite) {
+                    var speedY = sprite.getSpeedY() - gravity;
+                    sprite.setSpeedY(speedY);
                 });
+            });
 
 
 
-                engine.start();
+            engine.start();
 
 
 

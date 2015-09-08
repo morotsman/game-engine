@@ -23,12 +23,12 @@
         </script>
 
         
-        <script type="text/javascript" src="../../dist/engine.js"></script>
+        <script type="text/javascript" src="engine.js"></script>
         <script type="text/javascript" src="platform.js"></script>
         <script>
 
 
-                var engine = new game_engine.engine("canvas1","canvas").withGlobalOffScreenHandler("bouncing",0,0).withCollisionDetector();
+                var engine = new game_engine.engine("canvas1","webGL").withGlobalOffScreenHandler("bouncing",0,0).withCollisionDetector();
                 
                 
                 new game_engine.sprite(engine).setImage("ball").setWidthAndHeight(10, 10).setPosition(25, 10).setSpeedY(-37);

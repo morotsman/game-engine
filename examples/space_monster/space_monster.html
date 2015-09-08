@@ -26,7 +26,7 @@
         <script>
         </script>
 
-        <script type="text/javascript" src="../../dist/engine.js"></script>
+        <script type="text/javascript" src="engine.js"></script>
         <script type="text/javascript" src="scripts/sprites/BaseSprite.js"></script>
         <script type="text/javascript" src="scripts/sprites/Rocket.js"></script>       
         <script type="text/javascript" src="scripts/sprites/UfoType1.js"></script>
@@ -41,8 +41,8 @@
             var screenWidth = 800;
             var screenHeight = 600;
 
-            var engine = new game_engine.engine("canvas1","canvas").withCollisionDetector();
-
+            var engine = new game_engine.engine("canvas1","webGL").withCollisionDetector();
+            
             var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
 
 
@@ -58,11 +58,12 @@
             engine.withDestructionHandler(function (sprite) {
                 points = points + sprite.getPoints();
                 if (sprite.getPoints() !== 0 && points !== 0) {
-                    if (points % 20000 === 0) {
+                   if (points % 20000 === 0) {
                         new Bonus(engine, screenWidth);
                     }
                 }
             });
+            
 
 
 

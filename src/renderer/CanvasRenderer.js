@@ -26,9 +26,20 @@ define([], function () {
             context.restore.apply(context, arguments);
         };
 
-        this.drawImage = function () {
-            context.drawImage.apply(context, arguments);
+        this.drawImage = function (sprite) {
+            if (!sprite.getSpritesPerRow()) {
+                context.drawImage(sprite.getImage(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+            } else {
+                var row = Math.floor(sprite.getCurrentFrameNumber() / sprite.getSpritesPerRow());
+                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.getCurrentFrameNumber() - (row * sprite.getSpritesPerRow()));
+                var sy = sprite.getSpriteY() + sprite.getSpriteHeight() * row;
+                context.drawImage(sprite.getImage(), sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+            }
+
         };
+
+        this.flush = function () {
+        }
     }
     ;
 

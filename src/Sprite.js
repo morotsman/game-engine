@@ -18,12 +18,75 @@ define(["OffScreenHandlerFactory","Util", "Animator"], function (offScreenHandle
         var offScreenHandler;
 
         var keyEvents = {};
+        
+        var numberOfFrames;
+        var spritesPerRow; 
+        var spriteWidth;
+        var spriteHeight;
+        var currentFrameNumber = 0;
+        var animationSpeed = 0;
+        var animationCycle = 0;
+        var rotation = 0;
+        var spriteX = 0;
+        var spriteY = 0;
 
+        this.getRotation = function(){
+            return rotation;
+        };
 
+        this.getSpritesPerRow = function(){
+            return spritesPerRow;
+        };
+        
+        this.getSpriteWidth = function(){
+            return spriteWidth;
+        };
+        
+        this.getSpriteHeight = function(){
+            return spriteHeight;
+        };
+        
+        this.getCurrentFrameNumber = function(){
+            return currentFrameNumber;
+        };
+        
+        this.getImage = function(){
+            return image;
+        };
+        
+        this.getX = function(){
+            return x;
+        };
+        
+        this.getY = function(){
+            return y;
+        };
+        
+        this.getWidth = function(){
+            return width;
+        };
+        
+        this.getHeight = function(){
+            return height;
+        };
 
+        this.getSpriteX = function(){
+            return spriteX;
+        };
+        
+        this.getSpriteY = function(){
+            return spriteY;
+        };        
 
-        this.setImage = function (_image) {
+        this.setImage = function (_image, _numberOfFrames, _spritesPerRow, _spriteWidth, _spriteHeight,_animationSpeed, _spriteX, _spriteY) {
             image = document.getElementById(_image);
+            numberOfFrames = _numberOfFrames?_numberOfFrames:1;
+            spritesPerRow = _spritesPerRow;
+            spriteWidth = _spriteWidth;
+            spriteHeight = _spriteHeight;
+            animationSpeed = _animationSpeed;
+            spriteX = _spriteX?_spriteX:0;
+            spriteY = _spriteY?_spriteY:0;
             return this;
         };
 
@@ -183,31 +246,39 @@ define(["OffScreenHandlerFactory","Util", "Animator"], function (offScreenHandle
             };
         };
 
+        var prevDraw;
         var drawImage = function (context) {
             if (!image) {
                 return;
             }
-            x = x + speedX;
-            y = y - speedY;
 
-
-            if (width && height) {
-                context.drawImage(image, x, y, width, height);
-            } else if (width && !height) {
-                context.drawImage(image, x, y, width);
-            } else if (height) {
-                context.drawImage(image, x, y, width, height);
-            } else {
-                context.drawImage(image, x, y);
+            context.drawImage(that);
+           
+            var now = new Date().getTime();
+            if(!prevDraw || (now-prevDraw)>animationSpeed){
+                currentFrameNumber++;
+                prevDraw = now;
             }
+            
+            if(currentFrameNumber >= numberOfFrames){
+               currentFrameNumber=0; 
+               animationCycle++;
+            }
+        };
+        
+        this.getAnimationCycle = function(){
+            return animationCycle;
         };
 
         var animate = function (context) {
-            x = x + speedX;
-            y = y - speedY;
             animation.setPosition(x, y);
             animation.setWidthAndHeight(width, height);
             return animation.animate(context);
+        };
+        
+        this.tick = function(){
+            x = x + speedX;
+            y = y - speedY;           
         };
 
         this.draw = function (context) {
