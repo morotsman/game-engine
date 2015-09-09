@@ -1,4 +1,4 @@
-define(["OffScreenHandlerFactory","Util", "Animator"], function (offScreenHandlerFactory,util, Animator) {
+define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,util) {
 
     function Sprite(engine) {
 
@@ -288,7 +288,6 @@ define(["OffScreenHandlerFactory","Util", "Animator"], function (offScreenHandle
             } else {
                 drawImage(context);
             }
-            //that.drawCircle(context);
             context.restore();
         };
 
@@ -296,25 +295,6 @@ define(["OffScreenHandlerFactory","Util", "Animator"], function (offScreenHandle
             return animation.isCompleted();
         };
 
-
-        this.setAnimation = function (_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed, numberOfPhases, numberOfColumns) {
-            animation = new Animator(_animation, startX, startY, width, height, columnWidth, rowHeight, animationSpeed, numberOfPhases, numberOfColumns);
-            return this;
-        };
-
-
-        this.setAnimator = function (animator) {
-            animation = animator;
-            return this;
-        };
-
-
-
-        this.drawCircle = function (ctx) {
-            ctx.beginPath();
-            ctx.arc(x + width / 2, y + height / 2, radius, 0, 2 * Math.PI);
-            ctx.stroke();
-        };
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {
             if (offScreenHandler) {

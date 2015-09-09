@@ -41,9 +41,9 @@
             var screenWidth = 800;
             var screenHeight = 600;
 
-            var engine = new game_engine.engine("canvas1","webGL").withCollisionDetector();
+            var engine = new game_engine.engine("canvas1","canvas").withCollisionDetector();
             
-            var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(30, 50).setPosition(400, 500);
+            var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(32, 64).setPosition(400, 500);
 
 
             var enemyGenerator = new EnemyGenerator(engine, rocket);
