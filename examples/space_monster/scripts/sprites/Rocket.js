@@ -49,13 +49,12 @@ function Rocket(engine) {
         if (that.cannonFired === true) {
 
             that.cannonFired = false;
-            var position = that.getPosition();
-            new Bullet(engine, position.x, position.y - that.getRadius()*2, 5);
+            new Bullet(engine, that.getX(), that.getY() - that.getRadius()*2, 5);
             if (bonuses.numberOfCanons > 1) {
-                new Bullet(engine, position.x + 20, position.y - that.getRadius()*2, 5).setTeam("Rocket");
+                new Bullet(engine, that.getX() + 20, that.getY() - that.getRadius()*2, 5).setTeam("Rocket");
             }
             if (bonuses.numberOfCanons > 2) {
-                new Bullet(engine, position.x - 20, position.y - that.getRadius()*2, 5).setTeam("Rocket");
+                new Bullet(engine, that.getX() - 20, that.getY() - that.getRadius()*2, 5).setTeam("Rocket");
             }
         }
         return result;
@@ -66,7 +65,7 @@ function Rocket(engine) {
     };
 
     this.handleDestruction = function () {
-        new Explosion(engine, this.getPosition().x, this.getPosition().y, this.getSpeedX(), this.getSpeedY());
+        new Explosion(engine, this.getX(), this.getY(), this.getSpeedX(), this.getSpeedY());
     };
 
 

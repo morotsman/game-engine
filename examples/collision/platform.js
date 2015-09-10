@@ -17,20 +17,16 @@ function Platform(engine) {
     this.handleCollision = function (other,side) { 
         var onGround = false;
         if (side === "top") {
-            var position = other.getPosition();
-            other.setPosition(position.x, that.getPosition().y - other.getWidthAndHeight().height);            
+            other.setPosition(other.getX(), that.getY() - other.getHeight());            
             other.setSpeedY(0);
         }else if(side === "down"){
-            var position = other.getPosition();
-            other.setPosition(position.x, that.getPosition().y + that.getWidthAndHeight().height);               
+            other.setPosition(other.getX(), that.getY() + that.getHeight());               
             other.setSpeedY(0);
         }else if(side === "left"){
-            var position = other.getPosition();
-            other.setPosition(that.getPosition().x - other.getWidthAndHeight().width, position.y);
+            other.setPosition(that.getX() - other.getWidth(), other.getY());
             other.setSpeedX(0);  
         }else if(side === "right"){
-            var position = other.getPosition();
-            other.setPosition(that.getPosition().x + that.getWidthAndHeight().width, position.y);
+            other.setPosition(that.getX() + that.getWidth(), other.getY());
             other.setSpeedX(0);           
         }
         if(other.setOnGround){

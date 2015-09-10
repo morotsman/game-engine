@@ -14,14 +14,13 @@ function Knight(engine){
     var onGround;
     
     this.handleKeyEvents = function (keys) {
-        var position = that.getPosition();
         if (keys[39]) {//right
             if(that.getSpeedX() < maxSpeed){
                 throttledWalk(0,force);
             }
             if(currentDirection !== "right"){
                 currentDirection = "right";
-                this.setImage("right_knight",6,6,16,22,100,34,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
+                this.setImage("right_knight",6,6,16,22,100,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
             }            
         }else if (keys[37]) {//left
             if(that.getSpeedX() > -maxSpeed){
@@ -29,15 +28,15 @@ function Knight(engine){
             }
             if(currentDirection !== "left"){
                 currentDirection = "left";
-                this.setImage("left_knight",6,6,16,22,100,45,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
+                this.setImage("left_knight",6,6,16,22,100,45,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
             }              
         } else{
             that.setSpeedX(0);
             if(currentDirection !== "none"){
                 if(currentDirection==="right"){
-                   this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
+                   this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
                 }else{
-                  this.setImage("left_knight",1,6,16,22,100,44,24).setPosition(position.x,position.y).setWidthAndHeight(30,30);
+                  this.setImage("left_knight",1,6,16,22,100,44,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
                 }
                
                 currentDirection = "none";

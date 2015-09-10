@@ -18,8 +18,7 @@ function UfoType2(engine,rocket) {
 
 
     var inBreakZone = function (sprite) {
-        var position = sprite.getPosition();
-        return position.x > 725 || position.x < 40 || position.y < 40 || position.y > 525;
+        return sprite.getX() > 725 || sprite.getX() < 40 || sprite.getY() < 40 || sprite.getY() > 525;
     };
 
     var reverseAngle = function (angle) {
@@ -85,7 +84,7 @@ function UfoType2(engine,rocket) {
     };
     
     this.handleDestruction = function(){
-        new Explosion(engine, this.getPosition().x,this.getPosition().y,this.getSpeedX(),this.getSpeedY());
+        new Explosion(engine, this.getX(),this.getY(),this.getSpeedX(),this.getSpeedY());
     };   
 
 

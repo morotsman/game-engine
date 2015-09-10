@@ -17,8 +17,7 @@ function Platform(engine) {
         if (side === "top") {
             other.setSpeedY(that.getSpeedY());
             other.addForceVector(90, 0.1);
-            var position = other.getPosition();
-            other.setPosition(position.x, that.getPosition().y - other.getWidthAndHeight().height);
+            other.setPosition(other.getX(), that.getY() - other.getHeight());
             onGround = true;
         }else if(side === "down"){
             var speedY = other.getSpeedY();

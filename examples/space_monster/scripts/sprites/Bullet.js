@@ -19,7 +19,7 @@ function Bullet(engine,x,y, speed){
     };      
     
     this.handleDestruction = function(){
-        new Explosion(engine, this.getPosition().x,this.getPosition().y,0,0);
+        new Explosion(engine, this.getX(),this.getY(),0,0);
     };    
              
     this.handleCollision = function(other){

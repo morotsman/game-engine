@@ -469,22 +469,20 @@ define('OffScreenHandlerFactory',[], function () {
 
         var createBouncingOffScreenHandler = function (bounce, friction) {
             return function (sprite, screenWidth, screenHeight, offScreen, now) {
-                var widthAndHeight = sprite.getWidthAndHeight();
-                var position = sprite.getPosition();
                 if (offScreen.direction === "down") {
-                    var yPos = screenHeight - widthAndHeight.height - offScreen.distance;
-                    sprite.setPosition(position.x, offScreen.distance===0?yPos+1:yPos);
+                    var yPos = screenHeight - sprite.getHeight() - offScreen.distance;
+                    sprite.setPosition(sprite.getX(), offScreen.distance===0?yPos+1:yPos);
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
                 } else if (offScreen.direction === "top") {
-                    sprite.setPosition(position.x, widthAndHeight.height);
+                    sprite.setPosition(sprite.getX(), sprite.getHeight());
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
                 } else if (offScreen.direction === "right") {
-                    sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
+                    sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
                 } else if (offScreen.direction === "left") {
-                    sprite.setPosition(0, position.y);
+                    sprite.setPosition(0, sprite.getY());
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
                 }
 
@@ -493,17 +491,15 @@ define('OffScreenHandlerFactory',[], function () {
         };
 
         var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, offScreen, now) {
-            var position = sprite.getPosition();
-            var widthAndHeight = sprite.getWidthAndHeight();
             if (offScreen.direction === "right") {
-                sprite.setPosition(0, position.y);
+                sprite.setPosition(0, sprite.getY());
             } else if (offScreen.direction === "left") {
-                sprite.setPosition(screenWidth - widthAndHeight.width, position.y);
+                sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
             }
             if (offScreen.direction === "down") {
-                sprite.setPosition(position.x, 0);
+                sprite.setPosition(sprite.getX(), 0);
             } else if (offScreen.direction === "top") {
-                sprite.setPosition(position.x, screenHeight - widthAndHeight.height);
+                sprite.setPosition(sprite.getX(), screenHeight - sprite.getHeight());
             }
         };
 
@@ -706,12 +702,12 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 
         var spriteToAABB = function (sprite) {
             return {
-                x: sprite.getPosition().x,
-                y: sprite.getPosition().y,
-                maxX: sprite.getPosition().x + sprite.getWidthAndHeight().width,
-                maxY: sprite.getPosition().y + sprite.getWidthAndHeight().height,
-                width: sprite.getWidthAndHeight().width,
-                height: sprite.getWidthAndHeight().height
+                x: sprite.getX(),
+                y: sprite.getY(),
+                maxX: sprite.getX() + sprite.getWidth(),
+                maxY: sprite.getY() + sprite.getHeight(),
+                width: sprite.getWidth(),
+                height: sprite.getHeight()
             };
         };
 
@@ -1486,28 +1482,27 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
         var createBufferedOffScreenDetector = function () {
             return function (screenWidth, screenHeight, sprite, now) {
-                var position = sprite.getPosition();
-                var widthAndHeight = sprite.getWidthAndHeight();
-                var direction;
-                if (position.x < 0) {
+                var width = sprite.getWidth();
+                var height = sprite.getHeight();
+                if (sprite.getX() < 0) {
                     return {
                         direction: "left",
-                        distance: position.x
+                        distance: sprite.getX()
                     };
-                } else if (position.x > (screenWidth - widthAndHeight.width)) {
+                } else if (sprite.getX() > (screenWidth - width)) {
                     return {
                         direction: "right",
-                        distance: position.x - (screenWidth - widthAndHeight.width)
+                        distance: sprite.getX() - (screenWidth - width)
                     };
-                } else if (position.y < 0) {
+                } else if (sprite.getY() < 0) {
                     return {
                         direction: "top",
-                        distance: position.y
+                        distance: sprite.getY()
                     };
-                } else if (position.y >= (screenHeight - widthAndHeight.height)) {
+                } else if (sprite.getY() >= (screenHeight - height)) {
                     return {
                         direction: "down",
-                        distance: position.y - (screenHeight - widthAndHeight.height)
+                        distance: sprite.getY() - (screenHeight - height)
                     };
                 }
                 return undefined;
@@ -1572,9 +1567,9 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
         var frameCounter = createFrameCounter();
         var runner = function (now) {
-            frameCounter(now);
             requestId = requestAnimationFrame(runner);
-
+            frameCounter(now);
+            
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
@@ -1781,14 +1776,14 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             y = _y;
             return this;
         };
-
+/*
         this.getPosition = function () {
             return {
                 x: x,
                 y: y
             };
         };
-
+*/
         this.increaseSpeedX = function (amount) {
             speedX = speedX + amount;
             return this;
@@ -1823,15 +1818,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             radius = width > height ? width / 2 : height / 2;
             return this;
         };
-
-        this.getWidthAndHeight = function () {
-            return {
-                width: width,
-                height: height
-            };
-        };
-
-
+        
 
         this.setAngle = function (_angle) {
             angle = _angle;
@@ -1910,9 +1897,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
 
         this.getAngleAndDistance = function (other) {
-            var otherPosition = other.getPosition();
-            var distanceX = otherPosition.x - x;
-            var distanceY = otherPosition.y - y;
+            var distanceX = other.getX() - x;
+            var distanceY = other.getY() - y;
             var angle = Math.atan2(distanceY, distanceX) * 180 / Math.PI;
 
             if (angle > 0) {

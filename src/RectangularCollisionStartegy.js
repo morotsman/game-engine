@@ -64,12 +64,12 @@ define(["line-intersect"], function (lineIntersect) {
 
         var spriteToAABB = function (sprite) {
             return {
-                x: sprite.getPosition().x,
-                y: sprite.getPosition().y,
-                maxX: sprite.getPosition().x + sprite.getWidthAndHeight().width,
-                maxY: sprite.getPosition().y + sprite.getWidthAndHeight().height,
-                width: sprite.getWidthAndHeight().width,
-                height: sprite.getWidthAndHeight().height
+                x: sprite.getX(),
+                y: sprite.getY(),
+                maxX: sprite.getX() + sprite.getWidth(),
+                maxY: sprite.getY() + sprite.getHeight(),
+                width: sprite.getWidth(),
+                height: sprite.getHeight()
             };
         };
 

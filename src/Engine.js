@@ -29,28 +29,27 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
 
         var createBufferedOffScreenDetector = function () {
             return function (screenWidth, screenHeight, sprite, now) {
-                var position = sprite.getPosition();
-                var widthAndHeight = sprite.getWidthAndHeight();
-                var direction;
-                if (position.x < 0) {
+                var width = sprite.getWidth();
+                var height = sprite.getHeight();
+                if (sprite.getX() < 0) {
                     return {
                         direction: "left",
-                        distance: position.x
+                        distance: sprite.getX()
                     };
-                } else if (position.x > (screenWidth - widthAndHeight.width)) {
+                } else if (sprite.getX() > (screenWidth - width)) {
                     return {
                         direction: "right",
-                        distance: position.x - (screenWidth - widthAndHeight.width)
+                        distance: sprite.getX() - (screenWidth - width)
                     };
-                } else if (position.y < 0) {
+                } else if (sprite.getY() < 0) {
                     return {
                         direction: "top",
-                        distance: position.y
+                        distance: sprite.getY()
                     };
-                } else if (position.y >= (screenHeight - widthAndHeight.height)) {
+                } else if (sprite.getY() >= (screenHeight - height)) {
                     return {
                         direction: "down",
-                        distance: position.y - (screenHeight - widthAndHeight.height)
+                        distance: sprite.getY() - (screenHeight - height)
                     };
                 }
                 return undefined;
@@ -115,9 +114,9 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
 
         var frameCounter = createFrameCounter();
         var runner = function (now) {
-            frameCounter(now);
             requestId = requestAnimationFrame(runner);
-
+            frameCounter(now);
+            
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);

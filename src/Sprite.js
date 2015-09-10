@@ -97,14 +97,14 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             y = _y;
             return this;
         };
-
+/*
         this.getPosition = function () {
             return {
                 x: x,
                 y: y
             };
         };
-
+*/
         this.increaseSpeedX = function (amount) {
             speedX = speedX + amount;
             return this;
@@ -139,15 +139,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             radius = width > height ? width / 2 : height / 2;
             return this;
         };
-
-        this.getWidthAndHeight = function () {
-            return {
-                width: width,
-                height: height
-            };
-        };
-
-
+        
 
         this.setAngle = function (_angle) {
             angle = _angle;
@@ -226,9 +218,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
 
         this.getAngleAndDistance = function (other) {
-            var otherPosition = other.getPosition();
-            var distanceX = otherPosition.x - x;
-            var distanceY = otherPosition.y - y;
+            var distanceX = other.getX() - x;
+            var distanceY = other.getY() - y;
             var angle = Math.atan2(distanceY, distanceX) * 180 / Math.PI;
 
             if (angle > 0) {

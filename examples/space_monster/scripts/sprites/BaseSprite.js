@@ -39,11 +39,10 @@ function BaseSprite() {
 
 
     var getOffScreenHandler = function (sprite, screenWidth, screenHeight, direction, now) {
-        var position = sprite.getPosition();
-        if (position.x > screenWidth + 300 || position.x < -300) {
+        if (sprite.getX() > screenWidth + 300 || sprite.getX() < -300) {
             sprite.setDestroyed();
         }
-        if (position.y > screenHeight + 300 || position.y < -300) {
+        if (sprite.getY() > screenHeight + 300 || sprite.getY() < -300) {
             sprite.setDestroyed();
         }
 

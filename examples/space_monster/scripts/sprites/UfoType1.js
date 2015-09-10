@@ -13,26 +13,23 @@ function UfoType1(engine, rocket) {
 
     var aggressiveStrategy = function (sprite) {
         var result = [];
-        var rocketPosition = rocket.getPosition();
 
-        var ufoPosition = sprite.getPosition();
-        if (Math.abs(ufoPosition.x - rocketPosition.x) < 10) {
+        if (Math.abs(sprite.getX() - rocket.getX()) < 10) {
             throttledFireCannon();
         }
 
         if (fireCannon) {
-            new Bullet(engine, ufoPosition.x, ufoPosition.y + sprite.getRadius() + 30, -6).setTeam("Enemy");
+            new Bullet(engine, sprite.getX(), sprite.getY() + sprite.getRadius() + 30, -6).setTeam("Enemy");
             fireCannon = false;
         }
         return result;
     };
 
     this.handleUpdate = function () {
-        var position = this.getPosition();
-        if (position.x > 700) {
+        if (this.getX() > 700) {
             this.setSpeedX(-2);
         }
-        if (position.x < 100) {
+        if (this.getX() < 100) {
             this.setSpeedX(2);
         }
         var bullets = aggressiveStrategy(this);
@@ -59,7 +56,7 @@ function UfoType1(engine, rocket) {
     };
     
     this.handleDestruction = function(){
-        new Explosion(engine, this.getPosition().x,this.getPosition().y,this.getSpeedX(),this.getSpeedY());
+        new Explosion(engine, this.getX(),this.getY(),this.getSpeedX(),this.getSpeedY());
     };      
 
     
