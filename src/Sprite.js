@@ -97,14 +97,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             y = _y;
             return this;
         };
-/*
-        this.getPosition = function () {
-            return {
-                x: x,
-                y: y
-            };
-        };
-*/
+        
         this.increaseSpeedX = function (amount) {
             speedX = speedX + amount;
             return this;
@@ -163,30 +156,35 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             return angle;
         };
 
-        this.relativeForce = function (other) {
+        this.relativeForceForce = function (other) {
             var relativeX = speedX - other.getSpeedX();
             var relativeY = speedY - other.getSpeedY();
-            return {
-                force: calulateForce(relativeX, relativeY),
-                angle: calculateAngle(relativeX, relativeY)
-            };
+            return calulateForce(relativeX, relativeY);
         };
-
-        this.relativeSpeed = function (other) {
+        
+        this.relativeForceAngle = function (other) {
             var relativeX = speedX - other.getSpeedX();
             var relativeY = speedY - other.getSpeedY();
-            return {
-                x: -relativeX,
-                y: relativeY
-            };
-        };
+            return calculateAngle(relativeX, relativeY);
+        };        
 
-        this.getForceVector = function () {
-            return {
-                force: calulateForce(speedX, speedY),
-                angle: calculateAngle(speedX, speedY)
-            };
+        this.relativeSpeedX = function (other) {
+            var relativeX = speedX - other.getSpeedX();
+            return -relativeX;
         };
+        
+        this.relativeSpeedY = function (other) {
+            var relativeY = speedY - other.getSpeedY();
+            return relativeY;
+        };        
+
+        this.getForceVectorForce = function () {
+            return calulateForce(speedX, speedY);
+        };
+        
+        this.getForceVectorAngle = function () {
+            return calculateAngle(speedX, speedY);
+        };        
 
         this.getRadius = function () {
             return radius;

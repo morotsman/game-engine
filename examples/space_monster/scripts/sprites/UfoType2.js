@@ -38,8 +38,7 @@ function UfoType2(engine,rocket) {
 
     var searchUpdateStrategy = function () {
         if (inBreakZone(that)) {
-            var forceVector = that.getForceVector();
-            breakeAngle = reverseAngle(forceVector.angle);
+            breakeAngle = reverseAngle(that.getForceVectorAngle());
             currentUpdateStrategy = breakMoveStrategy;
             return;
         }
@@ -59,9 +58,8 @@ function UfoType2(engine,rocket) {
     };
 
     var breakMoveStrategy = function () {
-        var forceVector = that.getForceVector();
-        throttledBreakForceVector(breakeAngle, forceVector.force / 2);
-        if (forceVector.force < 0.01) {
+        throttledBreakForceVector(breakeAngle, that.getForceVectorForce() / 2);
+        if (that.getForceVectorForce() < 0.01) {
             currentUpdateStrategy = initUpdateStrategy;
         }
     };
