@@ -116,59 +116,82 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-            
+
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
-            
+
             if (useCollisionDetector) {
                 that.detectCollisions(now);
                 for (var i = 0; i < sprites.length; i++) {
-                    if (sprites[i].isDestroyed(now)) {
-                        sprites[i].handleDestruction(now);
-                        destructionHandler(sprites[i], now);
+                    var sprite = sprites[i];
+                    if (sprite.isDestroyed(now)) {
+                        sprite.handleDestruction(now);
+                        destructionHandler(sprite, now);
                     }
                 }
             }
-            
+
             if (updateHandler) {
                 updateHandler(now, keyEvents);
-            }    
-            
+            }
+
             for (var i = 0; i < sprites.length; i++) {
-                sprites[i].handleKeyEvents(keyEvents, now);
-                sprites[i].handleUpdate(now);  
-                sprites[i].tick();
-            }            
-            
-            for (var i = 0; i < sprites.length; i++) {
-                var offScreen = offScreenDetector(screenWidth, screenHeight, sprites[i]);
-                if (offScreen) {
-                    var handled = sprites[i].handleOffScreen(screenWidth, screenHeight, offScreen, now);
+                var sprite = sprites[i];
+                sprite.handleKeyEvents(keyEvents, now);
+                sprite.handleUpdate(now);
+                sprite.tick();
+
+                var width = sprite.getWidth();
+                var height = sprite.getHeight();
+                var direction = undefined;
+                var distance = undefined;
+                if (sprite.getX() < 0) {
+                    direction = "left";
+                    distance = sprite.getX();
+                } else if (sprite.getX() > (screenWidth - width)) {
+                    direction = "right";
+                    distance = sprite.getX() - (screenWidth - width);
+                } else if (sprite.getY() < 0) {
+                    direction = "top";
+                    distance = sprite.getY();
+                } else if (sprite.getY() >= (screenHeight - height)) {
+                    direction = "down";
+                    distance = sprite.getY() - (screenHeight - height);
+                }
+
+
+
+                if (direction) {
+                    var handled = sprite.handleOffScreen(screenWidth, screenHeight, direction, distance, now);
                     if (!handled && globalOffScreenHandler) {
-                        globalOffScreenHandler(sprites[i], screenWidth, screenHeight, offScreen, now);
+                        globalOffScreenHandler(sprite, screenWidth, screenHeight, direction, distance, now);
                     }
                 }
             }
-            
-           
+
+
+
             var filteredSprites = [];
             for (var i = 0; i < sprites.length; i++) {
-                if(!sprites[i].isDestroyed(now)){
+                if (!sprites[i].isDestroyed(now)) {
                     filteredSprites.push(sprites[i]);
                 }
             }
-            
 
-            for(var i=0; i < filteredSprites.length; i++){
+
+            var filteredSprites = sprites;
+
+
+            for (var i = 0; i < filteredSprites.length; i++) {
                 filteredSprites[i].draw(renderer);
             }
 
-            
+
             renderer.flush();
             sprites = filteredSprites;
 
-            
+
         };
 
         this.start = function () {
@@ -206,7 +229,7 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
 
 
         this.forEach = function (fun) {
-            for(var i = 0; i < sprites.length; i++ ){
+            for (var i = 0; i < sprites.length; i++) {
                 fun(sprites[i]);
             }
         };

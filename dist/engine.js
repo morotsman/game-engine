@@ -468,20 +468,20 @@ define('OffScreenHandlerFactory',[], function () {
 
 
         var createBouncingOffScreenHandler = function (bounce, friction) {
-            return function (sprite, screenWidth, screenHeight, offScreen, now) {
-                if (offScreen.direction === "down") {
-                    var yPos = screenHeight - sprite.getHeight() - offScreen.distance;
-                    sprite.setPosition(sprite.getX(), offScreen.distance===0?yPos+1:yPos);
+            return function (sprite, screenWidth, screenHeight, direction,distance, now) {
+                if (direction === "down") {
+                    var yPos = screenHeight - sprite.getHeight() - distance;
+                    sprite.setPosition(sprite.getX(), distance===0?yPos+1:yPos);
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (offScreen.direction === "top") {
+                } else if (direction === "top") {
                     sprite.setPosition(sprite.getX(), sprite.getHeight());
                     sprite.setSpeedY(-sprite.getSpeedY() * bounce);
                     sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (offScreen.direction === "right") {
+                } else if (direction === "right") {
                     sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
-                } else if (offScreen.direction === "left") {
+                } else if (direction === "left") {
                     sprite.setPosition(0, sprite.getY());
                     sprite.setSpeedX(-sprite.getSpeedX() * bounce);
                 }
@@ -490,15 +490,15 @@ define('OffScreenHandlerFactory',[], function () {
             };
         };
 
-        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, offScreen, now) {
-            if (offScreen.direction === "right") {
+        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, direction,distance, now) {
+            if (direction === "right") {
                 sprite.setPosition(0, sprite.getY());
-            } else if (offScreen.direction === "left") {
+            } else if (direction === "left") {
                 sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
             }
-            if (offScreen.direction === "down") {
+            if (direction === "down") {
                 sprite.setPosition(sprite.getX(), 0);
-            } else if (offScreen.direction === "top") {
+            } else if (direction === "top") {
                 sprite.setPosition(sprite.getX(), screenHeight - sprite.getHeight());
             }
         };
@@ -1569,59 +1569,82 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-            
+
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
-            
+
             if (useCollisionDetector) {
                 that.detectCollisions(now);
                 for (var i = 0; i < sprites.length; i++) {
-                    if (sprites[i].isDestroyed(now)) {
-                        sprites[i].handleDestruction(now);
-                        destructionHandler(sprites[i], now);
+                    var sprite = sprites[i];
+                    if (sprite.isDestroyed(now)) {
+                        sprite.handleDestruction(now);
+                        destructionHandler(sprite, now);
                     }
                 }
             }
-            
+
             if (updateHandler) {
                 updateHandler(now, keyEvents);
-            }    
-            
+            }
+
             for (var i = 0; i < sprites.length; i++) {
-                sprites[i].handleKeyEvents(keyEvents, now);
-                sprites[i].handleUpdate(now);  
-                sprites[i].tick();
-            }            
-            
-            for (var i = 0; i < sprites.length; i++) {
-                var offScreen = offScreenDetector(screenWidth, screenHeight, sprites[i]);
-                if (offScreen) {
-                    var handled = sprites[i].handleOffScreen(screenWidth, screenHeight, offScreen, now);
+                var sprite = sprites[i];
+                sprite.handleKeyEvents(keyEvents, now);
+                sprite.handleUpdate(now);
+                sprite.tick();
+
+                var width = sprite.getWidth();
+                var height = sprite.getHeight();
+                var direction = undefined;
+                var distance = undefined;
+                if (sprite.getX() < 0) {
+                    direction = "left";
+                    distance = sprite.getX();
+                } else if (sprite.getX() > (screenWidth - width)) {
+                    direction = "right";
+                    distance = sprite.getX() - (screenWidth - width);
+                } else if (sprite.getY() < 0) {
+                    direction = "top";
+                    distance = sprite.getY();
+                } else if (sprite.getY() >= (screenHeight - height)) {
+                    direction = "down";
+                    distance = sprite.getY() - (screenHeight - height);
+                }
+
+
+
+                if (direction) {
+                    var handled = sprite.handleOffScreen(screenWidth, screenHeight, direction, distance, now);
                     if (!handled && globalOffScreenHandler) {
-                        globalOffScreenHandler(sprites[i], screenWidth, screenHeight, offScreen, now);
+                        globalOffScreenHandler(sprite, screenWidth, screenHeight, direction, distance, now);
                     }
                 }
             }
-            
-           
+
+
+
             var filteredSprites = [];
             for (var i = 0; i < sprites.length; i++) {
-                if(!sprites[i].isDestroyed(now)){
+                if (!sprites[i].isDestroyed(now)) {
                     filteredSprites.push(sprites[i]);
                 }
             }
-            
 
-            for(var i=0; i < filteredSprites.length; i++){
+
+            var filteredSprites = sprites;
+
+
+            for (var i = 0; i < filteredSprites.length; i++) {
                 filteredSprites[i].draw(renderer);
             }
 
-            
+
             renderer.flush();
             sprites = filteredSprites;
 
-            
+
         };
 
         this.start = function () {
@@ -1659,7 +1682,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
 
         this.forEach = function (fun) {
-            for(var i = 0; i < sprites.length; i++ ){
+            for (var i = 0; i < sprites.length; i++) {
                 fun(sprites[i]);
             }
         };
