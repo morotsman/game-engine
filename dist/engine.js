@@ -1558,7 +1558,9 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     time = now;
                 }
                 if (now - time > 1000) {
-                    console.log(counter);
+                    if(counter < 59){
+                        console.log("frame rate: " + counter);
+                    }
                     counter = 0;
                     time = now;
                 }
@@ -1631,9 +1633,6 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     filteredSprites.push(sprites[i]);
                 }
             }
-
-
-            var filteredSprites = sprites;
 
 
             for (var i = 0; i < filteredSprites.length; i++) {

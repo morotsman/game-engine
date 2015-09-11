@@ -105,7 +105,9 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
                     time = now;
                 }
                 if (now - time > 1000) {
-                    console.log(counter);
+                    if(counter < 59){
+                        console.log("frame rate: " + counter);
+                    }
                     counter = 0;
                     time = now;
                 }
@@ -178,9 +180,6 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
                     filteredSprites.push(sprites[i]);
                 }
             }
-
-
-            var filteredSprites = sprites;
 
 
             for (var i = 0; i < filteredSprites.length; i++) {
