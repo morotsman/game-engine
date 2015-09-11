@@ -1027,7 +1027,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
     var spriteCache = {};
     var imageCache = {};
 
-    var MAX_BATCH = 20000;
+    var MAX_BATCH = 5000;
 
     var init = function (fragmentShader, vertexShader) {
         //create program
@@ -1134,7 +1134,8 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         function createRectangles(limit) {
             var result = new Float32Array(limit * 12);
             var prevSize;
-            return function (gl, sprites) {
+            
+            var rectangles = function (gl, sprites) {
                 var offset;
                 for (var i = 0; i < sprites.length; i++) {
                     offset = 12 * i;
@@ -1172,14 +1173,16 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 prevSize = sprites.length;
                 return result;
             };
-        }
-        ;
+            
+            return rectangles;
+        };
 
 
 
         function createScales(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var scales = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var scaleX = sprites[i].getWidth() / imageCache[sprites[i].getImage().currentSrc].spriteWidth;
                     var scaleY = sprites[i].getHeight() / imageCache[sprites[i].getImage().currentSrc].spriteHeight;
@@ -1199,12 +1202,16 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
+            
+            
+            return scales;
         }
         ;
 
         function createCenterPositions(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var centerPositions = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1224,12 +1231,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-        }
-        ;
+            
+            return centerPositions;
+        };
 
         function createCurrentFrameNumber(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, image, startIndex, stopIndex) {
+            
+            var currentFrameNumber = function (sprites, image, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1251,12 +1260,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
                 return result;
             };
-        }
-        ;
+            
+            return currentFrameNumber;
+        };
 
         function createRotation(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var rotation = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1276,8 +1287,9 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-        }
-        ;
+            
+            return rotation;
+        };
 
         var rectangleCreator = createRectangles(MAX_BATCH);
         var scaleCreator = createScales(MAX_BATCH);
@@ -1558,7 +1570,9 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     time = now;
                 }
                 if (now - time > 1000) {
-                    console.log(counter);
+                    if(counter < 59){
+                        console.log("frame rate: " + counter);
+                    }
                     counter = 0;
                     time = now;
                 }
@@ -1631,9 +1645,6 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     filteredSprites.push(sprites[i]);
                 }
             }
-
-
-            var filteredSprites = sprites;
 
 
             for (var i = 0; i < filteredSprites.length; i++) {
