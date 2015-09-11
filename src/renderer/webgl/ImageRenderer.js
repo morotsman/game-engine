@@ -20,7 +20,8 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         '   float s = sin(rotation);',
         '   float c = cos(rotation);',
         '   mat2 rotMat = mat2(c, -s, s, c);',
-        '   vec2 scaledOffset = spriteSize * a_position*scale;',
+        '   vec2 calculatedScale = vec2(scale.x/spriteSize.x, scale.y/spriteSize.y);',
+        '   vec2 scaledOffset = spriteSize * a_position*calculatedScale;',
         '   vec2 pos = centerPosition + rotMat * scaledOffset;',
         '   gl_Position = vec4(pos * u_screenDims.xy + u_screenDims.zw, 0.0, 1.0); ',
         '}'
@@ -199,21 +200,19 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
             
             var scales = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
-                    var scaleX = sprites[i].getWidth() / imageCache[sprites[i].getImage().currentSrc].spriteWidth;
-                    var scaleY = sprites[i].getHeight() / imageCache[sprites[i].getImage().currentSrc].spriteHeight;
                     var offset = 12 * i;
-                    result[offset] = scaleX;
-                    result[offset + 1] = scaleY;
-                    result[offset + 2] = scaleX;
-                    result[offset + 3] = scaleY;
-                    result[offset + 4] = scaleX;
-                    result[offset + 5] = scaleY;
-                    result[offset + 6] = scaleX;
-                    result[offset + 7] = scaleY;
-                    result[offset + 8] = scaleX;
-                    result[offset + 9] = scaleY;
-                    result[offset + 10] = scaleX;
-                    result[offset + 11] = scaleY;
+                    result[offset] = sprites[i].getWidth();
+                    result[offset + 1] = sprites[i].getHeight();
+                    result[offset + 2] = sprites[i].getWidth();
+                    result[offset + 3] = sprites[i].getHeight();
+                    result[offset + 4] = sprites[i].getWidth();
+                    result[offset + 5] = sprites[i].getHeight();
+                    result[offset + 6] = sprites[i].getWidth();
+                    result[offset + 7] = sprites[i].getHeight();
+                    result[offset + 8] = sprites[i].getWidth();
+                    result[offset + 9] = sprites[i].getHeight();
+                    result[offset + 10] = sprites[i].getWidth();
+                    result[offset + 11] = sprites[i].getHeight();
                 }
                 return result;
             };
@@ -379,7 +378,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
 
             for (var property in spriteCache) {
                 if (spriteCache.hasOwnProperty(property)) {
-                    spriteCache[property] = [];
+                    spriteCache[property].length = 0;
                 }
             }
 

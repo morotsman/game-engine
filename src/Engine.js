@@ -105,9 +105,9 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
                     time = now;
                 }
                 if (now - time > 1000) {
-                    if(counter < 59){
+                    //if(counter < 59){
                         console.log("frame rate: " + counter);
-                    }
+                    //}
                     counter = 0;
                     time = now;
                 }

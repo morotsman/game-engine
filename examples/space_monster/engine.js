@@ -1005,7 +1005,8 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         '   float s = sin(rotation);',
         '   float c = cos(rotation);',
         '   mat2 rotMat = mat2(c, -s, s, c);',
-        '   vec2 scaledOffset = spriteSize * a_position*scale;',
+        '   vec2 calculatedScale = vec2(scale.x/spriteSize.x, scale.y/spriteSize.y);',
+        '   vec2 scaledOffset = spriteSize * a_position*calculatedScale;',
         '   vec2 pos = centerPosition + rotMat * scaledOffset;',
         '   gl_Position = vec4(pos * u_screenDims.xy + u_screenDims.zw, 0.0, 1.0); ',
         '}'
@@ -1027,7 +1028,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
     var spriteCache = {};
     var imageCache = {};
 
-    var MAX_BATCH = 20000;
+    var MAX_BATCH = 5000;
 
     var init = function (fragmentShader, vertexShader) {
         //create program
@@ -1134,7 +1135,8 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         function createRectangles(limit) {
             var result = new Float32Array(limit * 12);
             var prevSize;
-            return function (gl, sprites) {
+            
+            var rectangles = function (gl, sprites) {
                 var offset;
                 for (var i = 0; i < sprites.length; i++) {
                     offset = 12 * i;
@@ -1172,39 +1174,43 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 prevSize = sprites.length;
                 return result;
             };
-        }
-        ;
+            
+            return rectangles;
+        };
 
 
 
         function createScales(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var scales = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
-                    var scaleX = sprites[i].getWidth() / imageCache[sprites[i].getImage().currentSrc].spriteWidth;
-                    var scaleY = sprites[i].getHeight() / imageCache[sprites[i].getImage().currentSrc].spriteHeight;
                     var offset = 12 * i;
-                    result[offset] = scaleX;
-                    result[offset + 1] = scaleY;
-                    result[offset + 2] = scaleX;
-                    result[offset + 3] = scaleY;
-                    result[offset + 4] = scaleX;
-                    result[offset + 5] = scaleY;
-                    result[offset + 6] = scaleX;
-                    result[offset + 7] = scaleY;
-                    result[offset + 8] = scaleX;
-                    result[offset + 9] = scaleY;
-                    result[offset + 10] = scaleX;
-                    result[offset + 11] = scaleY;
+                    result[offset] = sprites[i].getWidth();
+                    result[offset + 1] = sprites[i].getHeight();
+                    result[offset + 2] = sprites[i].getWidth();
+                    result[offset + 3] = sprites[i].getHeight();
+                    result[offset + 4] = sprites[i].getWidth();
+                    result[offset + 5] = sprites[i].getHeight();
+                    result[offset + 6] = sprites[i].getWidth();
+                    result[offset + 7] = sprites[i].getHeight();
+                    result[offset + 8] = sprites[i].getWidth();
+                    result[offset + 9] = sprites[i].getHeight();
+                    result[offset + 10] = sprites[i].getWidth();
+                    result[offset + 11] = sprites[i].getHeight();
                 }
                 return result;
             };
+            
+            
+            return scales;
         }
         ;
 
         function createCenterPositions(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var centerPositions = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1224,12 +1230,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-        }
-        ;
+            
+            return centerPositions;
+        };
 
         function createCurrentFrameNumber(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, image, startIndex, stopIndex) {
+            
+            var currentFrameNumber = function (sprites, image, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1251,12 +1259,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
                 return result;
             };
-        }
-        ;
+            
+            return currentFrameNumber;
+        };
 
         function createRotation(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var rotation = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
@@ -1276,8 +1286,9 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-        }
-        ;
+            
+            return rotation;
+        };
 
         var rectangleCreator = createRectangles(MAX_BATCH);
         var scaleCreator = createScales(MAX_BATCH);
@@ -1352,7 +1363,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
             for (var property in spriteCache) {
                 if (spriteCache.hasOwnProperty(property)) {
-                    spriteCache[property] = [];
+                    spriteCache[property].length = 0;
                 }
             }
 
@@ -1558,9 +1569,9 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     time = now;
                 }
                 if (now - time > 1000) {
-                    if(counter < 59){
+                    //if(counter < 59){
                         console.log("frame rate: " + counter);
-                    }
+                    //}
                     counter = 0;
                     time = now;
                 }
