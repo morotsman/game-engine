@@ -996,7 +996,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         'attribute float rotation;',
         'attribute vec2 centerPosition;',
         'attribute float currentFrameNumber;',
-        'attribute vec2 scale;',
+        'attribute vec2 preferedDisplaySize;',
         'void main() {',
         '   float row = floor(currentFrameNumber / spritesPerRow);',
         '   vec2 upperLeftTC = spriteStartPos + vec2(spriteTextureSize.x * (currentFrameNumber - (row * spritesPerRow)),spriteTextureSize.y * row);',
@@ -1005,7 +1005,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         '   float s = sin(rotation);',
         '   float c = cos(rotation);',
         '   mat2 rotMat = mat2(c, -s, s, c);',
-        '   vec2 calculatedScale = vec2(scale.x/spriteSize.x, scale.y/spriteSize.y);',
+        '   vec2 calculatedScale = vec2(preferedDisplaySize.x/spriteSize.x, preferedDisplaySize.y/spriteSize.y);',
         '   vec2 scaledOffset = spriteSize * a_position*calculatedScale;',
         '   vec2 pos = centerPosition + rotMat * scaledOffset;',
         '   gl_Position = vec4(pos * u_screenDims.xy + u_screenDims.zw, 0.0, 1.0); ',
@@ -1054,7 +1054,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         parameterLocations.spriteStartPos = gl.getUniformLocation(shaderProgram, "spriteStartPos");
         parameterLocations.rotation = gl.getAttribLocation(shaderProgram, "rotation");
         parameterLocations.centerPosition = gl.getAttribLocation(shaderProgram, "centerPosition");
-        parameterLocations.scale = gl.getAttribLocation(shaderProgram, "scale");
+        parameterLocations.preferedDisplaySize = gl.getAttribLocation(shaderProgram, "preferedDisplaySize");
 
 
 
@@ -1067,10 +1067,10 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         gl.enableVertexAttribArray(parameterLocations.positionLocation);
         gl.vertexAttribPointer(parameterLocations.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        buffers.scale = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.scale);
-        gl.enableVertexAttribArray(parameterLocations.scale);
-        gl.vertexAttribPointer(parameterLocations.scale, 2, gl.FLOAT, false, 0, 0);
+        buffers.preferedDisplaySize = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.preferedDisplaySize);
+        gl.enableVertexAttribArray(parameterLocations.preferedDisplaySize);
+        gl.vertexAttribPointer(parameterLocations.preferedDisplaySize, 2, gl.FLOAT, false, 0, 0);
 
         buffers.centerPosition = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.centerPosition);
@@ -1182,10 +1182,10 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
 
 
-        function createScales(limit) {
+        function createDisplaySize(limit) {
             var result = new Float32Array(limit * 12);
             
-            var scales = function (sprites, startIndex, stopIndex) {
+            var displaySize = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * i;
                     result[offset] = sprites[i].width;
@@ -1205,7 +1205,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
             };
             
             
-            return scales;
+            return displaySize;
         }
         ;
 
@@ -1293,7 +1293,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         };
 
         var rectangleCreator = createRectangles(MAX_BATCH);
-        var scaleCreator = createScales(MAX_BATCH);
+        var displaySizeCreator = createDisplaySize(MAX_BATCH);
         var centerPositionCreator = createCenterPositions(MAX_BATCH);
         var currentFrameNumberCreator = createCurrentFrameNumber(MAX_BATCH);
         var rotationCreator = createRotation(MAX_BATCH);
@@ -1328,9 +1328,9 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.rectangle);
                         gl.bufferData(gl.ARRAY_BUFFER, rectangles, gl.STATIC_DRAW);
 
-                        var scales = scaleCreator(spritesToDraw, startIndex, stopIndex);
-                        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.scale);
-                        gl.bufferData(gl.ARRAY_BUFFER, scales, gl.STATIC_DRAW);
+                        var preferedDisplaySize = displaySizeCreator(spritesToDraw, startIndex, stopIndex);
+                        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.preferedDisplaySize);
+                        gl.bufferData(gl.ARRAY_BUFFER, preferedDisplaySize, gl.STATIC_DRAW);
 
                         var centerPositions = centerPositionCreator(spritesToDraw, startIndex, stopIndex);
                         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.centerPosition);
@@ -1695,7 +1695,6 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         this.speedX = 0;
         this.speedY = 0;
         var radius = 0;
-        var animation;
         var angle;
         var destroyed = false;
 
@@ -1710,7 +1709,6 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         var spriteHeight;
         this.currentFrameNumber = 0;
         var animationSpeed = 0;
-        var animationCycle = 0;
         this.rotation = 0;
         var spriteX = 0;
         var spriteY = 0;
@@ -1938,19 +1936,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             
             if(that.currentFrameNumber >= numberOfFrames){
                that.currentFrameNumber=0; 
-               animationCycle++;
             }
             
-        };
-        
-        this.getAnimationCycle = function(){
-            return animationCycle;
-        };
-
-        var animate = function (context) {
-            animation.setPosition(that.x, that.y);
-            animation.setWidthAndHeight(that.width, that.height);
-            return animation.animate(context);
         };
         
         this.tick = function(){
@@ -1960,18 +1947,9 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
         this.draw = function (context) {
             context.save();
-            if (animation) {
-                animate(context);
-            } else {
-                drawImage(context);
-            }
+            drawImage(context);
             context.restore();
         };
-
-        this.animationCompleted = function () {
-            return animation.isCompleted();
-        };
-
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {
             if (offScreenHandler) {

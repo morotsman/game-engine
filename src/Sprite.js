@@ -10,7 +10,6 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         this.speedX = 0;
         this.speedY = 0;
         var radius = 0;
-        var animation;
         var angle;
         var destroyed = false;
 
@@ -25,7 +24,6 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         var spriteHeight;
         this.currentFrameNumber = 0;
         var animationSpeed = 0;
-        var animationCycle = 0;
         this.rotation = 0;
         var spriteX = 0;
         var spriteY = 0;
@@ -253,19 +251,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             
             if(that.currentFrameNumber >= numberOfFrames){
                that.currentFrameNumber=0; 
-               animationCycle++;
             }
             
-        };
-        
-        this.getAnimationCycle = function(){
-            return animationCycle;
-        };
-
-        var animate = function (context) {
-            animation.setPosition(that.x, that.y);
-            animation.setWidthAndHeight(that.width, that.height);
-            return animation.animate(context);
         };
         
         this.tick = function(){
@@ -275,18 +262,9 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
         this.draw = function (context) {
             context.save();
-            if (animation) {
-                animate(context);
-            } else {
-                drawImage(context);
-            }
+            drawImage(context);
             context.restore();
         };
-
-        this.animationCompleted = function () {
-            return animation.isCompleted();
-        };
-
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {
             if (offScreenHandler) {
