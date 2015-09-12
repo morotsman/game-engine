@@ -11,7 +11,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         'attribute float rotation;',
         'attribute vec2 centerPosition;',
         'attribute float currentFrameNumber;',
-        'attribute vec2 scale;',
+        'attribute vec2 preferedDisplaySize;',
         'void main() {',
         '   float row = floor(currentFrameNumber / spritesPerRow);',
         '   vec2 upperLeftTC = spriteStartPos + vec2(spriteTextureSize.x * (currentFrameNumber - (row * spritesPerRow)),spriteTextureSize.y * row);',
@@ -20,7 +20,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         '   float s = sin(rotation);',
         '   float c = cos(rotation);',
         '   mat2 rotMat = mat2(c, -s, s, c);',
-        '   vec2 calculatedScale = vec2(scale.x/spriteSize.x, scale.y/spriteSize.y);',
+        '   vec2 calculatedScale = vec2(preferedDisplaySize.x/spriteSize.x, preferedDisplaySize.y/spriteSize.y);',
         '   vec2 scaledOffset = spriteSize * a_position*calculatedScale;',
         '   vec2 pos = centerPosition + rotMat * scaledOffset;',
         '   gl_Position = vec4(pos * u_screenDims.xy + u_screenDims.zw, 0.0, 1.0); ',
@@ -69,7 +69,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         parameterLocations.spriteStartPos = gl.getUniformLocation(shaderProgram, "spriteStartPos");
         parameterLocations.rotation = gl.getAttribLocation(shaderProgram, "rotation");
         parameterLocations.centerPosition = gl.getAttribLocation(shaderProgram, "centerPosition");
-        parameterLocations.scale = gl.getAttribLocation(shaderProgram, "scale");
+        parameterLocations.preferedDisplaySize = gl.getAttribLocation(shaderProgram, "preferedDisplaySize");
 
 
 
@@ -82,10 +82,10 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         gl.enableVertexAttribArray(parameterLocations.positionLocation);
         gl.vertexAttribPointer(parameterLocations.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        buffers.scale = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.scale);
-        gl.enableVertexAttribArray(parameterLocations.scale);
-        gl.vertexAttribPointer(parameterLocations.scale, 2, gl.FLOAT, false, 0, 0);
+        buffers.preferedDisplaySize = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.preferedDisplaySize);
+        gl.enableVertexAttribArray(parameterLocations.preferedDisplaySize);
+        gl.vertexAttribPointer(parameterLocations.preferedDisplaySize, 2, gl.FLOAT, false, 0, 0);
 
         buffers.centerPosition = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.centerPosition);
@@ -197,10 +197,10 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
 
 
 
-        function createScales(limit) {
+        function createDisplaySize(limit) {
             var result = new Float32Array(limit * 12);
             
-            var scales = function (sprites, startIndex, stopIndex) {
+            var displaySize = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * i;
                     result[offset] = sprites[i].width;
@@ -220,7 +220,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
             };
             
             
-            return scales;
+            return displaySize;
         }
         ;
 
@@ -308,7 +308,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         };
 
         var rectangleCreator = createRectangles(MAX_BATCH);
-        var scaleCreator = createScales(MAX_BATCH);
+        var displaySizeCreator = createDisplaySize(MAX_BATCH);
         var centerPositionCreator = createCenterPositions(MAX_BATCH);
         var currentFrameNumberCreator = createCurrentFrameNumber(MAX_BATCH);
         var rotationCreator = createRotation(MAX_BATCH);
@@ -343,9 +343,9 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.rectangle);
                         gl.bufferData(gl.ARRAY_BUFFER, rectangles, gl.STATIC_DRAW);
 
-                        var scales = scaleCreator(spritesToDraw, startIndex, stopIndex);
-                        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.scale);
-                        gl.bufferData(gl.ARRAY_BUFFER, scales, gl.STATIC_DRAW);
+                        var preferedDisplaySize = displaySizeCreator(spritesToDraw, startIndex, stopIndex);
+                        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.preferedDisplaySize);
+                        gl.bufferData(gl.ARRAY_BUFFER, preferedDisplaySize, gl.STATIC_DRAW);
 
                         var centerPositions = centerPositionCreator(spritesToDraw, startIndex, stopIndex);
                         gl.bindBuffer(gl.ARRAY_BUFFER, buffers.centerPosition);
