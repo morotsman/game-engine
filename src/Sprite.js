@@ -2,13 +2,13 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
     function Sprite(engine) {
 
-        var image;
-        var x = 0;
-        var y = 0;
-        var width = 0;
-        var height = 0;
-        var speedX = 0;
-        var speedY = 0;
+        this.image;
+        this.x = 0;
+        this.y = 0;
+        this.width = 0;
+        this.height = 0;
+        this.speedX = 0;
+        this.speedY = 0;
         var radius = 0;
         var animation;
         var angle;
@@ -23,15 +23,16 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         var spritesPerRow; 
         var spriteWidth;
         var spriteHeight;
-        var currentFrameNumber = 0;
+        this.currentFrameNumber = 0;
         var animationSpeed = 0;
         var animationCycle = 0;
-        var rotation = 0;
+        this.rotation = 0;
         var spriteX = 0;
         var spriteY = 0;
+        this.currentSrc;
 
         this.getRotation = function(){
-            return rotation;
+            return that.rotation;
         };
 
         this.getSpritesPerRow = function(){
@@ -47,27 +48,27 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         };
         
         this.getCurrentFrameNumber = function(){
-            return currentFrameNumber;
+            return that.currentFrameNumber;
         };
         
         this.getImage = function(){
-            return image;
+            return that.image;
         };
         
         this.getX = function(){
-            return x;
+            return that.x;
         };
         
         this.getY = function(){
-            return y;
+            return that.y;
         };
         
         this.getWidth = function(){
-            return width;
+            return that.width;
         };
         
         this.getHeight = function(){
-            return height;
+            return that.height;
         };
 
         this.getSpriteX = function(){
@@ -79,7 +80,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         };        
 
         this.setImage = function (_image, _numberOfFrames, _spritesPerRow, _spriteWidth, _spriteHeight,_animationSpeed, _spriteX, _spriteY) {
-            image = document.getElementById(_image);
+            that.image = document.getElementById(_image);
             numberOfFrames = _numberOfFrames?_numberOfFrames:1;
             spritesPerRow = _spritesPerRow;
             spriteWidth = _spriteWidth;
@@ -87,49 +88,50 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             animationSpeed = _animationSpeed;
             spriteX = _spriteX?_spriteX:0;
             spriteY = _spriteY?_spriteY:0;
+            that.currentSrc = that.image.currentSrc;
             return this;
         };
 
 
 
         this.setPosition = function (_x, _y) {
-            x = _x;
-            y = _y;
+            that.x = _x;
+            that.y = _y;
             return this;
         };
         
         this.increaseSpeedX = function (amount) {
-            speedX = speedX + amount;
+            that.speedX = that.speedX + amount;
             return this;
         };
 
         this.increaseSpeedY = function (amount) {
-            speedY = speedY + amount;
+            that.speedY = that.speedY + amount;
             return this;
         };
 
         this.setSpeedX = function (_speedX) {
-            speedX = _speedX;
+            that.speedX = _speedX;
             return this;
         };
 
         this.setSpeedY = function (_speedY) {
-            speedY = _speedY;
+            that.speedY = _speedY;
             return this;
         };
 
         this.getSpeedX = function () {
-            return speedX;
+            return that.speedX;
         };
 
         this.getSpeedY = function () {
-            return speedY;
+            return that.speedY;
         };
 
         this.setWidthAndHeight = function (_width, _height) {
-            width = _width;
-            height = _height;
-            radius = width > height ? width / 2 : height / 2;
+            that.width = _width;
+            that.height = _height;
+            radius = that.width > that.height ? that.width / 2 : that.height / 2;
             return this;
         };
         
@@ -141,8 +143,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
 
         this.addForceVector = function (_angle, force) {
-            speedX = speedX + Math.cos(_angle * Math.PI / 180) * force;
-            speedY = speedY + Math.sin(_angle * Math.PI / 180) * force;
+            that.speedX = that.speedX + Math.cos(_angle * Math.PI / 180) * force;
+            that.speedY = that.speedY + Math.sin(_angle * Math.PI / 180) * force;
         };
 
         var calulateForce = function (speedX, speedY) {
@@ -157,33 +159,33 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         };
 
         this.relativeForceForce = function (other) {
-            var relativeX = speedX - other.getSpeedX();
-            var relativeY = speedY - other.getSpeedY();
+            var relativeX = that.speedX - other.getSpeedX();
+            var relativeY = that.speedY - other.getSpeedY();
             return calulateForce(relativeX, relativeY);
         };
         
         this.relativeForceAngle = function (other) {
-            var relativeX = speedX - other.getSpeedX();
-            var relativeY = speedY - other.getSpeedY();
+            var relativeX = that.speedX - other.getSpeedX();
+            var relativeY = that.speedY - other.getSpeedY();
             return calculateAngle(relativeX, relativeY);
         };        
 
         this.relativeSpeedX = function (other) {
-            var relativeX = speedX - other.getSpeedX();
+            var relativeX = that.speedX - other.getSpeedX();
             return -relativeX;
         };
         
         this.relativeSpeedY = function (other) {
-            var relativeY = speedY - other.getSpeedY();
+            var relativeY = that.speedY - other.getSpeedY();
             return relativeY;
         };        
 
         this.getForceVectorForce = function () {
-            return calulateForce(speedX, speedY);
+            return calulateForce(that.speedX, that.speedY);
         };
         
         this.getForceVectorAngle = function () {
-            return calculateAngle(speedX, speedY);
+            return calculateAngle(that.speedX, that.speedY);
         };        
 
         this.getRadius = function () {
@@ -216,8 +218,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
 
         this.getAngleAndDistance = function (other) {
-            var distanceX = other.getX() - x;
-            var distanceY = other.getY() - y;
+            var distanceX = other.getX() - that.x;
+            var distanceY = other.getY() - that.y;
             var angle = Math.atan2(distanceY, distanceX) * 180 / Math.PI;
 
             if (angle > 0) {
@@ -237,7 +239,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
         var prevDraw;
         var drawImage = function (context) {
-            if (!image) {
+            if (!that.image) {
                 return;
             }
 
@@ -245,14 +247,15 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
            
             var now = new Date().getTime();
             if(!prevDraw || (now-prevDraw)>animationSpeed){
-                currentFrameNumber++;
+                that.currentFrameNumber++;
                 prevDraw = now;
             }
             
-            if(currentFrameNumber >= numberOfFrames){
-               currentFrameNumber=0; 
+            if(that.currentFrameNumber >= numberOfFrames){
+               that.currentFrameNumber=0; 
                animationCycle++;
             }
+            
         };
         
         this.getAnimationCycle = function(){
@@ -260,14 +263,14 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         };
 
         var animate = function (context) {
-            animation.setPosition(x, y);
-            animation.setWidthAndHeight(width, height);
+            animation.setPosition(that.x, that.y);
+            animation.setWidthAndHeight(that.width, that.height);
             return animation.animate(context);
         };
         
         this.tick = function(){
-            x = x + speedX;
-            y = y - speedY;           
+            that.x = that.x + that.speedX;
+            that.y = that.y - that.speedY;           
         };
 
         this.draw = function (context) {

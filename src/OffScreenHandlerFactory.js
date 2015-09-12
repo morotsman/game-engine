@@ -6,20 +6,20 @@ define([], function () {
         var createBouncingOffScreenHandler = function (bounce, friction) {
             return function (sprite, screenWidth, screenHeight, direction,distance, now) {
                 if (direction === "down") {
-                    var yPos = screenHeight - sprite.getHeight() - distance;
-                    sprite.setPosition(sprite.getX(), distance===0?yPos+1:yPos);
-                    sprite.setSpeedY(-sprite.getSpeedY() * bounce);
-                    sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
+                    var yPos = screenHeight - sprite.height - distance;
+                    sprite.y = (distance===0?yPos+1:yPos);
+                    sprite.speedY = -sprite.speedY * bounce;
+                    sprite.speedX = sprite.speedX * (1 - friction);
                 } else if (direction === "top") {
-                    sprite.setPosition(sprite.getX(), sprite.getHeight());
-                    sprite.setSpeedY(-sprite.getSpeedY() * bounce);
-                    sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
+                    sprite.y = sprite.height;
+                    sprite.speedY = -sprite.speedY * bounce;
+                    sprite.speedX = sprite.speedX * (1 - friction);
                 } else if (direction === "right") {
-                    sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
-                    sprite.setSpeedX(-sprite.getSpeedX() * bounce);
+                    sprite.x = screenWidth - sprite.width;
+                    sprite.speedX = -sprite.speedX * bounce;
                 } else if (direction === "left") {
-                    sprite.setPosition(0, sprite.getY());
-                    sprite.setSpeedX(-sprite.getSpeedX() * bounce);
+                    sprite.x = 0;
+                    sprite.speedX = -sprite.speedX * bounce;
                 }
 
 
@@ -28,14 +28,14 @@ define([], function () {
 
         var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, direction,distance, now) {
             if (direction === "right") {
-                sprite.setPosition(0, sprite.getY());
+                sprite.setPosition(0, sprite.y);
             } else if (direction === "left") {
-                sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
+                sprite.setPosition(screenWidth - sprite.width, sprite.y);
             }
             if (direction === "down") {
-                sprite.setPosition(sprite.getX(), 0);
+                sprite.setPosition(sprite.x, 0);
             } else if (direction === "top") {
-                sprite.setPosition(sprite.getX(), screenHeight - sprite.getHeight());
+                sprite.setPosition(sprite.x, screenHeight - sprite.height);
             }
         };
 

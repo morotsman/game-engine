@@ -468,38 +468,38 @@ define('OffScreenHandlerFactory',[], function () {
 
 
         var createBouncingOffScreenHandler = function (bounce, friction) {
-            return function (sprite, screenWidth, screenHeight, offScreen, now) {
-                if (offScreen.direction === "down") {
-                    var yPos = screenHeight - sprite.getHeight() - offScreen.distance;
-                    sprite.setPosition(sprite.getX(), offScreen.distance===0?yPos+1:yPos);
-                    sprite.setSpeedY(-sprite.getSpeedY() * bounce);
-                    sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (offScreen.direction === "top") {
-                    sprite.setPosition(sprite.getX(), sprite.getHeight());
-                    sprite.setSpeedY(-sprite.getSpeedY() * bounce);
-                    sprite.setSpeedX(sprite.getSpeedX() * (1 - friction));
-                } else if (offScreen.direction === "right") {
-                    sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
-                    sprite.setSpeedX(-sprite.getSpeedX() * bounce);
-                } else if (offScreen.direction === "left") {
-                    sprite.setPosition(0, sprite.getY());
-                    sprite.setSpeedX(-sprite.getSpeedX() * bounce);
+            return function (sprite, screenWidth, screenHeight, direction,distance, now) {
+                if (direction === "down") {
+                    var yPos = screenHeight - sprite.height - distance;
+                    sprite.y = (distance===0?yPos+1:yPos);
+                    sprite.speedY = -sprite.speedY * bounce;
+                    sprite.speedX = sprite.speedX * (1 - friction);
+                } else if (direction === "top") {
+                    sprite.y = sprite.height;
+                    sprite.speedY = -sprite.speedY * bounce;
+                    sprite.speedX = sprite.speedX * (1 - friction);
+                } else if (direction === "right") {
+                    sprite.x = screenWidth - sprite.width;
+                    sprite.speedX = -sprite.speedX * bounce;
+                } else if (direction === "left") {
+                    sprite.x = 0;
+                    sprite.speedX = -sprite.speedX * bounce;
                 }
 
 
             };
         };
 
-        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, offScreen, now) {
-            if (offScreen.direction === "right") {
-                sprite.setPosition(0, sprite.getY());
-            } else if (offScreen.direction === "left") {
-                sprite.setPosition(screenWidth - sprite.getWidth(), sprite.getY());
+        var wrappingOffScreenHandler = function (sprite, screenWidth, screenHeight, direction,distance, now) {
+            if (direction === "right") {
+                sprite.setPosition(0, sprite.y);
+            } else if (direction === "left") {
+                sprite.setPosition(screenWidth - sprite.width, sprite.y);
             }
-            if (offScreen.direction === "down") {
-                sprite.setPosition(sprite.getX(), 0);
-            } else if (offScreen.direction === "top") {
-                sprite.setPosition(sprite.getX(), screenHeight - sprite.getHeight());
+            if (direction === "down") {
+                sprite.setPosition(sprite.x, 0);
+            } else if (direction === "top") {
+                sprite.setPosition(sprite.x, screenHeight - sprite.height);
             }
         };
 
@@ -702,18 +702,18 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
 
         var spriteToAABB = function (sprite) {
             return {
-                x: sprite.getX(),
-                y: sprite.getY(),
-                maxX: sprite.getX() + sprite.getWidth(),
-                maxY: sprite.getY() + sprite.getHeight(),
-                width: sprite.getWidth(),
-                height: sprite.getHeight()
+                x: sprite.x,
+                y: sprite.y,
+                maxX: sprite.x + sprite.width,
+                maxY: sprite.y + sprite.height,
+                width: sprite.width,
+                height: sprite.height
             };
         };
 
         var relativeSpeed = function (one, two) {
-            var relativeX = one.getSpeedX() - two.getSpeedX();
-            var relativeY = one.getSpeedY() - two.getSpeedY();
+            var relativeX = one.speedX - two.speedX;
+            var relativeY = one.speedY - two.speedY;
             return {
                 x: -relativeX,
                 y: relativeY
@@ -793,12 +793,12 @@ define('renderer/CanvasRenderer',[], function () {
 
         this.drawImage = function (sprite) {
             if (!sprite.getSpritesPerRow()) {
-                context.drawImage(sprite.getImage(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+                context.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height);
             } else {
-                var row = Math.floor(sprite.getCurrentFrameNumber() / sprite.getSpritesPerRow());
-                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.getCurrentFrameNumber() - (row * sprite.getSpritesPerRow()));
+                var row = Math.floor(sprite.currentFrameNumber / sprite.getSpritesPerRow());
+                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.currentFrameNumber - (row * sprite.getSpritesPerRow()));
                 var sy = sprite.getSpriteY() + sprite.getSpriteHeight() * row;
-                context.drawImage(sprite.getImage(), sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+                context.drawImage(sprite.image, sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.x, sprite.y, sprite.width, sprite.getHeight());
             }
 
         };
@@ -1005,7 +1005,8 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         '   float s = sin(rotation);',
         '   float c = cos(rotation);',
         '   mat2 rotMat = mat2(c, -s, s, c);',
-        '   vec2 scaledOffset = spriteSize * a_position*scale;',
+        '   vec2 calculatedScale = vec2(scale.x/spriteSize.x, scale.y/spriteSize.y);',
+        '   vec2 scaledOffset = spriteSize * a_position*calculatedScale;',
         '   vec2 pos = centerPosition + rotMat * scaledOffset;',
         '   gl_Position = vec4(pos * u_screenDims.xy + u_screenDims.zw, 0.0, 1.0); ',
         '}'
@@ -1027,7 +1028,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
     var spriteCache = {};
     var imageCache = {};
 
-    var MAX_BATCH = 20000;
+    var MAX_BATCH = 5000;
 
     var init = function (fragmentShader, vertexShader) {
         //create program
@@ -1103,20 +1104,22 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         
         
         this.drawImage = function (sprite) {
-            var currentImageSrc = sprite.getImage().currentSrc;
+            var currentImageSrc = sprite.currentSrc;
             if (!imageCache[currentImageSrc]) {
                 imageCache[currentImageSrc] = {};
-                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.getImage());
+                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.image);
                 imageCache[currentImageSrc].spritesPerRow = sprite.getSpritesPerRow() ? sprite.getSpritesPerRow() : 1;
-                imageCache[currentImageSrc].imageWidth = sprite.getImage().width;
-                imageCache[currentImageSrc].imageHeight = sprite.getImage().height;
-                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.getImage().width;
-                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.getImage().height;
+                imageCache[currentImageSrc].imageWidth = sprite.image.width;
+                imageCache[currentImageSrc].imageHeight = sprite.image.height;
+                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.image.width;
+                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.image.height;
                 imageCache[currentImageSrc].spriteX = sprite.getSpriteX();
                 imageCache[currentImageSrc].spriteY = sprite.getSpriteY();
                 spriteCache[currentImageSrc] = [];
             }
-            spriteCache[currentImageSrc].push(sprite);            
+            
+            spriteCache[currentImageSrc].push(sprite);  
+            
             /*
             spriteCache[currentImageSrc].push({
                 x: sprite.getX(),
@@ -1134,7 +1137,8 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
         function createRectangles(limit) {
             var result = new Float32Array(limit * 12);
             var prevSize;
-            return function (gl, sprites) {
+            
+            var rectangles = function (gl, sprites) {
                 var offset;
                 for (var i = 0; i < sprites.length; i++) {
                     offset = 12 * i;
@@ -1172,112 +1176,121 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 prevSize = sprites.length;
                 return result;
             };
-        }
-        ;
+            
+            return rectangles;
+        };
 
 
 
         function createScales(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var scales = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
-                    var scaleX = sprites[i].getWidth() / imageCache[sprites[i].getImage().currentSrc].spriteWidth;
-                    var scaleY = sprites[i].getHeight() / imageCache[sprites[i].getImage().currentSrc].spriteHeight;
                     var offset = 12 * i;
-                    result[offset] = scaleX;
-                    result[offset + 1] = scaleY;
-                    result[offset + 2] = scaleX;
-                    result[offset + 3] = scaleY;
-                    result[offset + 4] = scaleX;
-                    result[offset + 5] = scaleY;
-                    result[offset + 6] = scaleX;
-                    result[offset + 7] = scaleY;
-                    result[offset + 8] = scaleX;
-                    result[offset + 9] = scaleY;
-                    result[offset + 10] = scaleX;
-                    result[offset + 11] = scaleY;
+                    result[offset] = sprites[i].width;
+                    result[offset + 1] = sprites[i].height;
+                    result[offset + 2] = sprites[i].width;
+                    result[offset + 3] = sprites[i].height;
+                    result[offset + 4] = sprites[i].width;
+                    result[offset + 5] = sprites[i].height;
+                    result[offset + 6] = sprites[i].width;
+                    result[offset + 7] = sprites[i].height;
+                    result[offset + 8] = sprites[i].width;
+                    result[offset + 9] = sprites[i].height;
+                    result[offset + 10] = sprites[i].width;
+                    result[offset + 11] = sprites[i].height;
                 }
                 return result;
             };
+            
+            
+            return scales;
         }
         ;
 
         function createCenterPositions(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var centerPositions = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getX();
-                    result[offset + 1] = sprites[i].getY();
-                    result[offset + 2] = sprites[i].getX();
-                    result[offset + 3] = sprites[i].getY();
-                    result[offset + 4] = sprites[i].getX();
-                    result[offset + 5] = sprites[i].getY();
-                    result[offset + 6] = sprites[i].getX();
-                    result[offset + 7] = sprites[i].getY();
-                    result[offset + 8] = sprites[i].getX();
-                    result[offset + 9] = sprites[i].getY();
-                    result[offset + 10] = sprites[i].getX();
-                    result[offset + 11] = sprites[i].getY();
+                    result[offset] = sprites[i].x;
+                    result[offset + 1] = sprites[i].y;
+                    result[offset + 2] = sprites[i].x;
+                    result[offset + 3] = sprites[i].y;
+                    result[offset + 4] = sprites[i].x;
+                    result[offset + 5] = sprites[i].y;
+                    result[offset + 6] = sprites[i].x;
+                    result[offset + 7] = sprites[i].y;
+                    result[offset + 8] = sprites[i].x;
+                    result[offset + 9] = sprites[i].y;
+                    result[offset + 10] = sprites[i].x;
+                    result[offset + 11] = sprites[i].y;
                     index++;
                 }
                 return result;
             };
-        }
-        ;
+            
+            return centerPositions;
+        };
 
         function createCurrentFrameNumber(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, image, startIndex, stopIndex) {
+            
+            var currentFrameNumber = function (sprites, image, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 1] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 2] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 3] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 4] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 5] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 6] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 7] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 8] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 9] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 10] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 11] = sprites[i].getCurrentFrameNumber();
+                    result[offset] = sprites[i].currentFrameNumber;
+                    result[offset + 1] = sprites[i].currentFrameNumber;
+                    result[offset + 2] = sprites[i].currentFrameNumber;
+                    result[offset + 3] = sprites[i].currentFrameNumber;
+                    result[offset + 4] = sprites[i].currentFrameNumber;
+                    result[offset + 5] = sprites[i].currentFrameNumber;
+                    result[offset + 6] = sprites[i].currentFrameNumber;
+                    result[offset + 7] = sprites[i].currentFrameNumber;
+                    result[offset + 8] = sprites[i].currentFrameNumber;
+                    result[offset + 9] = sprites[i].currentFrameNumber;
+                    result[offset + 10] = sprites[i].currentFrameNumber;
+                    result[offset + 11] = sprites[i].currentFrameNumber;
                     index++;
                 }
 
 
                 return result;
             };
-        }
-        ;
+            
+            return currentFrameNumber;
+        };
 
         function createRotation(limit) {
             var result = new Float32Array(limit * 12);
-            return function (sprites, startIndex, stopIndex) {
+            
+            var rotation = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getRotation();
-                    result[offset + 1] = sprites[i].getRotation();
-                    result[offset + 2] = sprites[i].getRotation();
-                    result[offset + 3] = sprites[i].getRotation();
-                    result[offset + 4] = sprites[i].getRotation();
-                    result[offset + 5] = sprites[i].getRotation();
-                    result[offset + 6] = sprites[i].getRotation();
-                    result[offset + 7] = sprites[i].getRotation();
-                    result[offset + 8] = sprites[i].getRotation();
-                    result[offset + 9] = sprites[i].getRotation();
-                    result[offset + 10] = sprites[i].getRotation();
-                    result[offset + 11] = sprites[i].getRotation();
+                    result[offset] = sprites[i].rotation;
+                    result[offset + 1] = sprites[i].rotation;
+                    result[offset + 2] = sprites[i].rotation;
+                    result[offset + 3] = sprites[i].rotation;
+                    result[offset + 4] = sprites[i].rotation;
+                    result[offset + 5] = sprites[i].rotation;
+                    result[offset + 6] = sprites[i].rotation;
+                    result[offset + 7] = sprites[i].rotation;
+                    result[offset + 8] = sprites[i].rotation;
+                    result[offset + 9] = sprites[i].rotation;
+                    result[offset + 10] = sprites[i].rotation;
+                    result[offset + 11] = sprites[i].rotation;
                     index++;
                 }
                 return result;
             };
-        }
-        ;
+            
+            return rotation;
+        };
 
         var rectangleCreator = createRectangles(MAX_BATCH);
         var scaleCreator = createScales(MAX_BATCH);
@@ -1352,7 +1365,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
             for (var property in spriteCache) {
                 if (spriteCache.hasOwnProperty(property)) {
-                    spriteCache[property] = [];
+                    spriteCache[property].length = 0;
                 }
             }
 
@@ -1480,36 +1493,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
         };
 
-        var createBufferedOffScreenDetector = function () {
-            return function (screenWidth, screenHeight, sprite, now) {
-                var width = sprite.getWidth();
-                var height = sprite.getHeight();
-                if (sprite.getX() < 0) {
-                    return {
-                        direction: "left",
-                        distance: sprite.getX()
-                    };
-                } else if (sprite.getX() > (screenWidth - width)) {
-                    return {
-                        direction: "right",
-                        distance: sprite.getX() - (screenWidth - width)
-                    };
-                } else if (sprite.getY() < 0) {
-                    return {
-                        direction: "top",
-                        distance: sprite.getY()
-                    };
-                } else if (sprite.getY() >= (screenHeight - height)) {
-                    return {
-                        direction: "down",
-                        distance: sprite.getY() - (screenHeight - height)
-                    };
-                }
-                return undefined;
-            };
-        };
-
-        var offScreenDetector = createBufferedOffScreenDetector(0, 0);
+ 
 
         var keyEvents = {};
         document.addEventListener("keydown", function (e) {
@@ -1558,7 +1542,9 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
                     time = now;
                 }
                 if (now - time > 1000) {
-                    console.log(counter);
+                    //if(counter < 59){
+                        console.log("frame rate: " + counter);
+                    //}
                     counter = 0;
                     time = now;
                 }
@@ -1569,59 +1555,79 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-            
+
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
-            
+
             if (useCollisionDetector) {
                 that.detectCollisions(now);
                 for (var i = 0; i < sprites.length; i++) {
-                    if (sprites[i].isDestroyed(now)) {
-                        sprites[i].handleDestruction(now);
-                        destructionHandler(sprites[i], now);
+                    var sprite = sprites[i];
+                    if (sprite.isDestroyed(now)) {
+                        sprite.handleDestruction(now);
+                        destructionHandler(sprite, now);
                     }
                 }
             }
-            
+
             if (updateHandler) {
                 updateHandler(now, keyEvents);
-            }    
-            
+            }
+
             for (var i = 0; i < sprites.length; i++) {
-                sprites[i].handleKeyEvents(keyEvents, now);
-                sprites[i].handleUpdate(now);  
-                sprites[i].tick();
-            }            
-            
-            for (var i = 0; i < sprites.length; i++) {
-                var offScreen = offScreenDetector(screenWidth, screenHeight, sprites[i]);
-                if (offScreen) {
-                    var handled = sprites[i].handleOffScreen(screenWidth, screenHeight, offScreen, now);
+                var sprite = sprites[i];
+                sprite.handleKeyEvents(keyEvents, now);
+                sprite.handleUpdate(now);
+                sprite.tick();
+
+                var width = sprite.width;
+                var height = sprite.height;
+                var direction = undefined;
+                var distance = undefined;
+                if (sprite.x < 0) {
+                    direction = "left";
+                    distance = sprite.getX();
+                } else if (sprite.x > (screenWidth - width)) {
+                    direction = "right";
+                    distance = sprite.x - (screenWidth - width);
+                } else if (sprite.y < 0) {
+                    direction = "top";
+                    distance = sprite.y;
+                } else if (sprite.y >= (screenHeight - height)) {
+                    direction = "down";
+                    distance = sprite.y - (screenHeight - height);
+                }
+
+
+
+                if (direction) {
+                    var handled = sprite.handleOffScreen(screenWidth, screenHeight, direction, distance, now);
                     if (!handled && globalOffScreenHandler) {
-                        globalOffScreenHandler(sprites[i], screenWidth, screenHeight, offScreen, now);
+                        globalOffScreenHandler(sprite, screenWidth, screenHeight, direction, distance, now);
                     }
                 }
             }
+
+
             
-           
             var filteredSprites = [];
             for (var i = 0; i < sprites.length; i++) {
-                if(!sprites[i].isDestroyed(now)){
+                if (!sprites[i].isDestroyed(now)) {
                     filteredSprites.push(sprites[i]);
                 }
             }
-            
 
-            for(var i=0; i < filteredSprites.length; i++){
+
+            for (var i = 0; i < filteredSprites.length; i++) {
                 filteredSprites[i].draw(renderer);
             }
 
-            
+
             renderer.flush();
             sprites = filteredSprites;
 
-            
+
         };
 
         this.start = function () {
@@ -1659,7 +1665,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
 
         this.forEach = function (fun) {
-            for(var i = 0; i < sprites.length; i++ ){
+            for (var i = 0; i < sprites.length; i++) {
                 fun(sprites[i]);
             }
         };
@@ -1681,13 +1687,13 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
     function Sprite(engine) {
 
-        var image;
-        var x = 0;
-        var y = 0;
-        var width = 0;
-        var height = 0;
-        var speedX = 0;
-        var speedY = 0;
+        this.image;
+        this.x = 0;
+        this.y = 0;
+        this.width = 0;
+        this.height = 0;
+        this.speedX = 0;
+        this.speedY = 0;
         var radius = 0;
         var animation;
         var angle;
@@ -1702,15 +1708,16 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         var spritesPerRow; 
         var spriteWidth;
         var spriteHeight;
-        var currentFrameNumber = 0;
+        this.currentFrameNumber = 0;
         var animationSpeed = 0;
         var animationCycle = 0;
-        var rotation = 0;
+        this.rotation = 0;
         var spriteX = 0;
         var spriteY = 0;
+        this.currentSrc;
 
         this.getRotation = function(){
-            return rotation;
+            return that.rotation;
         };
 
         this.getSpritesPerRow = function(){
@@ -1726,27 +1733,27 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };
         
         this.getCurrentFrameNumber = function(){
-            return currentFrameNumber;
+            return that.currentFrameNumber;
         };
         
         this.getImage = function(){
-            return image;
+            return that.image;
         };
         
         this.getX = function(){
-            return x;
+            return that.x;
         };
         
         this.getY = function(){
-            return y;
+            return that.y;
         };
         
         this.getWidth = function(){
-            return width;
+            return that.width;
         };
         
         this.getHeight = function(){
-            return height;
+            return that.height;
         };
 
         this.getSpriteX = function(){
@@ -1758,7 +1765,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };        
 
         this.setImage = function (_image, _numberOfFrames, _spritesPerRow, _spriteWidth, _spriteHeight,_animationSpeed, _spriteX, _spriteY) {
-            image = document.getElementById(_image);
+            that.image = document.getElementById(_image);
             numberOfFrames = _numberOfFrames?_numberOfFrames:1;
             spritesPerRow = _spritesPerRow;
             spriteWidth = _spriteWidth;
@@ -1766,49 +1773,50 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             animationSpeed = _animationSpeed;
             spriteX = _spriteX?_spriteX:0;
             spriteY = _spriteY?_spriteY:0;
+            that.currentSrc = that.image.currentSrc;
             return this;
         };
 
 
 
         this.setPosition = function (_x, _y) {
-            x = _x;
-            y = _y;
+            that.x = _x;
+            that.y = _y;
             return this;
         };
         
         this.increaseSpeedX = function (amount) {
-            speedX = speedX + amount;
+            that.speedX = that.speedX + amount;
             return this;
         };
 
         this.increaseSpeedY = function (amount) {
-            speedY = speedY + amount;
+            that.speedY = that.speedY + amount;
             return this;
         };
 
         this.setSpeedX = function (_speedX) {
-            speedX = _speedX;
+            that.speedX = _speedX;
             return this;
         };
 
         this.setSpeedY = function (_speedY) {
-            speedY = _speedY;
+            that.speedY = _speedY;
             return this;
         };
 
         this.getSpeedX = function () {
-            return speedX;
+            return that.speedX;
         };
 
         this.getSpeedY = function () {
-            return speedY;
+            return that.speedY;
         };
 
         this.setWidthAndHeight = function (_width, _height) {
-            width = _width;
-            height = _height;
-            radius = width > height ? width / 2 : height / 2;
+            that.width = _width;
+            that.height = _height;
+            radius = that.width > that.height ? that.width / 2 : that.height / 2;
             return this;
         };
         
@@ -1820,8 +1828,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
 
         this.addForceVector = function (_angle, force) {
-            speedX = speedX + Math.cos(_angle * Math.PI / 180) * force;
-            speedY = speedY + Math.sin(_angle * Math.PI / 180) * force;
+            that.speedX = that.speedX + Math.cos(_angle * Math.PI / 180) * force;
+            that.speedY = that.speedY + Math.sin(_angle * Math.PI / 180) * force;
         };
 
         var calulateForce = function (speedX, speedY) {
@@ -1836,33 +1844,33 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };
 
         this.relativeForceForce = function (other) {
-            var relativeX = speedX - other.getSpeedX();
-            var relativeY = speedY - other.getSpeedY();
+            var relativeX = that.speedX - other.getSpeedX();
+            var relativeY = that.speedY - other.getSpeedY();
             return calulateForce(relativeX, relativeY);
         };
         
         this.relativeForceAngle = function (other) {
-            var relativeX = speedX - other.getSpeedX();
-            var relativeY = speedY - other.getSpeedY();
+            var relativeX = that.speedX - other.getSpeedX();
+            var relativeY = that.speedY - other.getSpeedY();
             return calculateAngle(relativeX, relativeY);
         };        
 
         this.relativeSpeedX = function (other) {
-            var relativeX = speedX - other.getSpeedX();
+            var relativeX = that.speedX - other.getSpeedX();
             return -relativeX;
         };
         
         this.relativeSpeedY = function (other) {
-            var relativeY = speedY - other.getSpeedY();
+            var relativeY = that.speedY - other.getSpeedY();
             return relativeY;
         };        
 
         this.getForceVectorForce = function () {
-            return calulateForce(speedX, speedY);
+            return calulateForce(that.speedX, that.speedY);
         };
         
         this.getForceVectorAngle = function () {
-            return calculateAngle(speedX, speedY);
+            return calculateAngle(that.speedX, that.speedY);
         };        
 
         this.getRadius = function () {
@@ -1895,8 +1903,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
 
         this.getAngleAndDistance = function (other) {
-            var distanceX = other.getX() - x;
-            var distanceY = other.getY() - y;
+            var distanceX = other.getX() - that.x;
+            var distanceY = other.getY() - that.y;
             var angle = Math.atan2(distanceY, distanceX) * 180 / Math.PI;
 
             if (angle > 0) {
@@ -1916,7 +1924,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
         var prevDraw;
         var drawImage = function (context) {
-            if (!image) {
+            if (!that.image) {
                 return;
             }
 
@@ -1924,14 +1932,15 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
            
             var now = new Date().getTime();
             if(!prevDraw || (now-prevDraw)>animationSpeed){
-                currentFrameNumber++;
+                that.currentFrameNumber++;
                 prevDraw = now;
             }
             
-            if(currentFrameNumber >= numberOfFrames){
-               currentFrameNumber=0; 
+            if(that.currentFrameNumber >= numberOfFrames){
+               that.currentFrameNumber=0; 
                animationCycle++;
             }
+            
         };
         
         this.getAnimationCycle = function(){
@@ -1939,14 +1948,14 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };
 
         var animate = function (context) {
-            animation.setPosition(x, y);
-            animation.setWidthAndHeight(width, height);
+            animation.setPosition(that.x, that.y);
+            animation.setWidthAndHeight(that.width, that.height);
             return animation.animate(context);
         };
         
         this.tick = function(){
-            x = x + speedX;
-            y = y - speedY;           
+            that.x = that.x + that.speedX;
+            that.y = that.y - that.speedY;           
         };
 
         this.draw = function (context) {

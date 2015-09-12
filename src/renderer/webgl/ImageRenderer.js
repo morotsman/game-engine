@@ -119,20 +119,22 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
         
         
         this.drawImage = function (sprite) {
-            var currentImageSrc = sprite.getImage().currentSrc;
+            var currentImageSrc = sprite.currentSrc;
             if (!imageCache[currentImageSrc]) {
                 imageCache[currentImageSrc] = {};
-                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.getImage());
+                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.image);
                 imageCache[currentImageSrc].spritesPerRow = sprite.getSpritesPerRow() ? sprite.getSpritesPerRow() : 1;
-                imageCache[currentImageSrc].imageWidth = sprite.getImage().width;
-                imageCache[currentImageSrc].imageHeight = sprite.getImage().height;
-                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.getImage().width;
-                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.getImage().height;
+                imageCache[currentImageSrc].imageWidth = sprite.image.width;
+                imageCache[currentImageSrc].imageHeight = sprite.image.height;
+                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.image.width;
+                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.image.height;
                 imageCache[currentImageSrc].spriteX = sprite.getSpriteX();
                 imageCache[currentImageSrc].spriteY = sprite.getSpriteY();
                 spriteCache[currentImageSrc] = [];
             }
-            spriteCache[currentImageSrc].push(sprite);            
+            
+            spriteCache[currentImageSrc].push(sprite);  
+            
             /*
             spriteCache[currentImageSrc].push({
                 x: sprite.getX(),
@@ -201,18 +203,18 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
             var scales = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * i;
-                    result[offset] = sprites[i].getWidth();
-                    result[offset + 1] = sprites[i].getHeight();
-                    result[offset + 2] = sprites[i].getWidth();
-                    result[offset + 3] = sprites[i].getHeight();
-                    result[offset + 4] = sprites[i].getWidth();
-                    result[offset + 5] = sprites[i].getHeight();
-                    result[offset + 6] = sprites[i].getWidth();
-                    result[offset + 7] = sprites[i].getHeight();
-                    result[offset + 8] = sprites[i].getWidth();
-                    result[offset + 9] = sprites[i].getHeight();
-                    result[offset + 10] = sprites[i].getWidth();
-                    result[offset + 11] = sprites[i].getHeight();
+                    result[offset] = sprites[i].width;
+                    result[offset + 1] = sprites[i].height;
+                    result[offset + 2] = sprites[i].width;
+                    result[offset + 3] = sprites[i].height;
+                    result[offset + 4] = sprites[i].width;
+                    result[offset + 5] = sprites[i].height;
+                    result[offset + 6] = sprites[i].width;
+                    result[offset + 7] = sprites[i].height;
+                    result[offset + 8] = sprites[i].width;
+                    result[offset + 9] = sprites[i].height;
+                    result[offset + 10] = sprites[i].width;
+                    result[offset + 11] = sprites[i].height;
                 }
                 return result;
             };
@@ -229,18 +231,18 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getX();
-                    result[offset + 1] = sprites[i].getY();
-                    result[offset + 2] = sprites[i].getX();
-                    result[offset + 3] = sprites[i].getY();
-                    result[offset + 4] = sprites[i].getX();
-                    result[offset + 5] = sprites[i].getY();
-                    result[offset + 6] = sprites[i].getX();
-                    result[offset + 7] = sprites[i].getY();
-                    result[offset + 8] = sprites[i].getX();
-                    result[offset + 9] = sprites[i].getY();
-                    result[offset + 10] = sprites[i].getX();
-                    result[offset + 11] = sprites[i].getY();
+                    result[offset] = sprites[i].x;
+                    result[offset + 1] = sprites[i].y;
+                    result[offset + 2] = sprites[i].x;
+                    result[offset + 3] = sprites[i].y;
+                    result[offset + 4] = sprites[i].x;
+                    result[offset + 5] = sprites[i].y;
+                    result[offset + 6] = sprites[i].x;
+                    result[offset + 7] = sprites[i].y;
+                    result[offset + 8] = sprites[i].x;
+                    result[offset + 9] = sprites[i].y;
+                    result[offset + 10] = sprites[i].x;
+                    result[offset + 11] = sprites[i].y;
                     index++;
                 }
                 return result;
@@ -256,18 +258,18 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 1] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 2] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 3] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 4] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 5] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 6] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 7] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 8] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 9] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 10] = sprites[i].getCurrentFrameNumber();
-                    result[offset + 11] = sprites[i].getCurrentFrameNumber();
+                    result[offset] = sprites[i].currentFrameNumber;
+                    result[offset + 1] = sprites[i].currentFrameNumber;
+                    result[offset + 2] = sprites[i].currentFrameNumber;
+                    result[offset + 3] = sprites[i].currentFrameNumber;
+                    result[offset + 4] = sprites[i].currentFrameNumber;
+                    result[offset + 5] = sprites[i].currentFrameNumber;
+                    result[offset + 6] = sprites[i].currentFrameNumber;
+                    result[offset + 7] = sprites[i].currentFrameNumber;
+                    result[offset + 8] = sprites[i].currentFrameNumber;
+                    result[offset + 9] = sprites[i].currentFrameNumber;
+                    result[offset + 10] = sprites[i].currentFrameNumber;
+                    result[offset + 11] = sprites[i].currentFrameNumber;
                     index++;
                 }
 
@@ -285,18 +287,18 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * index;
-                    result[offset] = sprites[i].getRotation();
-                    result[offset + 1] = sprites[i].getRotation();
-                    result[offset + 2] = sprites[i].getRotation();
-                    result[offset + 3] = sprites[i].getRotation();
-                    result[offset + 4] = sprites[i].getRotation();
-                    result[offset + 5] = sprites[i].getRotation();
-                    result[offset + 6] = sprites[i].getRotation();
-                    result[offset + 7] = sprites[i].getRotation();
-                    result[offset + 8] = sprites[i].getRotation();
-                    result[offset + 9] = sprites[i].getRotation();
-                    result[offset + 10] = sprites[i].getRotation();
-                    result[offset + 11] = sprites[i].getRotation();
+                    result[offset] = sprites[i].rotation;
+                    result[offset + 1] = sprites[i].rotation;
+                    result[offset + 2] = sprites[i].rotation;
+                    result[offset + 3] = sprites[i].rotation;
+                    result[offset + 4] = sprites[i].rotation;
+                    result[offset + 5] = sprites[i].rotation;
+                    result[offset + 6] = sprites[i].rotation;
+                    result[offset + 7] = sprites[i].rotation;
+                    result[offset + 8] = sprites[i].rotation;
+                    result[offset + 9] = sprites[i].rotation;
+                    result[offset + 10] = sprites[i].rotation;
+                    result[offset + 11] = sprites[i].rotation;
                     index++;
                 }
                 return result;

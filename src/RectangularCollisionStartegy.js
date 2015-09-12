@@ -64,18 +64,18 @@ define(["line-intersect"], function (lineIntersect) {
 
         var spriteToAABB = function (sprite) {
             return {
-                x: sprite.getX(),
-                y: sprite.getY(),
-                maxX: sprite.getX() + sprite.getWidth(),
-                maxY: sprite.getY() + sprite.getHeight(),
-                width: sprite.getWidth(),
-                height: sprite.getHeight()
+                x: sprite.x,
+                y: sprite.y,
+                maxX: sprite.x + sprite.width,
+                maxY: sprite.y + sprite.height,
+                width: sprite.width,
+                height: sprite.height
             };
         };
 
         var relativeSpeed = function (one, two) {
-            var relativeX = one.getSpeedX() - two.getSpeedX();
-            var relativeY = one.getSpeedY() - two.getSpeedY();
+            var relativeX = one.speedX - two.speedX;
+            var relativeY = one.speedY - two.speedY;
             return {
                 x: -relativeX,
                 y: relativeY

@@ -27,36 +27,7 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
 
         };
 
-        var createBufferedOffScreenDetector = function () {
-            return function (screenWidth, screenHeight, sprite, now) {
-                var width = sprite.getWidth();
-                var height = sprite.getHeight();
-                if (sprite.getX() < 0) {
-                    return {
-                        direction: "left",
-                        distance: sprite.getX()
-                    };
-                } else if (sprite.getX() > (screenWidth - width)) {
-                    return {
-                        direction: "right",
-                        distance: sprite.getX() - (screenWidth - width)
-                    };
-                } else if (sprite.getY() < 0) {
-                    return {
-                        direction: "top",
-                        distance: sprite.getY()
-                    };
-                } else if (sprite.getY() >= (screenHeight - height)) {
-                    return {
-                        direction: "down",
-                        distance: sprite.getY() - (screenHeight - height)
-                    };
-                }
-                return undefined;
-            };
-        };
-
-        var offScreenDetector = createBufferedOffScreenDetector(0, 0);
+ 
 
         var keyEvents = {};
         document.addEventListener("keydown", function (e) {
@@ -144,22 +115,22 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
                 sprite.handleUpdate(now);
                 sprite.tick();
 
-                var width = sprite.getWidth();
-                var height = sprite.getHeight();
+                var width = sprite.width;
+                var height = sprite.height;
                 var direction = undefined;
                 var distance = undefined;
-                if (sprite.getX() < 0) {
+                if (sprite.x < 0) {
                     direction = "left";
                     distance = sprite.getX();
-                } else if (sprite.getX() > (screenWidth - width)) {
+                } else if (sprite.x > (screenWidth - width)) {
                     direction = "right";
-                    distance = sprite.getX() - (screenWidth - width);
-                } else if (sprite.getY() < 0) {
+                    distance = sprite.x - (screenWidth - width);
+                } else if (sprite.y < 0) {
                     direction = "top";
-                    distance = sprite.getY();
-                } else if (sprite.getY() >= (screenHeight - height)) {
+                    distance = sprite.y;
+                } else if (sprite.y >= (screenHeight - height)) {
                     direction = "down";
-                    distance = sprite.getY() - (screenHeight - height);
+                    distance = sprite.y - (screenHeight - height);
                 }
 
 
@@ -173,7 +144,7 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
             }
 
 
-
+            
             var filteredSprites = [];
             for (var i = 0; i < sprites.length; i++) {
                 if (!sprites[i].isDestroyed(now)) {

@@ -28,12 +28,12 @@ define([], function () {
 
         this.drawImage = function (sprite) {
             if (!sprite.getSpritesPerRow()) {
-                context.drawImage(sprite.getImage(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+                context.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height);
             } else {
-                var row = Math.floor(sprite.getCurrentFrameNumber() / sprite.getSpritesPerRow());
-                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.getCurrentFrameNumber() - (row * sprite.getSpritesPerRow()));
+                var row = Math.floor(sprite.currentFrameNumber / sprite.getSpritesPerRow());
+                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.currentFrameNumber - (row * sprite.getSpritesPerRow()));
                 var sy = sprite.getSpriteY() + sprite.getSpriteHeight() * row;
-                context.drawImage(sprite.getImage(), sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+                context.drawImage(sprite.image, sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.x, sprite.y, sprite.width, sprite.getHeight());
             }
 
         };
