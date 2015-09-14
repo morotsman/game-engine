@@ -1920,25 +1920,29 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             };
         };
 
-        var prevDraw;
+        var frameNumber = 0;
+        var counter = 0;
         var drawImage = function (context) {
             if (!that.image) {
                 return;
             }
 
             context.drawImage(that);
-           
-            var now = new Date().getTime();
-            if(!prevDraw || (now-prevDraw)>animationSpeed){
-                that.currentFrameNumber++;
-                prevDraw = now;
-            }
             
-            if(that.currentFrameNumber >= numberOfFrames){
-               that.currentFrameNumber=0; 
-            }
+            if(numberOfFrames>1){
+                that.currentFrameNumber = frameNumber%numberOfFrames;
+                counter++;
+                if(counter%animationSpeed===0){
+                    frameNumber++;
+                }
+                
+            }   
             
         };
+        
+        this.getAnimationCycle = function(){
+            return that.currentFrameNumber;
+        };        
         
         this.tick = function(){
             that.x = that.x + that.speedX;

@@ -6,7 +6,7 @@ function Knight(engine){
     var that = this;
     var throttledJump = game_engine.util.throttled(500, that.addForceVector);
     var throttledWalk = game_engine.util.throttled(100, that.addForceVector);
-    var speed = 70;
+    var animationSpeed = 5;
     
     var currentDirection = "none";
     var maxSpeed = 5;
@@ -20,7 +20,7 @@ function Knight(engine){
             }
             if(currentDirection !== "right"){
                 currentDirection = "right";
-                this.setImage("right_knight",6,6,16,22,100,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
+                this.setImage("right_knight",6,6,16,22,animationSpeed,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
             }            
         }else if (keys[37]) {//left
             if(that.getSpeedX() > -maxSpeed){
@@ -28,15 +28,15 @@ function Knight(engine){
             }
             if(currentDirection !== "left"){
                 currentDirection = "left";
-                this.setImage("left_knight",6,6,16,22,100,45,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
+                this.setImage("left_knight",6,6,16,22,animationSpeed,45,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
             }              
         } else{
             that.setSpeedX(0);
             if(currentDirection !== "none"){
                 if(currentDirection==="right"){
-                   this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
+                   this.setImage("right_knight",1,6,16,22,animationSpeed,34,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
                 }else{
-                  this.setImage("left_knight",1,6,16,22,100,44,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
+                  this.setImage("left_knight",1,6,16,22,animationSpeed,44,24).setPosition(that.getX(),that.getY()).setWidthAndHeight(30,30);
                 }
                
                 currentDirection = "none";
@@ -60,6 +60,6 @@ function Knight(engine){
         onGround = _onGround;
     };
 
-    this.setImage("right_knight",1,6,16,22,100,34,24).setPosition(7,50).setWidthAndHeight(30,30);
+    this.setImage("right_knight",1,6,16,22,animationSpeed,34,24).setPosition(7,50).setWidthAndHeight(30,30);
     
 }
