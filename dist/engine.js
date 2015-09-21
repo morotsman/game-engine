@@ -794,6 +794,7 @@ define('renderer/CanvasRenderer',[], function () {
         };
 
         this.drawImage = function (sprite) {
+            context.save();
             var imageInfo = imageCache[sprite.currentSrc];
 
             if (imageInfo.numberOfFrames===1) {
@@ -813,6 +814,7 @@ define('renderer/CanvasRenderer',[], function () {
 
                 }
             }
+            context.restore();
 
         };
 
@@ -1599,7 +1601,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-
+            
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
@@ -1670,16 +1672,6 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
             renderer.flush();
             sprites = filteredSprites;
-            
-           /*
-            for (var i = 0; i < sprites.length; i++) {
-                sprites[i].draw(renderer);
-            }
-            renderer.flush();  
-            */
-
-
-                     
 
         };
 
@@ -1746,6 +1738,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         this.height = 0;
         this.speedX = 0;
         this.speedY = 0;
+        this.frameNumber = 0;
+        this.counter = 0;        
         var radius = 0;
         var angle;
         var destroyed = false;
@@ -1927,11 +1921,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             };
         };
 
-        this.frameNumber = 0;
-        this.counter = 0;
-        var drawImage = function (context) {
-            context.drawImage(that);
-        };
+
         
         this.getAnimationCycle = function(){
             return that.currentFrameNumber;
@@ -1943,9 +1933,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };
 
         this.draw = function (context) {
-            context.save();
-            drawImage(context);
-            context.restore();
+            context.drawImage(that);
         };
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {

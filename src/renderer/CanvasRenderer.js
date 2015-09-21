@@ -29,6 +29,7 @@ define([], function () {
         };
 
         this.drawImage = function (sprite) {
+            context.save();
             var imageInfo = imageCache[sprite.currentSrc];
 
             if (imageInfo.numberOfFrames===1) {
@@ -48,6 +49,7 @@ define([], function () {
 
                 }
             }
+            context.restore();
 
         };
 

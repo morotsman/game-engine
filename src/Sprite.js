@@ -8,6 +8,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         this.height = 0;
         this.speedX = 0;
         this.speedY = 0;
+        this.frameNumber = 0;
+        this.counter = 0;        
         var radius = 0;
         var angle;
         var destroyed = false;
@@ -189,11 +191,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             };
         };
 
-        this.frameNumber = 0;
-        this.counter = 0;
-        var drawImage = function (context) {
-            context.drawImage(that);
-        };
+
         
         this.getAnimationCycle = function(){
             return that.currentFrameNumber;
@@ -205,9 +203,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         };
 
         this.draw = function (context) {
-            context.save();
-            drawImage(context);
-            context.restore();
+            context.drawImage(that);
         };
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {

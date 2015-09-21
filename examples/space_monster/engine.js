@@ -1599,7 +1599,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-
+            
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
@@ -1670,16 +1670,6 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
             renderer.flush();
             sprites = filteredSprites;
-            
-           /*
-            for (var i = 0; i < sprites.length; i++) {
-                sprites[i].draw(renderer);
-            }
-            renderer.flush();  
-            */
-
-
-                     
 
         };
 
