@@ -2,7 +2,6 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
 
     function Sprite(engine) {
 
-        this.image;
         this.x = 0;
         this.y = 0;
         this.width = 0;
@@ -17,40 +16,13 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         var offScreenHandler;
 
         var keyEvents = {};
-        
-        var numberOfFrames;
-        var spritesPerRow; 
-        var spriteWidth;
-        var spriteHeight;
+       
         this.currentFrameNumber = 0;
-        var animationSpeed = 0;
         this.rotation = 0;
-        var spriteX = 0;
-        var spriteY = 0;
         this.currentSrc;
 
         this.getRotation = function(){
             return that.rotation;
-        };
-
-        this.getSpritesPerRow = function(){
-            return spritesPerRow;
-        };
-        
-        this.getSpriteWidth = function(){
-            return spriteWidth;
-        };
-        
-        this.getSpriteHeight = function(){
-            return spriteHeight;
-        };
-        
-        this.getCurrentFrameNumber = function(){
-            return that.currentFrameNumber;
-        };
-        
-        this.getImage = function(){
-            return that.image;
         };
         
         this.getX = function(){
@@ -67,23 +39,13 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         
         this.getHeight = function(){
             return that.height;
-        };
-
-        this.getSpriteX = function(){
-            return spriteX;
-        };
-        
-        this.getSpriteY = function(){
-            return spriteY;
-        };        
+        };       
 
         this.setImage = function (key) {
             that.currentSrc = key;
             return this;
         };
-
-
-
+        
         this.setPosition = function (_x, _y) {
             that.x = _x;
             that.y = _y;
@@ -230,12 +192,7 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
         this.frameNumber = 0;
         this.counter = 0;
         var drawImage = function (context) {
-
-
-
             context.drawImage(that);
-            
-            
         };
         
         this.getAnimationCycle = function(){
