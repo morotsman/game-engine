@@ -18,6 +18,23 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
         this.addSprites = function (_sprites) {
             sprites = sprites.concat(_sprites);
         };
+        
+        this.loadImage = function(key, image, numberOfFrames, spritesPerRow, spriteWidth, spriteHeight, spriteX, spriteY, animationSpeed){
+            var imageInfo = {
+                key: key,
+                image: image,
+                numberOfFrames: numberOfFrames?numberOfFrames:1,
+                spritesPerRow : spritesPerRow?spritesPerRow:1,
+                imageWidth : image.width,
+                imageHeight : image.height,
+                spriteWidth : spriteWidth ? spriteWidth : image.width,
+                spriteHeight : spriteHeight ? spriteHeight : image.height,
+                spriteX : spriteX?spriteX:0,
+                spriteY : spriteY?spriteY:0,
+                animationSpeed:animationSpeed
+            };
+            renderer.loadImage(imageInfo);
+        };
 
         var collisionHandler = function () {
 
@@ -160,7 +177,16 @@ define(["Util", "OffScreenHandlerFactory", "RectangularCollisionStartegy", "rend
 
             renderer.flush();
             sprites = filteredSprites;
+            
+           /*
+            for (var i = 0; i < sprites.length; i++) {
+                sprites[i].draw(renderer);
+            }
+            renderer.flush();  
+            */
 
+
+                     
 
         };
 

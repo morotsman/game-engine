@@ -30,6 +30,16 @@
         <script>
 
                 var engine = new game_engine.engine("canvas1","webGL").withCollisionDetector("rectangle").withGlobalOffScreenHandler("destructive");
+                
+                var rightKnight = document.getElementById("right_knight");
+                var leftKnight = document.getElementById("left_knight");
+                var platform = document.getElementById("platform");
+    
+                engine.loadImage("static_right_knight", rightKnight,1, 6, 16, 22, 34, 24,5);
+                engine.loadImage("right_knight", rightKnight,6, 6, 16, 22, 34, 24,5);
+                engine.loadImage("static_left_knight",leftKnight,1, 6, 16, 22, 45, 24,5);
+                engine.loadImage("left_knight",leftKnight,6, 6, 16, 22, 45, 24,5);
+                engine.loadImage("platform", platform);
 
                 new Knight(engine);
                 new Platform(engine).setImage("platform").setPosition(1,500).setWidthAndHeight(200,30);

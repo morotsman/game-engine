@@ -770,6 +770,8 @@ define('renderer/CanvasRenderer',[], function () {
         var canvas = document.getElementById(canvasId);
         var context = canvas.getContext("2d");
 
+        var imageCache = {};
+
 
         this.height = function () {
             return canvas.height;
@@ -792,19 +794,34 @@ define('renderer/CanvasRenderer',[], function () {
         };
 
         this.drawImage = function (sprite) {
-            if (!sprite.getSpritesPerRow()) {
-                context.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height);
+            var imageInfo = imageCache[sprite.currentSrc];
+
+            if (imageInfo.numberOfFrames===1) {
+                context.drawImage(imageInfo.image, sprite.x, sprite.y, sprite.width, sprite.height);
             } else {
-                var row = Math.floor(sprite.currentFrameNumber / sprite.getSpritesPerRow());
-                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.currentFrameNumber - (row * sprite.getSpritesPerRow()));
-                var sy = sprite.getSpriteY() + sprite.getSpriteHeight() * row;
-                context.drawImage(sprite.image, sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.x, sprite.y, sprite.width, sprite.getHeight());
+                var row = Math.floor(sprite.currentFrameNumber / imageInfo.spritesPerRow);
+                var sx = imageInfo.spriteX + imageInfo.spriteWidth * (sprite.currentFrameNumber - (row * imageInfo.spritesPerRow));
+                var sy = imageInfo.spriteY + imageInfo.spriteHeight * row;
+                context.drawImage(imageInfo.image, sx, sy, imageInfo.spriteWidth, imageInfo.spriteHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+
+                if (imageInfo.numberOfFrames > 1) {
+                    sprite.currentFrameNumber = sprite.frameNumber % imageInfo.numberOfFrames;
+                    sprite.counter++;
+                    if (sprite.counter % imageInfo.animationSpeed === 0) {
+                        sprite.frameNumber++;
+                    }
+
+                }
             }
 
         };
 
         this.flush = function () {
-        }
+        };
+
+        this.loadImage = function (imageInfo) {
+            imageCache[imageInfo.key] = imageInfo;
+        };
     }
     ;
 
@@ -987,7 +1004,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
     var vertexShader = [
         'attribute vec2 a_position;',
-        'varying vec2 v_texCoord;', 
+        'varying vec2 v_texCoord;',
         'uniform float spritesPerRow;',
         'uniform vec2 spriteTextureSize;',
         'uniform vec2 spriteSize;',
@@ -1101,43 +1118,45 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
             canvas = _canvas;
             init(fragmentShader, vertexShader);
         };
-        
-        
+
+        this.loadImage = function (imageInfo) {
+            imageInfo.texture = util.createTextureFromImage(gl, imageInfo.image);
+            imageCache[imageInfo.key] = imageInfo;
+            spriteCache[imageInfo.key] = [];
+        };
+
+
         this.drawImage = function (sprite) {
             var currentImageSrc = sprite.currentSrc;
-            if (!imageCache[currentImageSrc]) {
-                imageCache[currentImageSrc] = {};
-                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.image);
-                imageCache[currentImageSrc].spritesPerRow = sprite.getSpritesPerRow() ? sprite.getSpritesPerRow() : 1;
-                imageCache[currentImageSrc].imageWidth = sprite.image.width;
-                imageCache[currentImageSrc].imageHeight = sprite.image.height;
-                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.image.width;
-                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.image.height;
-                imageCache[currentImageSrc].spriteX = sprite.getSpriteX();
-                imageCache[currentImageSrc].spriteY = sprite.getSpriteY();
-                spriteCache[currentImageSrc] = [];
+            spriteCache[currentImageSrc].push(sprite);
+
+            var imageInfo = imageCache[currentImageSrc];
+            if (imageInfo.numberOfFrames > 1) {
+                sprite.currentFrameNumber = sprite.frameNumber % imageInfo.numberOfFrames;
+                sprite.counter++;
+                if (sprite.counter % imageInfo.animationSpeed === 0) {
+                    sprite.frameNumber++;
+                }
+
             }
-            
-            spriteCache[currentImageSrc].push(sprite);  
-            
             /*
-            spriteCache[currentImageSrc].push({
-                x: sprite.getX(),
-                y: sprite.getY(),
-                scaleX: sprite.getWidth() / imageCache[currentImageSrc].spriteWidth,
-                scaleY: sprite.getHeight() / imageCache[currentImageSrc].spriteHeight,
-                rotation: 0,
-                currentFrameNumber: sprite.getCurrentFrameNumber()
-            });
-            */
-        };        
+             spriteCache[currentImageSrc].push({
+             x: sprite.getX(),
+             y: sprite.getY(),
+             scaleX: sprite.getWidth() / imageCache[currentImageSrc].spriteWidth,
+             scaleY: sprite.getHeight() / imageCache[currentImageSrc].spriteHeight,
+             rotation: 0,
+             currentFrameNumber: sprite.getCurrentFrameNumber()
+             });
+             */
+        };
 
 
 
         function createRectangles(limit) {
             var result = new Float32Array(limit * 12);
             var prevSize;
-            
+
             var rectangles = function (gl, sprites) {
                 var offset;
                 for (var i = 0; i < sprites.length; i++) {
@@ -1176,15 +1195,16 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 prevSize = sprites.length;
                 return result;
             };
-            
+
             return rectangles;
-        };
+        }
+        ;
 
 
 
         function createDisplaySize(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var displaySize = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * i;
@@ -1203,15 +1223,15 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-            
-            
+
+
             return displaySize;
         }
         ;
 
         function createCenterPositions(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var centerPositions = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -1232,13 +1252,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-            
+
             return centerPositions;
-        };
+        }
+        ;
 
         function createCurrentFrameNumber(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var currentFrameNumber = function (sprites, image, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -1261,13 +1282,14 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
 
                 return result;
             };
-            
+
             return currentFrameNumber;
-        };
+        }
+        ;
 
         function createRotation(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var rotation = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -1288,9 +1310,10 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                 }
                 return result;
             };
-            
+
             return rotation;
-        };
+        }
+        ;
 
         var rectangleCreator = createRectangles(MAX_BATCH);
         var displaySizeCreator = createDisplaySize(MAX_BATCH);
@@ -1314,7 +1337,7 @@ define('renderer/webgl/ImageRenderer',["renderer/webgl/WEbGLUtil"], function (ut
                     gl.uniform1f(parameterLocations.spritesPerRow, image.spritesPerRow);
                     gl.uniform2f(parameterLocations.spriteTextureSize, image.spriteWidth / image.imageWidth, image.spriteHeight / image.imageHeight);
                     gl.uniform2f(parameterLocations.spriteSize, image.spriteWidth, image.spriteHeight);
-                    gl.uniform2f(parameterLocations.spriteStartPos,image.spriteX / image.imageWidth,image.spriteY / image.imageHeight);
+                    gl.uniform2f(parameterLocations.spriteStartPos, image.spriteX / image.imageWidth, image.spriteY / image.imageHeight);
                     var spritesToDraw = spriteCache[property];
                     gl.bindTexture(gl.TEXTURE_2D, image.texture);
 
@@ -1425,6 +1448,10 @@ define('renderer/webgl/WebGLRenderer',["renderer/webgl/WebGLUtil","renderer/webg
         this.flush = function () {
             imageRenderer.flush();
         };
+        
+        this.loadImage = function (imageInfo) {
+            imageRenderer.loadImage(imageInfo);
+        };
     }
     ;
 
@@ -1483,6 +1510,23 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
         this.addSprites = function (_sprites) {
             sprites = sprites.concat(_sprites);
+        };
+        
+        this.loadImage = function(key, image, numberOfFrames, spritesPerRow, spriteWidth, spriteHeight, spriteX, spriteY, animationSpeed){
+            var imageInfo = {
+                key: key,
+                image: image,
+                numberOfFrames: numberOfFrames?numberOfFrames:1,
+                spritesPerRow : spritesPerRow?spritesPerRow:1,
+                imageWidth : image.width,
+                imageHeight : image.height,
+                spriteWidth : spriteWidth ? spriteWidth : image.width,
+                spriteHeight : spriteHeight ? spriteHeight : image.height,
+                spriteX : spriteX?spriteX:0,
+                spriteY : spriteY?spriteY:0,
+                animationSpeed:animationSpeed
+            };
+            renderer.loadImage(imageInfo);
         };
 
         var collisionHandler = function () {
@@ -1626,7 +1670,16 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
             renderer.flush();
             sprites = filteredSprites;
+            
+           /*
+            for (var i = 0; i < sprites.length; i++) {
+                sprites[i].draw(renderer);
+            }
+            renderer.flush();  
+            */
 
+
+                     
 
         };
 
@@ -1762,16 +1815,8 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             return spriteY;
         };        
 
-        this.setImage = function (_image, _numberOfFrames, _spritesPerRow, _spriteWidth, _spriteHeight,_animationSpeed, _spriteX, _spriteY) {
-            that.image = document.getElementById(_image);
-            numberOfFrames = _numberOfFrames?_numberOfFrames:1;
-            spritesPerRow = _spritesPerRow;
-            spriteWidth = _spriteWidth;
-            spriteHeight = _spriteHeight;
-            animationSpeed = _animationSpeed;
-            spriteX = _spriteX?_spriteX:0;
-            spriteY = _spriteY?_spriteY:0;
-            that.currentSrc = that.image.currentSrc;
+        this.setImage = function (key) {
+            that.currentSrc = key;
             return this;
         };
 
@@ -1920,25 +1965,20 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             };
         };
 
-        var frameNumber = 0;
-        var counter = 0;
+        this.frameNumber = 0;
+        this.counter = 0;
         var drawImage = function (context) {
-            if (!that.image) {
-                return;
-            }
+
+
 
             context.drawImage(that);
             
-            if(numberOfFrames>1){
-                that.currentFrameNumber = frameNumber%numberOfFrames;
-                counter++;
-                if(counter%animationSpeed===0){
-                    frameNumber++;
-                }
-                
-            }   
             
         };
+        
+        this.getAnimationCycle = function(){
+            return that.currentFrameNumber;
+        };        
         
         this.tick = function(){
             that.x = that.x + that.speedX;

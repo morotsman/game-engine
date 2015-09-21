@@ -2,7 +2,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
 
     var vertexShader = [
         'attribute vec2 a_position;',
-        'varying vec2 v_texCoord;', 
+        'varying vec2 v_texCoord;',
         'uniform float spritesPerRow;',
         'uniform vec2 spriteTextureSize;',
         'uniform vec2 spriteSize;',
@@ -116,43 +116,45 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
             canvas = _canvas;
             init(fragmentShader, vertexShader);
         };
-        
-        
+
+        this.loadImage = function (imageInfo) {
+            imageInfo.texture = util.createTextureFromImage(gl, imageInfo.image);
+            imageCache[imageInfo.key] = imageInfo;
+            spriteCache[imageInfo.key] = [];
+        };
+
+
         this.drawImage = function (sprite) {
             var currentImageSrc = sprite.currentSrc;
-            if (!imageCache[currentImageSrc]) {
-                imageCache[currentImageSrc] = {};
-                imageCache[currentImageSrc].texture = util.createTextureFromImage(gl, sprite.image);
-                imageCache[currentImageSrc].spritesPerRow = sprite.getSpritesPerRow() ? sprite.getSpritesPerRow() : 1;
-                imageCache[currentImageSrc].imageWidth = sprite.image.width;
-                imageCache[currentImageSrc].imageHeight = sprite.image.height;
-                imageCache[currentImageSrc].spriteWidth = sprite.getSpriteWidth() ? sprite.getSpriteWidth() : sprite.image.width;
-                imageCache[currentImageSrc].spriteHeight = sprite.getSpriteHeight() ? sprite.getSpriteHeight() : sprite.image.height;
-                imageCache[currentImageSrc].spriteX = sprite.getSpriteX();
-                imageCache[currentImageSrc].spriteY = sprite.getSpriteY();
-                spriteCache[currentImageSrc] = [];
+            spriteCache[currentImageSrc].push(sprite);
+
+            var imageInfo = imageCache[currentImageSrc];
+            if (imageInfo.numberOfFrames > 1) {
+                sprite.currentFrameNumber = sprite.frameNumber % imageInfo.numberOfFrames;
+                sprite.counter++;
+                if (sprite.counter % imageInfo.animationSpeed === 0) {
+                    sprite.frameNumber++;
+                }
+
             }
-            
-            spriteCache[currentImageSrc].push(sprite);  
-            
             /*
-            spriteCache[currentImageSrc].push({
-                x: sprite.getX(),
-                y: sprite.getY(),
-                scaleX: sprite.getWidth() / imageCache[currentImageSrc].spriteWidth,
-                scaleY: sprite.getHeight() / imageCache[currentImageSrc].spriteHeight,
-                rotation: 0,
-                currentFrameNumber: sprite.getCurrentFrameNumber()
-            });
-            */
-        };        
+             spriteCache[currentImageSrc].push({
+             x: sprite.getX(),
+             y: sprite.getY(),
+             scaleX: sprite.getWidth() / imageCache[currentImageSrc].spriteWidth,
+             scaleY: sprite.getHeight() / imageCache[currentImageSrc].spriteHeight,
+             rotation: 0,
+             currentFrameNumber: sprite.getCurrentFrameNumber()
+             });
+             */
+        };
 
 
 
         function createRectangles(limit) {
             var result = new Float32Array(limit * 12);
             var prevSize;
-            
+
             var rectangles = function (gl, sprites) {
                 var offset;
                 for (var i = 0; i < sprites.length; i++) {
@@ -191,15 +193,16 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 prevSize = sprites.length;
                 return result;
             };
-            
+
             return rectangles;
-        };
+        }
+        ;
 
 
 
         function createDisplaySize(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var displaySize = function (sprites, startIndex, stopIndex) {
                 for (var i = startIndex; i < stopIndex; i++) {
                     var offset = 12 * i;
@@ -218,15 +221,15 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 }
                 return result;
             };
-            
-            
+
+
             return displaySize;
         }
         ;
 
         function createCenterPositions(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var centerPositions = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -247,13 +250,14 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 }
                 return result;
             };
-            
+
             return centerPositions;
-        };
+        }
+        ;
 
         function createCurrentFrameNumber(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var currentFrameNumber = function (sprites, image, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -276,13 +280,14 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
 
                 return result;
             };
-            
+
             return currentFrameNumber;
-        };
+        }
+        ;
 
         function createRotation(limit) {
             var result = new Float32Array(limit * 12);
-            
+
             var rotation = function (sprites, startIndex, stopIndex) {
                 var index = 0;
                 for (var i = startIndex; i < stopIndex; i++) {
@@ -303,9 +308,10 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                 }
                 return result;
             };
-            
+
             return rotation;
-        };
+        }
+        ;
 
         var rectangleCreator = createRectangles(MAX_BATCH);
         var displaySizeCreator = createDisplaySize(MAX_BATCH);
@@ -329,7 +335,7 @@ define(["renderer/webgl/WEbGLUtil"], function (util) {
                     gl.uniform1f(parameterLocations.spritesPerRow, image.spritesPerRow);
                     gl.uniform2f(parameterLocations.spriteTextureSize, image.spriteWidth / image.imageWidth, image.spriteHeight / image.imageHeight);
                     gl.uniform2f(parameterLocations.spriteSize, image.spriteWidth, image.spriteHeight);
-                    gl.uniform2f(parameterLocations.spriteStartPos,image.spriteX / image.imageWidth,image.spriteY / image.imageHeight);
+                    gl.uniform2f(parameterLocations.spriteStartPos, image.spriteX / image.imageWidth, image.spriteY / image.imageHeight);
                     var spritesToDraw = spriteCache[property];
                     gl.bindTexture(gl.TEXTURE_2D, image.texture);
 

@@ -43,6 +43,12 @@
 
             var engine = new game_engine.engine("canvas1","webGL").withCollisionDetector();
             
+            engine.loadImage("rocket", document.getElementById("rocket")); 
+            engine.loadImage("ufo", document.getElementById("ufo"));  
+            engine.loadImage("bullet", document.getElementById("bullet")); 
+            engine.loadImage("explosion", document.getElementById("explosion"),20,4,320,240,0,0,2); 
+            engine.loadImage("bonus", document.getElementById("bonus"));
+            
             var rocket = new Rocket(engine).setImage("rocket").setWidthAndHeight(32, 64).setPosition(400, 500);
 
 

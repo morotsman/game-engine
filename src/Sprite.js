@@ -77,16 +77,8 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             return spriteY;
         };        
 
-        this.setImage = function (_image, _numberOfFrames, _spritesPerRow, _spriteWidth, _spriteHeight,_animationSpeed, _spriteX, _spriteY) {
-            that.image = document.getElementById(_image);
-            numberOfFrames = _numberOfFrames?_numberOfFrames:1;
-            spritesPerRow = _spritesPerRow;
-            spriteWidth = _spriteWidth;
-            spriteHeight = _spriteHeight;
-            animationSpeed = _animationSpeed;
-            spriteX = _spriteX?_spriteX:0;
-            spriteY = _spriteY?_spriteY:0;
-            that.currentSrc = that.image.currentSrc;
+        this.setImage = function (key) {
+            that.currentSrc = key;
             return this;
         };
 
@@ -235,23 +227,14 @@ define(["OffScreenHandlerFactory","Util"], function (offScreenHandlerFactory,uti
             };
         };
 
-        var frameNumber = 0;
-        var counter = 0;
+        this.frameNumber = 0;
+        this.counter = 0;
         var drawImage = function (context) {
-            if (!that.image) {
-                return;
-            }
+
+
 
             context.drawImage(that);
             
-            if(numberOfFrames>1){
-                that.currentFrameNumber = frameNumber%numberOfFrames;
-                counter++;
-                if(counter%animationSpeed===0){
-                    frameNumber++;
-                }
-                
-            }   
             
         };
         

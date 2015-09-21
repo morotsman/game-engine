@@ -5,6 +5,8 @@ define([], function () {
         var canvas = document.getElementById(canvasId);
         var context = canvas.getContext("2d");
 
+        var imageCache = {};
+
 
         this.height = function () {
             return canvas.height;
@@ -27,19 +29,34 @@ define([], function () {
         };
 
         this.drawImage = function (sprite) {
-            if (!sprite.getSpritesPerRow()) {
-                context.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height);
+            var imageInfo = imageCache[sprite.currentSrc];
+
+            if (imageInfo.numberOfFrames===1) {
+                context.drawImage(imageInfo.image, sprite.x, sprite.y, sprite.width, sprite.height);
             } else {
-                var row = Math.floor(sprite.currentFrameNumber / sprite.getSpritesPerRow());
-                var sx = sprite.getSpriteX() + sprite.getSpriteWidth() * (sprite.currentFrameNumber - (row * sprite.getSpritesPerRow()));
-                var sy = sprite.getSpriteY() + sprite.getSpriteHeight() * row;
-                context.drawImage(sprite.image, sx, sy, sprite.getSpriteWidth(), sprite.getSpriteHeight(), sprite.x, sprite.y, sprite.width, sprite.getHeight());
+                var row = Math.floor(sprite.currentFrameNumber / imageInfo.spritesPerRow);
+                var sx = imageInfo.spriteX + imageInfo.spriteWidth * (sprite.currentFrameNumber - (row * imageInfo.spritesPerRow));
+                var sy = imageInfo.spriteY + imageInfo.spriteHeight * row;
+                context.drawImage(imageInfo.image, sx, sy, imageInfo.spriteWidth, imageInfo.spriteHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+
+                if (imageInfo.numberOfFrames > 1) {
+                    sprite.currentFrameNumber = sprite.frameNumber % imageInfo.numberOfFrames;
+                    sprite.counter++;
+                    if (sprite.counter % imageInfo.animationSpeed === 0) {
+                        sprite.frameNumber++;
+                    }
+
+                }
             }
 
         };
 
         this.flush = function () {
-        }
+        };
+
+        this.loadImage = function (imageInfo) {
+            imageCache[imageInfo.key] = imageInfo;
+        };
     }
     ;
 

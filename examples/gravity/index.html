@@ -32,7 +32,8 @@
 
             var engine = new game_engine.engine("canvas1", "webGL").withGlobalOffScreenHandler("bouncing", bounce, friction);
 
-
+            var ballImage = document.getElementById("ball");
+            engine.loadImage("ball", ballImage);
 
             var prev = 0;
             var counter = 0;

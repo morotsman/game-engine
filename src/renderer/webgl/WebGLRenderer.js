@@ -41,6 +41,10 @@ define(["renderer/webgl/WebGLUtil","renderer/webgl/ImageRenderer"], function (we
         this.flush = function () {
             imageRenderer.flush();
         };
+        
+        this.loadImage = function (imageInfo) {
+            imageRenderer.loadImage(imageInfo);
+        };
     }
     ;
 
