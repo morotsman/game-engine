@@ -93,17 +93,15 @@ define(["line-intersect"], function (lineIntersect) {
                 var rSpeed = relativeSpeed(sprite1, sprite2);
                 var h = getIntersectionFraction(md, rSpeed);
                 if (h !== Number.MAX_VALUE) {
-                    one.x = one.x + sprite1.getSpeedX() * h;
+                    one.x = one.x + sprite1.speedX * h;
                     one.maxX = one.x + one.width;
-                    one.y = one.y - sprite1.getSpeedY() * h;
+                    one.y = one.y - sprite1.speedY * h;
                     one.maxY = one.y + one.height;
-                    two.x = two.x + sprite2.getSpeedX() * h;
+                    two.x = two.x + sprite2.speedX * h;
                     two.maxX = two.x + two.width;
-                    two.y = two.y - sprite2.getSpeedY() * h;
+                    two.y = two.y - sprite2.speedY * h;
                     two.maxY = two.y + two.height;
                     var md = minkowskiDifference(one, two);
-                    var hepp1 = one;
-                    var hepp2 = two;
                     if (md.left <= 0 && md.left + md.width >= 0
                             && md.top <= 0 && md.top + md.height >= 0) {
                         return detectSide(md);

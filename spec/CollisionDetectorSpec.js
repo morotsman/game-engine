@@ -2,26 +2,18 @@ define(['RectangularCollisionStartegy'], function (unitUnderTest) {
 
     describe("Collision detector", function () {
 
-        function MockSprite(x, y, width, height, speedX, speedY) {
-            this.getX = function(){
-                return x;
-            };
-            this.getY = function(){
-                return y;
-            };
-            this.getWidth = function(){
-                return width;
-            };
-            this.getHeight = function(){
-                return width;
-            };            
+        function MockSprite(_x, _y, _width, _height, _speedX, _speedY) {
+            this.x = _x;
             
-            this.getSpeedX = function () {
-                return speedX;
-            };
-            this.getSpeedY = function () {
-                return speedY;
-            };
+            this.y = _y;
+            
+            this.width = _width;
+            
+            this.height = _height;            
+            
+            this.speedX = _speedX;
+            
+            this.speedY = _speedY;
         }
         ;
 

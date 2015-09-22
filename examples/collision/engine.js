@@ -731,17 +731,15 @@ define('RectangularCollisionStartegy',["line-intersect"], function (lineIntersec
                 var rSpeed = relativeSpeed(sprite1, sprite2);
                 var h = getIntersectionFraction(md, rSpeed);
                 if (h !== Number.MAX_VALUE) {
-                    one.x = one.x + sprite1.getSpeedX() * h;
+                    one.x = one.x + sprite1.speedX * h;
                     one.maxX = one.x + one.width;
-                    one.y = one.y - sprite1.getSpeedY() * h;
+                    one.y = one.y - sprite1.speedY * h;
                     one.maxY = one.y + one.height;
-                    two.x = two.x + sprite2.getSpeedX() * h;
+                    two.x = two.x + sprite2.speedX * h;
                     two.maxX = two.x + two.width;
-                    two.y = two.y - sprite2.getSpeedY() * h;
+                    two.y = two.y - sprite2.speedY * h;
                     two.maxY = two.y + two.height;
                     var md = minkowskiDifference(one, two);
-                    var hepp1 = one;
-                    var hepp2 = two;
                     if (md.left <= 0 && md.left + md.width >= 0
                             && md.top <= 0 && md.top + md.height >= 0) {
                         return detectSide(md);
@@ -794,6 +792,7 @@ define('renderer/CanvasRenderer',[], function () {
         };
 
         this.drawImage = function (sprite) {
+            context.save();
             var imageInfo = imageCache[sprite.currentSrc];
 
             if (imageInfo.numberOfFrames===1) {
@@ -813,6 +812,7 @@ define('renderer/CanvasRenderer',[], function () {
 
                 }
             }
+            context.restore();
 
         };
 
@@ -1599,7 +1599,7 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
         var runner = function (now) {
             requestId = requestAnimationFrame(runner);
             frameCounter(now);
-
+            
             var screenWidth = renderer.width();
             var screenHeight = renderer.height();
             renderer.clearRect(0, 0, screenWidth, screenHeight);
@@ -1670,16 +1670,6 @@ define('Engine',["Util", "OffScreenHandlerFactory", "RectangularCollisionStarteg
 
             renderer.flush();
             sprites = filteredSprites;
-            
-           /*
-            for (var i = 0; i < sprites.length; i++) {
-                sprites[i].draw(renderer);
-            }
-            renderer.flush();  
-            */
-
-
-                     
 
         };
 
@@ -1740,13 +1730,14 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
 
     function Sprite(engine) {
 
-        this.image;
         this.x = 0;
         this.y = 0;
         this.width = 0;
         this.height = 0;
         this.speedX = 0;
         this.speedY = 0;
+        this.frameNumber = 0;
+        this.counter = 0;        
         var radius = 0;
         var angle;
         var destroyed = false;
@@ -1755,40 +1746,13 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         var offScreenHandler;
 
         var keyEvents = {};
-        
-        var numberOfFrames;
-        var spritesPerRow; 
-        var spriteWidth;
-        var spriteHeight;
+       
         this.currentFrameNumber = 0;
-        var animationSpeed = 0;
         this.rotation = 0;
-        var spriteX = 0;
-        var spriteY = 0;
         this.currentSrc;
 
         this.getRotation = function(){
             return that.rotation;
-        };
-
-        this.getSpritesPerRow = function(){
-            return spritesPerRow;
-        };
-        
-        this.getSpriteWidth = function(){
-            return spriteWidth;
-        };
-        
-        this.getSpriteHeight = function(){
-            return spriteHeight;
-        };
-        
-        this.getCurrentFrameNumber = function(){
-            return that.currentFrameNumber;
-        };
-        
-        this.getImage = function(){
-            return that.image;
         };
         
         this.getX = function(){
@@ -1805,23 +1769,13 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         
         this.getHeight = function(){
             return that.height;
-        };
-
-        this.getSpriteX = function(){
-            return spriteX;
-        };
-        
-        this.getSpriteY = function(){
-            return spriteY;
-        };        
+        };       
 
         this.setImage = function (key) {
             that.currentSrc = key;
             return this;
         };
-
-
-
+        
         this.setPosition = function (_x, _y) {
             that.x = _x;
             that.y = _y;
@@ -1965,16 +1919,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
             };
         };
 
-        this.frameNumber = 0;
-        this.counter = 0;
-        var drawImage = function (context) {
 
-
-
-            context.drawImage(that);
-            
-            
-        };
         
         this.getAnimationCycle = function(){
             return that.currentFrameNumber;
@@ -1986,9 +1931,7 @@ define('Sprite',["OffScreenHandlerFactory","Util"], function (offScreenHandlerFa
         };
 
         this.draw = function (context) {
-            context.save();
-            drawImage(context);
-            context.restore();
+            context.drawImage(that);
         };
 
         this.handleOffScreen = function (screenWidth, screenHeight, direction, now) {
