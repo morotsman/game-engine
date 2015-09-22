@@ -20,7 +20,7 @@ require.config({
 });
 
 require(['jasmine-boot'], function () {
-  require(['../spec/CollisionDetectorSpec', "../spec/LineIntersectSpec"], function(){
+  require(['../spec/CollisionDetectorSpec', "../spec/LineIntersectSpec", "../spec/ListSpec"], function(){
     //trigger Jasmine
     window.onload();
   })
