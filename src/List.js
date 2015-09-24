@@ -48,8 +48,6 @@ define([], function () {
             } else {//remove in the middle of the list
                 node.next.prev = node.prev;
                 node.prev.next = node.next;
-                node.next = undefined;
-                node.prev = undefined;
             }
         };
 

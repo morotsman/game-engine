@@ -43,7 +43,7 @@ define(['List'], function (List) {
             var list = new List();
             list.append("b");
             list.append("a");
-            expect(list.head.next.content).toEqual("b");
+            expect(list.head.prev).toEqual(undefined);
         });         
         
         it("head.next.prev of [a,b] is a", function () {
@@ -138,7 +138,7 @@ define(['List'], function (List) {
             expect(list.head.content).toEqual("b");
         });  
 
-        it("head.next after delete of a [a,b] is b", function () {
+        it("head.next after delete of a [a,b] is undefined", function () {
             var list = new List();
             list.append("b");
             list.append("a");
@@ -146,7 +146,7 @@ define(['List'], function (List) {
             expect(list.head.next).toEqual(undefined);
         }); 
         
-        it("head.prev after delete of a [a,b] is b", function () {
+        it("head.prev after delete of a [a,b] is undefined", function () {
             var list = new List();
             list.append("b");
             list.append("a");
